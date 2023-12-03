@@ -1,8 +1,8 @@
-
+import Map from "./components/Map";
 function App() {
   return (
     <div className="App">
-     Hello World
+     <Map></Map>
     </div>
   );
 }
