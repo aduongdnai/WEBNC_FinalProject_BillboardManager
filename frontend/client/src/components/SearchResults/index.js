@@ -6,7 +6,7 @@ import './style.css'
 const SearchResults = ({ searchResults }) => {
     console.log(searchResults);
     return (
-        <Grid className='search-result-box' gridRowGap='1rem' background={'white'}  >
+        <Grid className='search-result-box' gridRowGap='1rem'>
             {searchResults.map(({ formatted_address }) => (
                 <Box
 

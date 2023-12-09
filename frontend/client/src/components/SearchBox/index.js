@@ -69,7 +69,7 @@ const SearchBox = () => {
             </Flex>
 
             {queryText && (
-                <Box maxH='70vh' p='0' overflowY='auto'>
+                <Box maxH='70vh' p='0' overflowY='auto' bg='white' position='relative' zIndex={10}>
                     <Box px={4}>
                         <Box borderTopWidth='1px' pt={2} pb={4}>
                             <SearchResults searchResults={searchResults} />

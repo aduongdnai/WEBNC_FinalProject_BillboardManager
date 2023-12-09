@@ -61,7 +61,7 @@ function Map(props) {
                 ref={mapRef}
                 {...viewport}
                 width="100vw"
-                height="80vh"
+                height="100vh"
                 onViewportChange={setViewport}
                 goongApiAccessToken={"9fzxhKjU16UdOtYirE5ceN2FOd7M9ERVA3zQ3WAD"}
                 attributionControl={true} >
