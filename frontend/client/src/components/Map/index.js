@@ -65,7 +65,7 @@ function Map(props) {
                 onViewportChange={setViewport}
                 goongApiAccessToken={"9fzxhKjU16UdOtYirE5ceN2FOd7M9ERVA3zQ3WAD"}
                 attributionControl={true} >
-
+                <SearchBox></SearchBox>
                 <Pins data={CITIES} onClick={setPopupInfo} />
 
                 {popupInfo && (
@@ -80,15 +80,15 @@ function Map(props) {
                         <CityInfo info={popupInfo} />
                     </Popup>
                 )}
-                <SearchBox></SearchBox>
+
                 <GeolocateControl style={geolocateStyle} />
                 <FullscreenControl style={fullscreenControlStyle} />
                 <NavigationControl style={navStyle} />
                 <ScaleControl style={scaleControlStyle} />
             </ReactMapGL>
 
-            <button onClick={goToDNC}>Dong Nai City</button>
-        </div>
+
+        </div >
     );
 }
 

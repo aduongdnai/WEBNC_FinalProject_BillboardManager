@@ -42,8 +42,9 @@ const SearchBox = () => {
                 mt: '1rem',
                 mx: 'auto',
             }}
+
         >
-            <Flex pos='relative' align='strech'>
+            <Flex pos='relative' align='strech' zIndex={10}>
                 <chakra.input
                     type=''
                     autoComplete='off'
