@@ -4,12 +4,11 @@ import { useState, useRef } from 'react';
 import ReactMapGL, { AttributionControl, GeolocateControl, NavigationControl, FullscreenControl, ScaleControl, Popup } from '@goongmaps/goong-map-react'
 import * as d3 from 'd3-ease'
 import { flyTo } from './viewportTransition';
-import ControlPanel from './control-panel';
 import Pins from '../Pin';
-import CityInfo from './city-info';
-import CITIES from './cities.json';
+import CityInfo from './locationInfo';
 import SearchBox from '../SearchBox';
 import '@goongmaps/goong-geocoder-react/dist/goong-geocoder.css'
+import mapAPI from '../../apis/mapApi';
 Map.propTypes = {
 
 };
@@ -20,16 +19,10 @@ function Map(props) {
 
         latitude: 10.78604,
         longitude: 106.70123,
-        zoom: 8
+        zoom: 12
     })
     const mapRef = useRef(null);
-    const goToDNC = () => {
-        setViewport(flyTo(11.055265614, 107.189669004, 14)
-        );
-    };
-    const addMarker = (e) => {
 
-    }
     const geolocateStyle = {
         right: 10,
         bottom: 0
@@ -51,10 +44,21 @@ function Map(props) {
         left: 0,
         padding: '10px'
     };
-    const handleGeocoderViewportChange = (newViewport) => {
-        const geocoderDefaultOverrides = { transitionDuration: 1000 };
-        setViewport({ ...newViewport, ...geocoderDefaultOverrides });
-    };
+
+    const onClickMap = async event => {
+        const address = await mapAPI.geoCodeToAddress(event.lngLat[1], event.lngLat[0])
+        const area = `${address.results[0].compound.commune}, ${address.results[0].compound.district}, ${address.results[0].compound.province}`
+
+        setPopupInfo({
+            longitude: event.lngLat[0],
+            latitude: event.lngLat[1],
+            planned: false,
+            address: address.results[0].formatted_address,
+            area: area,
+            location: address.results[0].geometry.location,
+        })
+    }
+    const CITIES = {}
     return (
         <div>
             <ReactMapGL
@@ -64,9 +68,10 @@ function Map(props) {
                 height="100vh"
                 onViewportChange={setViewport}
                 goongApiAccessToken={"9fzxhKjU16UdOtYirE5ceN2FOd7M9ERVA3zQ3WAD"}
-                attributionControl={true} >
+                attributionControl={true}
+                onClick={onClickMap} >
                 <SearchBox></SearchBox>
-                <Pins data={CITIES} onClick={setPopupInfo} />
+
 
                 {popupInfo && (
                     <Popup
