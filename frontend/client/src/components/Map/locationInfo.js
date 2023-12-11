@@ -60,7 +60,7 @@ function LocationInfo(props) {
                 }
             }
             // Perform any async operations (e.g., API calls) here
-            console.log('Form submitted with values:', data);
+            //console.log('Form submitted with values:', data);
             const result = await adLocationAPI.addAdLocation(data);
             // Clear any previous errors
             setError(null);

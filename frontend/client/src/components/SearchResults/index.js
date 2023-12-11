@@ -5,14 +5,16 @@ import { nanoid } from 'nanoid'
 import './style.css'
 import { useDispatch } from 'react-redux'
 import { setViewport } from '../actions/viewportAction'
-const SearchResults = ({ searchResults }) => {
-    console.log(searchResults);
+const SearchResults = ({ searchResults, setSearchResults }) => {
+    //console.log(searchResults);
     const dispatch = useDispatch()
     const changeViewport = (location) => {
+        setSearchResults([])
         const newViewport = {
             latitude: location.lat,
             longitude: location.lng,
             zoom: 12, // Adjust the zoom level as needed
+
         };
 
         dispatch(setViewport(newViewport));

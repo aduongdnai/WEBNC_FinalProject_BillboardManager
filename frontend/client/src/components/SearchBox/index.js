@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { Box, Flex, Center, chakra } from '@chakra-ui/react'
 import axios from 'axios'
 
@@ -9,6 +9,7 @@ import mapAPI from '../../apis/mapApi'
 const SearchBox = () => {
     const [queryText, setQueryText] = useState('')
     const [searchResults, setSearchResults] = useState([])
+
 
     const handleChange = (e) => setQueryText(e.target.value)
 
@@ -22,7 +23,7 @@ const SearchBox = () => {
                 const result = await mapAPI.adressToGeoCode(queryText);
                 if (result) {
                     setSearchResults(result.results)
-                    console.log(result.results[0].formatted_address);
+                    //console.log(result.results[0].formatted_address);
                 }
 
             })()
@@ -61,6 +62,7 @@ const SearchBox = () => {
                     placeholder='Search Movies'
                     value={queryText}
                     onChange={handleChange}
+
                 />
 
                 <Center pos='absolute' left={7} h='68px'>
@@ -72,7 +74,7 @@ const SearchBox = () => {
                 <Box maxH='70vh' p='0' overflowY='auto' bg='white' position='relative' zIndex={10}>
                     <Box px={4}>
                         <Box borderTopWidth='1px' pt={2} pb={4}>
-                            <SearchResults searchResults={searchResults} />
+                            <SearchResults searchResults={searchResults} setSearchResults={setSearchResults} />
                         </Box>
                     </Box>
                 </Box>
