@@ -1,12 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { useState, useRef } from 'react';
+import { useSelector, useDispatch } from 'react-redux'
 import ReactMapGL, { AttributionControl, GeolocateControl, NavigationControl, FullscreenControl, ScaleControl, Popup } from '@goongmaps/goong-map-react'
 import * as d3 from 'd3-ease'
 import { flyTo } from './viewportTransition';
 import Pins from '../Pin';
 import CityInfo from './locationInfo';
 import SearchBox from '../SearchBox';
+import { setViewport } from '../actions/viewportAction'
 import '@goongmaps/goong-geocoder-react/dist/goong-geocoder.css'
 import mapAPI from '../../apis/mapApi';
 Map.propTypes = {
@@ -15,14 +17,30 @@ Map.propTypes = {
 
 function Map(props) {
     const [popupInfo, setPopupInfo] = useState(null);
-    const [viewport, setViewport] = useState({
 
-        latitude: 10.78604,
-        longitude: 106.70123,
-        zoom: 12
-    })
+    const viewport = useSelector(state => state.viewport)
+    const dispatch = useDispatch()
     const mapRef = useRef(null);
+    // const goToDNC = () => {
+    //     setViewport(flyTo(11.055265614, 107.189669004, 14)
+    //     );
+    // };
+    // const addMarker = (e) => {
 
+    // }
+
+    // const handleGeocoderViewportChange = (newViewport) => {
+    //     const geocoderDefaultOverrides = { transitionDuration: 1000 };
+    //     setViewport({ ...newViewport, ...geocoderDefaultOverrides });
+    // };
+    const handleGeocoderViewportChange = (newViewport) => {
+        const viewportData = {
+            latitude: newViewport.latitude,
+            longitude: newViewport.longitude,
+            zoom: newViewport.zoom
+        }
+        dispatch(setViewport(viewportData));
+    };
     const geolocateStyle = {
         right: 10,
         bottom: 0
@@ -66,7 +84,7 @@ function Map(props) {
                 {...viewport}
                 width="100vw"
                 height="100vh"
-                onViewportChange={setViewport}
+                onViewportChange={handleGeocoderViewportChange}
                 goongApiAccessToken={"9fzxhKjU16UdOtYirE5ceN2FOd7M9ERVA3zQ3WAD"}
                 attributionControl={true}
                 onClick={onClickMap} >
