@@ -53,10 +53,7 @@ function Map(props) {
     };
 
     const onClickMap = async event => {
-        if (isSearchBoxClicked) {
-            // Don't handle map click if SearchBox is clicked
-            return;
-        }
+        event.preventDefault();
         //console.log(event);
         const address = await mapAPI.geoCodeToAddress(event.lngLat[1], event.lngLat[0])
         const area = `${address.results[0].compound.commune}, ${address.results[0].compound.district}, ${address.results[0].compound.province}`
@@ -70,13 +67,7 @@ function Map(props) {
             location: address.results[0].geometry.location,
         })
     }
-    const handleSearchBoxClick = () => {
-        setIsSearchBoxClicked(true);
-    };
 
-    const handleSearchBoxBlur = () => {
-        setIsSearchBoxClicked(false);
-    };
     const CITIES = {}
     return (
         <div>
@@ -88,14 +79,10 @@ function Map(props) {
                 onViewportChange={handleGeocoderViewportChange}
                 goongApiAccessToken={"9fzxhKjU16UdOtYirE5ceN2FOd7M9ERVA3zQ3WAD"}
                 attributionControl={true}
-                onClick={onClickMap} >
-                <div
-                    onClick={handleSearchBoxClick}
-                    onBlur={handleSearchBoxBlur}
+                onContextMenu={onClickMap} >
 
-                >
-                    <SearchBox ref={searchBoxRef} />
-                </div>
+                <SearchBox />
+
 
                 {popupInfo && (
                     <Popup

@@ -8,10 +8,12 @@ import CustomInput from '../CustomInput'
 import * as Yup from 'yup'
 import CustomSelect from '../CustomSelect';
 import adLocationAPI from '../../apis/adLocationApi';
+import ImageUploaderWithWidget from '../ImageUploaderWithWidget';
 function LocationInfo(props) {
     const { info } = props;
     const { isOpen, onOpen, onClose } = useDisclosure();
     const [error, setError] = useState(null);
+    const [publicId, setPublicId] = useState('');
     const displayAddress = `${info.address}`;
     const AddNewLocateSchema = Yup.object().shape({
         address: Yup.string()
@@ -26,9 +28,9 @@ function LocationInfo(props) {
         advertisingType: Yup.string()
             .oneOf(["Cổ động chính trị", "Quảng cáo thương mại", "Xã hội hoá"], "Invalid Advertisement Type")
             .required("Loại điểm quảng cáo không được để trống"),
-        // image: Yup.string()
-        //     .max(200, 'Tối đa 200 kí tự')
-        //     .required("Hình ảnh không được bỏ trống"),
+        image: Yup.string()
+            .max(200, 'Tối đa 200 kí tự')
+
         // planned: Yup.bool()
         //     .required("Trạng thái của điểm quảng cáo không được bỏ trống"),
 
@@ -46,10 +48,11 @@ function LocationInfo(props) {
         { key: 2, value: "Quảng cáo thương mại" },
         { key: 3, value: "Xã hội hoá" }]
     const onSubmit = async (values, actions) => {
+
         try {
+            console.log(values);
             const data = {
                 ...values,
-                image: "https://example.com/image.jpg",
                 planned: true,
                 coordinates: {
                     type: "Point",
@@ -67,6 +70,7 @@ function LocationInfo(props) {
 
             // Reset the form
             actions.resetForm();
+            setPublicId('');
         } catch (error) {
             // Handle errors, and set the error state
             console.error('Error submitting form:', error);
@@ -77,6 +81,16 @@ function LocationInfo(props) {
         }
 
     }
+    const hanleUploadImage = (info) => {
+        console.log('Upload success:', info);
+        setPublicId(info.public_id);
+
+    }
+    const handleChangeImageUrl = (e) => {
+        setPublicId(e.target.value);
+        console.log("cl " + publicId);
+    }
+
     return (
         <div>
             <Box width={350} >
@@ -100,10 +114,11 @@ function LocationInfo(props) {
                                         area: info.area,
                                         locationType: '',
                                         advertisingType: '',
-
+                                        image: publicId
                                     }}
                                     validationSchema={AddNewLocateSchema}
                                     onSubmit={onSubmit}
+                                    debug
                                 >
                                     {({ props }) => (
                                         <VStack
@@ -134,6 +149,17 @@ function LocationInfo(props) {
                                                 placeholder="Vui lòng chọn loại địa điểm"
                                                 options={advertisingTypeOption}
                                             />
+                                            <CustomInput
+                                                name="image"
+                                                label="Hình ảnh"
+                                                placeholder="Bấm nút browse để chọn ảnh"
+
+                                                value={publicId}
+                                                onChange={handleChangeImageUrl}
+                                            >
+
+                                            </CustomInput>
+                                            <ImageUploaderWithWidget onUpLoadSuccess={hanleUploadImage}></ImageUploaderWithWidget>
                                             <ButtonGroup pt="1rem">
                                                 <Button colorScheme="teal" type="submit">Add</Button>
                                             </ButtonGroup>
