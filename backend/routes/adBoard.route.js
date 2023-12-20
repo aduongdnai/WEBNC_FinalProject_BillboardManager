@@ -1,14 +1,14 @@
 import express from 'express'
-import AdLocationModel from '../models/adLocation.model.js';
+import AdBoardModel from '../models/adBoard.model.js';
 const router = express.Router();
 
-router.get('/', async (req, res) => {
+router.get('/:id', async (req, res) => {
     try {
-        const data = await AdLocationModel.find()
+        const data = await AdBoardModel.find({ location_id: req.params.id })
         console.log(data);
         if (data) {
-            res.status(200).json({
-                message: "Get All Ad Location Successfully",
+            res.status.json({
+                message: "Get All Ad Board By location ID Successfully",
                 data
             })
         }
@@ -23,9 +23,9 @@ router.get('/', async (req, res) => {
 })
 router.post('/', async (req, res) => {
     try {
-        const newAdLocation = new AdLocationModel(req.body);
+        const newAdBoard = new AdBoardModel(req.body);
         console.log(req.body);
-        const result = await newAdLocation.save()
+        const result = await newAdBoard.save()
         console.log(result);
 
         res.status(200).json({
