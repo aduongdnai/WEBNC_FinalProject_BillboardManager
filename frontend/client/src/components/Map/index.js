@@ -26,9 +26,12 @@ function Map(props) {
         const viewportData = {
             latitude: newViewport.latitude,
             longitude: newViewport.longitude,
-            zoom: newViewport.zoom
+            zoom: newViewport.zoom,
+            transitionDuration: 0
         }
         dispatch(setViewport(viewportData));
+
+
     };
     const geolocateStyle = {
         right: 10,

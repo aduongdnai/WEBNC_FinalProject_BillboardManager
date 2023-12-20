@@ -50,9 +50,10 @@ function LocationInfo(props) {
     const onSubmit = async (values, actions) => {
 
         try {
-            console.log(values);
+
             const data = {
                 ...values,
+                image: publicId,
                 planned: true,
                 coordinates: {
                     type: "Point",
@@ -62,6 +63,7 @@ function LocationInfo(props) {
                     ]
                 }
             }
+            console.log(data);
             // Perform any async operations (e.g., API calls) here
             //console.log('Form submitted with values:', data);
             const result = await adLocationAPI.addAdLocation(data);
@@ -153,7 +155,7 @@ function LocationInfo(props) {
                                                 name="image"
                                                 label="Hình ảnh"
                                                 placeholder="Bấm nút browse để chọn ảnh"
-
+                                                readOnly
                                                 value={publicId}
                                                 onChange={handleChangeImageUrl}
                                             >
