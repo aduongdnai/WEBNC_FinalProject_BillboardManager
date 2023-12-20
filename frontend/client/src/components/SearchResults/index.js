@@ -9,7 +9,7 @@ const SearchResults = ({ searchResults, setSearchResults }) => {
     //console.log(searchResults);
     const dispatch = useDispatch()
     const changeViewport = (location) => {
-        setSearchResults([])
+        setSearchResults(null)
         const newViewport = {
             latitude: location.lat,
             longitude: location.lng,
@@ -19,7 +19,11 @@ const SearchResults = ({ searchResults, setSearchResults }) => {
 
         dispatch(setViewport(newViewport));
     }
+    if (searchResults == null){
+        return null;
+    }
     return (
+        <Box borderTopWidth='1px' pt={2} pb={4}>
         <Grid className='search-result-box' gridRowGap='1rem'>
             {searchResults.map(({ formatted_address, place_id, geometry }) => (
                 <Box
@@ -45,6 +49,7 @@ const SearchResults = ({ searchResults, setSearchResults }) => {
                 </Box>
             ))}
         </Grid>
+        </Box>
     )
 }
 
