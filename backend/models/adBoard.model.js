@@ -1,11 +1,12 @@
 import mongoose from "mongoose";
 const adBoardSchema = new mongoose.Schema({
-    location: {
+    location_id: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'AdLocation',
     },
     boardType: String,
-    size: String,
+    width: Number,
+    height: Number,
     images: [String],
     expiryDate: Date,
 });

@@ -9,70 +9,62 @@ import * as Yup from 'yup'
 import CustomSelect from '../CustomSelect';
 import adLocationAPI from '../../apis/adLocationApi';
 import ImageUploaderWithWidget from '../ImageUploaderWithWidget';
-function LocationInfo(props) {
+import adBoardApi from '../../apis/adBoardApi';
+function PlannedLocationInfo(props) {
     const { info } = props;
     const { isOpen, onOpen, onClose } = useDisclosure();
     const [error, setError] = useState(null);
-    const [publicId, setPublicId] = useState('');
+    const [publicId, setPublicId] = useState([]);
     const displayAddress = `${info.address}`;
-    const AddNewLocateSchema = Yup.object().shape({
-        address: Yup.string()
-            .max(200, 'Tối đa 200 kí tự')
-            .required('Địa chỉ không được để trống'),
-        area: Yup.string()
-            .max(200, 'Tối đa 200 kí tự')
-            .required('Khu vực không được để trống'),
-        locationType: Yup.string()
-            .oneOf(["Đất công/Công viên/Hành lang an toàn giao thông", "Đất tư nhân/Nhà ở riêng lẻ", "Trung tâm thương mại", "Chợ", "Cây xăng", "Nhà chờ xe buýt"], "Invalid Location Type")
-            .required("Loại địa điểm không được để trống"),
-        advertisingType: Yup.string()
-            .oneOf(["Cổ động chính trị", "Quảng cáo thương mại", "Xã hội hoá"], "Invalid Advertisement Type")
-            .required("Loại điểm quảng cáo không được để trống"),
-        image: Yup.string()
-            .max(200, 'Tối đa 200 kí tự')
-
-        // planned: Yup.bool()
-        //     .required("Trạng thái của điểm quảng cáo không được bỏ trống"),
-
-
+    const AddNewBoardSchema = Yup.object().shape({
+        boardType: Yup.string()
+            .oneOf(["Trụ bảng hiflex", "Trụ màn hình điện tử LED", "Trụ hộp đèn", "Bảng hiflex ốp tường",
+                "Màn hình điện tử ốp tường", "Trụ treo băng rôn dọc", "Trụ treo băng rôn ngang", "Trụ/Cụm pano",
+                "Cổng chào", "Trung tâm thương mại"]),
+        width: Yup.number()
+            .required('Chiều rộng không được bỏ trống'),
+        height: Yup.number()
+            .required('Chiều dài không được bỏ trống'),
+        image: Yup.array()
     });
-    const locateTypeOption = [
-        { key: 1, value: "Đất công/Công viên/Hành lang an toàn giao thông" },
-        { key: 2, value: "Đất tư nhân/Nhà ở riêng lẻ" },
-        { key: 3, value: "Trung tâm thương mại" },
-        { key: 4, value: "Chợ" },
-        { key: 5, value: "Cây xăng" },
-        { key: 6, value: "Nhà chờ xe buýt" }]
-    const advertisingTypeOption = [
-        { key: 1, value: "Cổ động chính trị" },
-        { key: 2, value: "Quảng cáo thương mại" },
-        { key: 3, value: "Xã hội hoá" }]
+    const boardTypeOption = [
+        { key: 1, value: "Trụ bảng hiflex" },
+        { key: 2, value: "Trụ màn hình điện tử LED" },
+        { key: 3, value: "Trụ hộp đèn" },
+        { key: 4, value: "Bảng hiflex ốp tường" },
+        { key: 5, value: "Màn hình điện tử ốp tường" },
+        { key: 6, value: "Trụ treo băng rôn dọc" },
+        { key: 7, value: "Trụ treo băng rôn ngang" },
+        { key: 8, value: "Trụ/Cụm pano" },
+        { key: 9, value: "Cổng chào" },
+        { key: 10, value: "Trung tâm thương mại" },
+    ]
+
     const onSubmit = async (values, actions) => {
-
         try {
-
+            const curdate = new Date();
+            const expiryDate = new Date(
+                curdate.getFullYear() + 2,
+                curdate.getMonth(),
+                curdate.getDate(),
+            )
             const data = {
                 ...values,
-                image: publicId,
-                planned: true,
-                coordinates: {
-                    type: "Point",
-                    coordinates: [
-                        info.location.lng,
-                        info.location.lat
-                    ]
-                }
+                location_id: info._id,
+                images: publicId,
+                expiryDate: expiryDate.toDateString()
+
             }
             console.log(data);
             // Perform any async operations (e.g., API calls) here
             //console.log('Form submitted with values:', data);
-            const result = await adLocationAPI.addAdLocation(data);
+            const result = await adBoardApi.addAdBoard(data);
             // Clear any previous errors
             setError(null);
 
             // Reset the form
             actions.resetForm();
-            setPublicId('');
+            setPublicId([]);
         } catch (error) {
             // Handle errors, and set the error state
             console.error('Error submitting form:', error);
@@ -85,12 +77,12 @@ function LocationInfo(props) {
     }
     const hanleUploadImage = (info) => {
         console.log('Upload success:', info);
-        setPublicId(info.public_id);
+        setPublicId((prevpublicIds) => [...prevpublicIds, info.public_id]);
 
     }
     const handleChangeImageUrl = (e) => {
         setPublicId(e.target.value);
-        console.log("cl " + publicId);
+
     }
 
     return (
@@ -101,24 +93,23 @@ function LocationInfo(props) {
                 <Button colorScheme='blue' onClick={onOpen}>
                     <AddIcon boxSize={5} pr={2} >
                     </AddIcon>
-                    Thêm Điểm Quảng Cáo
+                    Thêm Bảng Quảng Cáo
                 </Button>
                 <Drawer placement={'right'} onClose={onClose} isOpen={isOpen} size='md'>
                     <DrawerOverlay />
                     <DrawerContent>
                         <DrawerHeader borderBottomWidth='1px'>Thêm điểm quảng cáo</DrawerHeader>
                         <DrawerBody>
-
                             <VStack>
                                 <Formik
                                     initialValues={{
-                                        address: displayAddress,
-                                        area: info.area,
+
                                         locationType: '',
-                                        advertisingType: '',
+                                        width: 0,
+                                        height: 0,
                                         image: publicId
                                     }}
-                                    validationSchema={AddNewLocateSchema}
+                                    validationSchema={AddNewBoardSchema}
                                     onSubmit={onSubmit}
                                     debug
                                 >
@@ -127,39 +118,33 @@ function LocationInfo(props) {
                                             as={Form}
                                         >
                                             <Text as="p" color="red.500">{error}</Text>
-                                            <CustomInput
-                                                name="address"
-                                                label="Địa chỉ"
-                                                placeholder="Nhập địa chỉ (VD: 123 Trường Chinh)"
-                                                type="text"
-                                            />
-                                            <CustomInput
-                                                name="area"
-                                                label="Khu vực"
-                                                placeholder="Nhập khu vực (VD: Tân Hưng Thuân, Quận 12, HCM)"
-                                                type="text"
-                                            />
+
                                             <CustomSelect
-                                                name="locationType"
+                                                name="boardType"
                                                 label="Loại địa điểm"
                                                 placeholder="Vui lòng chọn loại địa điểm"
-                                                options={locateTypeOption}
+                                                options={boardTypeOption}
                                             />
-                                            <CustomSelect
-                                                name="advertisingType"
-                                                label="Loại quảng cáo"
-                                                placeholder="Vui lòng chọn loại địa điểm"
-                                                options={advertisingTypeOption}
+                                            <CustomInput
+                                                name="width"
+                                                label="Chiều rộng"
+                                                placeholder="Nhập chiều dài (VD: 8m)"
+                                                type="number"
+                                            />
+                                            <CustomInput
+                                                name="height"
+                                                label="Chiều cao"
+                                                placeholder="Nhập khu vực (VD: 10m)"
+                                                type="number"
                                             />
                                             <CustomInput
                                                 name="image"
                                                 label="Hình ảnh"
                                                 placeholder="Bấm nút browse để chọn ảnh"
                                                 readOnly
-                                                value={publicId}
+                                                value={publicId.join(', ')}
                                                 onChange={handleChangeImageUrl}
                                             >
-
                                             </CustomInput>
                                             <ImageUploaderWithWidget onUpLoadSuccess={hanleUploadImage}></ImageUploaderWithWidget>
                                             <ButtonGroup pt="1rem">
@@ -178,4 +163,4 @@ function LocationInfo(props) {
     );
 }
 
-export default React.memo(LocationInfo);
+export default React.memo(PlannedLocationInfo);
