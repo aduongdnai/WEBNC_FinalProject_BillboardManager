@@ -21,6 +21,27 @@ function Map(props) {
     const viewport = useSelector(state => state.viewport)
     const dispatch = useDispatch()
     const mapRef = useRef(null);
+    const geolocateStyle = {
+        right: 10,
+        bottom: 0
+    };
+    const fullscreenControlStyle = {
+        top: 36,
+        right: 0,
+        padding: '10px'
+    };
+
+    const navStyle = {
+        top: 72,
+        right: 0,
+        padding: '10px'
+    };
+
+    const scaleControlStyle = {
+        bottom: 36,
+        left: 0,
+        padding: '10px'
+    };
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -50,27 +71,7 @@ function Map(props) {
 
 
     };
-    const geolocateStyle = {
-        right: 10,
-        bottom: 0
-    };
-    const fullscreenControlStyle = {
-        top: 36,
-        right: 0,
-        padding: '10px'
-    };
 
-    const navStyle = {
-        top: 72,
-        right: 0,
-        padding: '10px'
-    };
-
-    const scaleControlStyle = {
-        bottom: 36,
-        left: 0,
-        padding: '10px'
-    };
 
     const onClickMap = async event => {
         event.preventDefault();
