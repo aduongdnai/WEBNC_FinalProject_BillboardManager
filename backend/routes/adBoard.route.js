@@ -1,13 +1,15 @@
 import express from 'express'
 import AdBoardModel from '../models/adBoard.model.js';
+import mongoose from 'mongoose';
 const router = express.Router();
 
 router.get('/:id', async (req, res) => {
     try {
-        const data = await AdBoardModel.find({ location_id: req.params.id })
+        const objectId = new mongoose.Types.ObjectId(req.params.id)
+        const data = await AdBoardModel.find({ location_id: objectId })
         console.log(data);
         if (data) {
-            res.status.json({
+            res.status(200).json({
                 message: "Get All Ad Board By location ID Successfully",
                 data
             })
