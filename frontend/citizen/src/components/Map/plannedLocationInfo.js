@@ -13,12 +13,14 @@ function PlannedLocationInfo(props) {
     const { isOpen, onOpen, onClose } = useDisclosure();
     const [adBoards, setAdBoards] = useState([]);
     const displayAddress = `${info.address}`;
+
     useEffect(() => {
         const fetchData = async () => {
             try {
 
                 const result = await adBoardApi.getAdBoardByLocationID(info._id);
-                console.log(result.data.length);
+
+                console.log("adBoards length:" + result.data.length);
                 setAdBoards(result.data);
 
 
@@ -30,8 +32,12 @@ function PlannedLocationInfo(props) {
 
         // Call the fetchData function when the component mounts or when viewport changes
         fetchData();
-    }, []);
+    }, [info._id]);
+    const handleClose = () => {
+        // Perform any additional actions you need here
 
+        onClose();
+    };
     return (
         <div>
             <Box width={350} >
@@ -44,7 +50,7 @@ function PlannedLocationInfo(props) {
                     </ViewIcon>
                     Xem Chi Tiết
                 </Button>
-                <Drawer placement={'right'} onClose={onClose} isOpen={isOpen} size='md'>
+                <Drawer placement={'right'} onClose={handleClose} isOpen={isOpen} size='md'>
                     <DrawerOverlay />
                     <DrawerContent>
                         <DrawerHeader borderBottomWidth='1px'>Thông tin địa điểm quảng cáo</DrawerHeader>
