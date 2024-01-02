@@ -3,25 +3,29 @@ import { Link, Box, Flex, Text, Button, Stack } from "@chakra-ui/react";
 
 import { ReactComponent as Logo } from "./billboard.svg";
 import { ReactComponent as Phone } from "./phone.svg";
+import { useDispatch, useSelector } from "react-redux";
+import { useUser } from "../LoginSignup/userContext";
 
 const NavBar = (props) => {
   const [isOpen, setIsOpen] = React.useState(false);
   useEffect(() => {
     console.log(isOpen);
-  },[isOpen])
+  }, [isOpen]);
   const toggle = () => setIsOpen(!isOpen);
 
   return (
     <NavBarContainer {...props}>
-      <div style={{display:"flex"}}>
+      <div style={{ display: "flex" }}>
         <div>
-          <Logo style={{margin:"auto"}} />
+          <Logo style={{ margin: "auto" }} />
           <div>Billboard Manager</div>
         </div>
-        <div style={{margin:"auto", paddingLeft:"20px"}}>
-          <Phone/>
+        <div style={{ margin: "auto", paddingLeft: "20px" }}>
+          <Phone />
         </div>
-        <div style={{margin:"auto",paddingLeft:"10px"}}>Call us : (+84) 868282427</div>
+        <div style={{ margin: "auto", paddingLeft: "10px" }}>
+          Call us : (+84) 868282427
+        </div>
       </div>
       <MenuToggle toggle={toggle} isOpen={isOpen} />
       <MenuLinks isOpen={isOpen} />
@@ -70,6 +74,15 @@ const MenuItem = ({ children, isLast, to = "/", ...rest }) => {
 };
 
 const MenuLinks = ({ isOpen }) => {
+  const { username, logout } = useUser();
+  const handleLogout = () => {
+    logout(); // Gọi hàm logout khi người dùng nhấn logout
+  };
+  const getEmailFromUsername = () => {
+    const email = username.split(":")[0]; // Giả sử định dạng là "email:username"
+    return email;
+  };
+
   return (
     <Box
       display={{ base: isOpen ? "block" : "none", md: "block" }}
@@ -84,19 +97,47 @@ const MenuLinks = ({ isOpen }) => {
       >
         <MenuItem to="/">Map</MenuItem>
         <MenuItem to="/manage"> Manage </MenuItem>
-        <MenuItem to="/login" isLast>
-          <Button
-            size="sm"
-            rounded="md"
-            color={["primary.500", "primary.500", "white", "white"]}
-            bg={["white", "white", "primary.500", "primary.500"]}
-            _hover={{
-              bg: ["primary.100", "primary.100", "primary.600", "primary.600"]
-            }}
-          >
-            Login
-          </Button>
-        </MenuItem>
+        {username ? (
+          <span>
+            Welcome, {username} |
+            <Button
+              size="sm"
+              rounded="md"
+              color={["primary.500", "primary.500", "white", "white"]}
+              bg={["white", "white", "primary.500", "primary.500"]}
+              _hover={{
+                bg: [
+                  "primary.100",
+                  "primary.100",
+                  "primary.600",
+                  "primary.600",
+                ],
+              }}
+              onClick={handleLogout}
+            >
+              Logout
+            </Button>{" "}
+          </span>
+        ) : (
+          <MenuItem to="/login" isLast>
+            <Button
+              size="sm"
+              rounded="md"
+              color={["primary.500", "primary.500", "white", "white"]}
+              bg={["white", "white", "primary.500", "primary.500"]}
+              _hover={{
+                bg: [
+                  "primary.100",
+                  "primary.100",
+                  "primary.600",
+                  "primary.600",
+                ],
+              }}
+            >
+              Login
+            </Button>
+          </MenuItem>
+        )}
       </Stack>
     </Box>
   );

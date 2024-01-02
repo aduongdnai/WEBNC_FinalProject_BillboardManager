@@ -1,0 +1,31 @@
+### check server
+
+GET http://127.0.0.1:5000/v1
+
+
+###check register
+POST http://127.0.0.1:5000/v1/auth/register
+Content-Type: application/json
+
+{
+    "email": "khoanguyen0522@gmail.com",
+    "password": 123456789,
+    "role": 1,
+    "username": "hoang"
+}
+
+
+###login
+
+POST http://127.0.0.1:5000/v1/auth/login
+Content-Type: application/json
+
+{
+    "email": "khoanguyen0522@gmail.com",
+    "password": 1234567891213123
+}
+
+###logout
+POST http://127.0.0.1:5000/v1/auth/logout
+###user
+GET http://127.0.0.1:5000/v1/user
