@@ -14,8 +14,8 @@ import { Flex } from "@chakra-ui/react";
 function App() {
   return (
     <div style={{display:"flex"}}>
-      <Sidebar/>
     <Router>
+      <Sidebar/>
       <Routes>
         <Route path="/map" element={<Map/>}/>
         <Route path="/manage" element={<ManageWardAndDistrict/>}/>

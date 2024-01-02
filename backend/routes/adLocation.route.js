@@ -21,6 +21,26 @@ router.get('/', async (req, res) => {
     }
 
 })
+router.post('/findByArea', async (req,res) => {
+    try {
+        const data = await AdLocationModel.find(
+            req.body
+        )
+        console.log(req.body);
+        if (data) {
+            res.status(200).json({
+                message: "findByArea",
+                data
+            })
+        }
+    }
+    catch (err) {
+        console.log(err);
+        res.status(500).json({
+            error: "Internal Error"
+        })
+    }
+})
 router.post('/', async (req, res) => {
     try {
         const newAdLocation = new AdLocationModel(req.body);

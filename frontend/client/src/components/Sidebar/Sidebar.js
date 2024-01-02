@@ -12,16 +12,19 @@ import {
     useDisclosure,
     Input,
     Button,
-    Center
+    Center,
+    Link
 } from '@chakra-ui/react'
 import { HamburgerIcon } from '@chakra-ui/icons'
 import {FiUser} from 'react-icons/fi'
 import { CiLogin,CiLogout } from "react-icons/ci";
 import { BsTable } from "react-icons/bs";
 import { MdOutlineManageAccounts } from "react-icons/md";
-
+import { BsFillPinMapFill } from "react-icons/bs";
+import { useNavigate } from 'react-router-dom';
 
 export default function Sidebar() {
+    const navigate = useNavigate();
     const { isOpen, onOpen, onClose } = useDisclosure()
     const btnRef = React.useRef()
     return (
@@ -43,34 +46,42 @@ export default function Sidebar() {
                 <DrawerHeader>Billboard Manager</DrawerHeader>
 
                 <DrawerBody>
-                        <Button
-                            background="none"
-                            fontSize='15px'
-                            ref={btnRef}
-                            _hover={{ backgroundColor: "#AEC8CA" }}
-                            leftIcon={<BsTable />}
-                            width={'270px'}
-                            justifyContent={"start"}
-                            onClick={() => {
-
-                            }}
-                        >
-                            Table Management
-                        </Button>
-                        <Button
-                            background="none"
-                            fontSize='15px'
-                            ref={btnRef}
-                            width={'270px'}
-                            justifyContent={"start"}
-                            _hover={{ backgroundColor: "#AEC8CA" }}
-                            leftIcon={<MdOutlineManageAccounts />}
-                            onClick={() => {
-
-                            }}
-                        >
-                            Acount 
-                        </Button>
+                    <Button
+                        background="none"
+                        fontSize='15px'
+                        ref={btnRef}
+                        width={'270px'}
+                        justifyContent={"start"}
+                        _hover={{ backgroundColor: "#AEC8CA" }}
+                        leftIcon={<BsFillPinMapFill />}
+                        onClick={() => navigate('/')}
+                    >
+                        Map 
+                    </Button>
+                    <Button
+                        background="none"
+                        fontSize='15px'
+                        ref={btnRef}
+                        _hover={{ backgroundColor: "#AEC8CA" }}
+                        leftIcon={<BsTable />}
+                        width={'270px'}
+                        justifyContent={"start"}
+                        onClick={() => navigate('/manage')}
+                    >
+                        Table Management
+                    </Button>
+                    <Button
+                        background="none"
+                        fontSize='15px'
+                        ref={btnRef}
+                        width={'270px'}
+                        justifyContent={"start"}
+                        _hover={{ backgroundColor: "#AEC8CA" }}
+                        leftIcon={<MdOutlineManageAccounts />}
+                        onClick={() => navigate('/')}
+                    >
+                        Acount 
+                    </Button>
                 </DrawerBody>
             </DrawerContent>
         </Drawer>
