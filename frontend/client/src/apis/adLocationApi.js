@@ -6,6 +6,11 @@ const adLocationAPI = {
         const url = `/adlocations`
         return serverClient.get(url)
     },
+    getAdLocationByArea(param) {
+
+        const url = `/adlocations/findByArea`
+        return serverClient.post(url,param)
+    },
     addAdLocation(data) {
 
         const url = `/adlocations`
