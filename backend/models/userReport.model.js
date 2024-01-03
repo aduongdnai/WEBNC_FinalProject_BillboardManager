@@ -7,6 +7,10 @@ const userReportSchema = new mongoose.Schema({
     reportContent: String,
     images: [String],
     status: String, // 'Pending', 'Processed'
+    adboard_id: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'AdLocation',
+    },
 });
 
 const UserReportModel = mongoose.model('UserReport', userReportSchema);
