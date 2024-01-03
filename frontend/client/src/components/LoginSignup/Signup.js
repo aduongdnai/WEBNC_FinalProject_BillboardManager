@@ -28,6 +28,8 @@ function Signup() {
     password: "",
     confirmPassword: "",
     role: "",
+    district: '',
+    ward: '',
   });
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -64,6 +66,47 @@ function Signup() {
       [name]: value,
     });
   };
+  const roles = ["CB-Phuong", "CB-Quan", "CB-So"];
+  const districts = Array.from({ length: 12 }, (_, i) => `${i + 1}`); // Tạo mảng ['1', '2', ..., '12']
+  const wards = Array.from({ length: 12 }, (_, i) => `${i + 1}`); // Tạo mảng ['1', '2', ..., '12']
+  const roleOptions = {
+    'CB-Phuong': {
+      label: 'Phường',
+      districtOptions: districts.map((district) => ({
+        value: district,
+        label: `Quận ${district}`,
+        wards: wards.map((ward) => ({
+          value: ward,
+          label: `Phường ${ward}`,
+        })),
+      })),
+    },
+    'CB-Quan': {
+      label: 'Quận',
+      districtOptions: districts.map((district) => ({
+        value: district,
+        label: `Quận ${district}`,
+      })),
+    },
+    'CB-So': { label: 'Không có lựa chọn' }, // Có thể thêm xử lý cho trường hợp khác nếu cần
+  };
+  const handleRoleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value, district: '', ward: '' }); // Reset giá trị quận và phường khi thay đổi vai trò
+  };
+
+  const handleDistrictChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
+
+  const handleWardChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
+
+  
+
   return (
     <Box
       w={["full", "md"]}
@@ -138,16 +181,67 @@ function Signup() {
               <option value='option1'>3</option>
             </Select>
           </FormControl> */}
-        <FormControl>
-          <FormLabel>Role</FormLabel>
-          <Input
-            rounded="none"
-            variant="filled"
-            name="role"
-            value={formData.role}
-            onChange={handleChange}
-          ></Input>
-        </FormControl>
+<FormControl>
+        <FormLabel>Role</FormLabel>
+        <Select
+          rounded="none"
+          variant="filled"
+          name="role"
+          value={formData.role}
+          onChange={handleRoleChange}
+        >
+          <option value="">Select a role</option>
+          {roles.map((role) => (
+            <option key={role} value={role}>
+              {role}
+            </option>
+          ))}
+        </Select>
+      </FormControl>
+
+      {formData.role && roleOptions[formData.role] && formData.role !== 'CB-So' && (
+        <>
+          <FormControl mt={4}>
+            <FormLabel>Quận</FormLabel>
+            <Select
+              rounded="none"
+              variant="filled"
+              name="district"
+              value={formData.district}
+              onChange={handleDistrictChange}
+            >
+              <option value="">Select a district</option>
+              {roleOptions[formData.role].districtOptions.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </Select>
+          </FormControl>
+
+          {formData.district && formData.role === 'CB-Phuong' && (
+            <FormControl mt={4}>
+              <FormLabel>Phường</FormLabel>
+              <Select
+                rounded="none"
+                variant="filled"
+                name="ward"
+                value={formData.ward}
+                onChange={handleWardChange}
+              >
+                <option value="">Select a ward</option>
+                {roleOptions[formData.role].districtOptions.find(
+                  (option) => option.value === formData.district
+                )?.wards.map((ward) => (
+                  <option key={ward.value} value={ward.value}>
+                    {ward.label}
+                  </option>
+                ))}
+              </Select>
+            </FormControl>
+          )}
+        </>
+      )}
         <Button
           rounded="none"
           colorScheme="blue"
