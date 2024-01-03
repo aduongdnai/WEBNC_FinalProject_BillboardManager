@@ -8,7 +8,6 @@ import 'react-quill/dist/quill.snow.css'; // import styles
 import ReCAPTCHA from "react-google-recaptcha";
 import ImageUploaderWithWidget from '../ImageUploaderWithWidget';
 import CustomInput from '../CustomInput';
-import ReactDOM from 'react-dom';
 const ReportForm = () => {
     const initialValues = {
         reportType: '',
@@ -31,11 +30,39 @@ const ReportForm = () => {
         adboard_id: Yup.string().required('Location ID is required'),
     });
 
-    const handleSubmit = async (values, { setSubmitting }) => {
-        const response = await axios.post('http://127.0.0.1:5000/api/v1/report', values);
-        console.log(response.data);
+    const [isVerified, setVerified] = useState(false);
+    function onChange(value) {
+        if (value) {
+          setVerified(true);
+        }
+    }
 
+    const handleSubmit = async (values, { setSubmitting, resetForm }) => {
+        try {
+        
+            if (isVerified) {
+                // If reCAPTCHA verification is successful, make the API call
+                values.images = publicId;
+                values.reportContent = text;
+                const apiResponse = await axios.post('http://127.0.0.1:5000/api/v1/report', values);
+                console.log(apiResponse.data);
+    
+                // Reset the form on successful submission
+                resetForm();
+            } else {
+                // If reCAPTCHA verification fails, log an error
+                console.error('reCAPTCHA verification failed');
+            }
+        } catch (error) {
+            // Handle any errors from the server
+            console.error(error);
+        } finally {
+            // Reset the submitting state
+            setSubmitting(false);
+        }
     };
+
+   
     const [publicId, setPublicId] = useState([]);
     const [text, setText] = React.useState('');
     const hanleUploadImage = (info) => {
@@ -50,9 +77,7 @@ const ReportForm = () => {
     }
     return (
         <ChakraProvider>
-            <Box px={20}>
-                <Heading as='h2' size='xl' >Report Form</Heading>
-                <br />
+            <Box p={4}>
                 <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={handleSubmit}>
                     {({ isSubmitting }) => (
                         <Form>
@@ -105,7 +130,7 @@ const ReportForm = () => {
                             <ImageUploaderWithWidget onUpLoadSuccess={hanleUploadImage}></ImageUploaderWithWidget>
 
                             <br />
-                            <ReCAPTCHA sitekey="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI" /> {/* Replace with your reCAPTCHA site key */}
+                            <ReCAPTCHA sitekey="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI" onChange={onChange}/> {/* Replace with your reCAPTCHA site key */}
                             <br />
                             <Button colorScheme='red' variant='outline' type="submit" disabled={isSubmitting}>Submit</Button>
                         </Form>
