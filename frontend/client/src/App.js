@@ -6,12 +6,10 @@ import {
   Navigate,
 } from "react-router-dom";
 import ManageWardAndDistrict from "./components/ManageWardAndDistrict";
-import NavBar from "./components/NavBar";
 import Login from "./components/LoginSignup/Login";
 import Signup from "./components/LoginSignup/Signup";
 import { UserProvider } from "./components/LoginSignup/userContext";
 import Sidebar from "./components/Sidebar/Sidebar";
-import { Flex } from "@chakra-ui/react";
 
 
   
