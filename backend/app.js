@@ -5,6 +5,7 @@ import cors from "cors";
 import mongoose from "mongoose";
 import adLocationRoute from "./routes/adLocation.route.js";
 import adBoardRoute from "./routes/adBoard.route.js";
+import reportRoute from "./routes/report.route.js";
 import App from "./routes/LoginSignup.route.js";
 import cookieParser from "cookie-parser";
 
@@ -37,6 +38,7 @@ server.get("/", (req, res) => {
 // Routes
 server.use("/api/v1/adlocations", adLocationRoute);
 server.use("/api/v1/adboards", adBoardRoute);
+server.use("/api/v1/report", reportRoute);
 server.use(App);
 
 

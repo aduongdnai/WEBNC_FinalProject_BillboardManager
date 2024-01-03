@@ -6,14 +6,16 @@ import _ from "../config/config.js";
 
 export async function Register(req, res) {
 
-    const { role,email, password, username } = req.body;
+    const { role,email, password, username, ward, district } = req.body;
     try {
 
         const newUser = new User({
             email,
             password,
             role,
-            username
+            username,
+            ward,
+            district
         });
 
         const existingUser = await User.findOne({ email });
@@ -83,7 +85,9 @@ export async function Login(req, res) {
                 user.email,
                 user.username,
                 user.password,
-                user.role
+                user.role,
+                user.district,
+                user.ward
             ],
         });
     } catch (err) {
