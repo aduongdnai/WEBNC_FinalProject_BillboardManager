@@ -3,20 +3,17 @@ import {
   Flex,
   Drawer,
   DrawerBody,
-  DrawerFooter,
   DrawerHeader,
   DrawerOverlay,
   DrawerContent,
   DrawerCloseButton,
   IconButton,
   useDisclosure,
-  Input,
   Button,
-  Center,
   Link,
+  Tooltip,
 } from "@chakra-ui/react";
 import { HamburgerIcon } from "@chakra-ui/icons";
-import { FiUser } from "react-icons/fi";
 import { CiLogin, CiLogout } from "react-icons/ci";
 import { BsTable } from "react-icons/bs";
 import { MdOutlineManageAccounts } from "react-icons/md";
@@ -143,16 +140,44 @@ export default function Sidebar() {
           mt={5}
           _hover={{ backgroundColor: "#AEC8CA" }}
           icon={<HamburgerIcon />}
-          onClick={onOpen}
+          onClick={username ? (onOpen): (onClose)}
         />
-        <IconButton
-          background="none"
-          mt={5}
-          fontSize="25px"
-          icon={<CiLogin />}
-          onClick={() => {}}
-          _hover={{ textDecor: "none", backgroundColor: "#AEC8CA" }}
-        />
+        {username ? 
+          (
+            <Tooltip label='Logout'>
+              <IconButton
+                background="none"
+                mt={5}
+                fontSize="25px"
+                icon={<CiLogout />}
+                onClick={handleLogout}
+                _hover={{ textDecor: "none", backgroundColor: "#AEC8CA" }}
+              />
+            </Tooltip>
+          ) :
+          (
+            <Tooltip label='Login'>
+              <IconButton
+                background="none"
+                mt={5}
+                fontSize="25px"
+                icon={<CiLogin />}
+                onClick={() => navigate('/login')}
+                _hover={{ textDecor: "none", backgroundColor: "#AEC8CA" }}
+              />
+            </Tooltip>
+          )
+        }
+        {/* <Tooltip label='Login'>
+          <IconButton
+            background="none"
+            mt={5}
+            fontSize="25px"
+            icon={<CiLogin />}
+            onClick={() => navigate('/login')}
+            _hover={{ textDecor: "none", backgroundColor: "#AEC8CA" }}
+          />
+        </Tooltip> */}
         {/* <IconButton
                     background="none"
                     mt={5}

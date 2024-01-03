@@ -24,7 +24,9 @@ const UserSchema = new mongoose.Schema(
       select: false,
       max: 25,
     },
-    role: { type: Number, required: true },
+    role: { type: String, required: true, max: 100},
+    district: { type: Number, max: 100,required: false },
+    ward: { type: Number, max: 100,required: false },
   },
   { timestamps: true }
 );
