@@ -23,6 +23,26 @@ router.get('/:id', async (req, res) => {
     }
 
 })
+router.get('/find/:id', async (req, res) => {
+    try {
+        const objectId = new mongoose.Types.ObjectId(req.params.id)
+        const data = await AdBoardModel.find({ _id: objectId })
+        console.log(data);
+        if (data) {
+            res.status(200).json({
+                message: "Get Ad Board By ID Successfully",
+                data
+            })
+        }
+    }
+    catch (err) {
+        console.log(err);
+        res.status(500).json({
+            error: "Internal Error"
+        })
+    }
+
+})
 router.post('/', async (req, res) => {
     try {
         const newAdBoard = new AdBoardModel(req.body);
