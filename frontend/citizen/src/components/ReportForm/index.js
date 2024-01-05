@@ -48,6 +48,13 @@ const ReportForm = (props) => {
                 // Reset the form on successful submission
                 resetForm();
                 alert("Report submitted successfully!");
+
+                var rp = localStorage.getItem('report');
+                rp = rp ? JSON.parse(rp) : [];
+                rp.push(apiResponse.data);
+                localStorage.setItem('report', JSON.stringify(rp));
+
+
             } catch (error) {
                 // Handle any errors from the server
                 console.error(error);
