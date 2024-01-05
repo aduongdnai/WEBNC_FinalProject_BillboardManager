@@ -11,7 +11,6 @@ import {
 } from '@chakra-ui/react'
 import { Image as CloudinaryImage, CloudinaryContext } from 'cloudinary-react';
 import { InfoOutlineIcon, WarningTwoIcon } from '@chakra-ui/icons';
-import { outline } from '@cloudinary/url-gen/actions/effect';
 import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
 import { Carousel } from 'react-responsive-carousel';
 import ReportForm from '../ReportForm';
@@ -115,17 +114,17 @@ function AdBoardList(props) {
                     Report
                 </Button>
                 <Modal isOpen={isReportModalOpen} onClose={onReportModalClose} size='4xl'>
-                        <ModalOverlay />
-                        <ModalContent >
-                            <ModalHeader>Report Form</ModalHeader>
-                            <ModalCloseButton />
-                            <ModalBody>
-                                <ReportForm></ReportForm>
-                            </ModalBody>
+                    <ModalOverlay />
+                    <ModalContent >
+                        <ModalHeader>Report Form</ModalHeader>
+                        <ModalCloseButton />
+                        <ModalBody>
+                            <ReportForm></ReportForm>
+                        </ModalBody>
 
-                           
-                        </ModalContent>
-                    </Modal>
+
+                    </ModalContent>
+                </Modal>
             </CardHeader>
 
         </Card>
