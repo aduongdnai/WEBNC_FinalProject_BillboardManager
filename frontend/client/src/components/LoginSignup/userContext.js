@@ -4,6 +4,7 @@ const UserContext = createContext();
 
 export const UserProvider = ({ children }) => {
   const [username, setUsername] = useState('');
+  const [area, setArea] = useState('');
   
   useEffect(() => {
     const storedUser = localStorage.getItem('username');
@@ -14,6 +15,9 @@ export const UserProvider = ({ children }) => {
   const setUser = (user) => {
     setUsername(user);
     localStorage.setItem('username', user); 
+  };
+  const setUserArea = (area) => {
+    setArea(area);
   };
   const logout = () => {
     setUsername('');

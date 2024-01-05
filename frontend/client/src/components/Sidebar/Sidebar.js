@@ -48,49 +48,9 @@ export default function Sidebar() {
           <DrawerHeader>Billboard Manager</DrawerHeader>
 
           {username ? (
-            <span>
-              <DrawerHeader>Welcome, {username} </DrawerHeader> |
-              <DrawerBody>
-                <Button
-                  size="sm"
-                  rounded="md"
-                  color={["primary.500", "primary.500", "white", "white"]}
-                  bg={["white", "white", "primary.500", "primary.500"]}
-                  _hover={{
-                    bg: [
-                      "primary.100",
-                      "primary.100",
-                      "primary.600",
-                      "primary.600",
-                    ],
-                  }}
-                  onClick={handleLogout}
-                >
-                  Logout
-                </Button>{" "}
-              </DrawerBody>
-            </span>
+            <DrawerHeader>Welcome, {username} </DrawerHeader>
           ) : (
-            <Link href="/login">
-              <DrawerBody>
-                <Button
-                  size="sm"
-                  rounded="md"
-                  color={["primary.500", "primary.500", "white", "white"]}
-                  bg={["white", "white", "primary.500", "primary.500"]}
-                  _hover={{
-                    bg: [
-                      "primary.100",
-                      "primary.100",
-                      "primary.600",
-                      "primary.600",
-                    ],
-                  }}
-                >
-                  Login
-                </Button>
-              </DrawerBody>
-            </Link>
+            <DrawerHeader></DrawerHeader>
           )}
           <DrawerBody>
             <Button
