@@ -21,6 +21,7 @@ function AdBoardList(props) {
     const { isOpen: isInfoModalOpen, onOpen: onInfoModalOpen, onClose: onInfoModalClose } = useDisclosure();
     const { isOpen: isReportModalOpen, onOpen: onReportModalOpen, onClose: onReportModalClose } = useDisclosure();
     console.log(process.env.REACT_APP_CLOUDINARY_CLOUD_NAME);
+    
     return (
 
         <Card
@@ -115,17 +116,17 @@ function AdBoardList(props) {
                     Report
                 </Button>
                 <Modal isOpen={isReportModalOpen} onClose={onReportModalClose} size='4xl'>
-                        <ModalOverlay />
-                        <ModalContent >
-                            <ModalHeader>Report Form</ModalHeader>
-                            <ModalCloseButton />
-                            <ModalBody>
-                                <ReportForm></ReportForm>
-                            </ModalBody>
+                    <ModalOverlay />
+                    <ModalContent >
+                        <ModalHeader>Report Form</ModalHeader>
+                        <ModalCloseButton />
+                        <ModalBody>
+                            <ReportForm info={{ type: 'adboard', _id: info._id }}></ReportForm>
+                        </ModalBody>
 
-                           
-                        </ModalContent>
-                    </Modal>
+
+                    </ModalContent>
+                </Modal>
             </CardHeader>
 
         </Card>

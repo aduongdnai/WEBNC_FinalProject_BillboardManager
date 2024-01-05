@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 const userReportSchema = new mongoose.Schema({
+    type: String, // 'adboard', 'plannedLocation'
     reportType: String,
     senderName: String,
     email: String,
@@ -7,9 +8,8 @@ const userReportSchema = new mongoose.Schema({
     reportContent: String,
     images: [String],
     status: String, // 'Pending', 'Processed'
-    adboard_id: {
+    reference_id: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'AdLocation',
     },
 });
 

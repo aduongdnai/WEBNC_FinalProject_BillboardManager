@@ -7,11 +7,25 @@ import { ViewIcon, InfoOutlineIcon, CheckIcon } from '@chakra-ui/icons';
 import adBoardApi from '../../apis/adBoardApi';
 import { outline } from '@cloudinary/url-gen/actions/effect';
 import AdBoardList from '../adBoardList';
+import {
+    Modal,
+    ModalOverlay,
+    ModalContent,
+    ModalHeader,
+    ModalFooter,
+    ModalBody,
+    ModalCloseButton,
+} from '@chakra-ui/react'
+import ReportForm from '../ReportForm';
+import {WarningTwoIcon } from '@chakra-ui/icons';
 
 function PlannedLocationInfo(props) {
     const { info } = props;
     const { isOpen, onOpen, onClose } = useDisclosure();
     const [adBoards, setAdBoards] = useState([]);
+
+    const { isOpen: isReportModalOpen, onOpen: onReportModalOpen, onClose: onReportModalClose } = useDisclosure();
+
     const displayAddress = `${info.address}`;
 
     useEffect(() => {
@@ -53,7 +67,31 @@ function PlannedLocationInfo(props) {
                 <Drawer placement={'right'} onClose={handleClose} isOpen={isOpen} size='md'>
                     <DrawerOverlay />
                     <DrawerContent>
-                        <DrawerHeader borderBottomWidth='1px'>Thông tin địa điểm quảng cáo</DrawerHeader>
+                        <DrawerHeader borderBottomWidth='1px'>Thông tin địa điểm quảng cáo
+                        <br></br>
+                        <Button
+                    colorScheme="red"  // Set the button color to red
+                    leftIcon={<WarningTwoIcon />}                   
+                    onClick={onReportModalOpen}
+                    variant={"outline"}  // Add the report icon to the left of the button text
+                    mt={2}
+                    size='sm'
+                >
+                    Report
+                </Button>
+                <Modal isOpen={isReportModalOpen} onClose={onReportModalClose} size='4xl'>
+                    <ModalOverlay />
+                    <ModalContent >
+                        <ModalHeader>Report Location Form</ModalHeader>
+                        <ModalCloseButton />
+                        <ModalBody>
+                            <ReportForm info={{ type: 'plannedLocation', _id: info._id }}></ReportForm>
+                        </ModalBody>
+
+
+                    </ModalContent>
+                </Modal>
+                        </DrawerHeader>
                         <DrawerBody>
                             <Box>
                                 <Heading size={"md"}>Có  {adBoards.length} biển quảng cáo</Heading>
