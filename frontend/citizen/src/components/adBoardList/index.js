@@ -14,10 +14,12 @@ import { InfoOutlineIcon, WarningTwoIcon } from '@chakra-ui/icons';
 import { outline } from '@cloudinary/url-gen/actions/effect';
 import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
 import { Carousel } from 'react-responsive-carousel';
-
+import ReportForm from '../ReportForm';
 function AdBoardList(props) {
     const { info } = props;
-    const { isOpen, onOpen, onClose } = useDisclosure()
+    //const { isOpen, onOpen, onClose } = useDisclosure()
+    const { isOpen: isInfoModalOpen, onOpen: onInfoModalOpen, onClose: onInfoModalClose } = useDisclosure();
+    const { isOpen: isReportModalOpen, onOpen: onReportModalOpen, onClose: onReportModalClose } = useDisclosure();
     console.log(process.env.REACT_APP_CLOUDINARY_CLOUD_NAME);
     return (
 
@@ -40,12 +42,12 @@ function AdBoardList(props) {
                             variant='outline'
                             colorScheme='teal'
                             mr={2}
-                            onClick={onOpen}
+                            onClick={onInfoModalOpen}
                         >
 
                         </IconButton>
                     </Tooltip>
-                    <Modal isOpen={isOpen} onClose={onClose}>
+                    <Modal isOpen={isInfoModalOpen} onClose={onInfoModalClose}>
                         <ModalOverlay />
                         <ModalContent>
                             <ModalHeader>{info.boardType}</ModalHeader>
@@ -107,10 +109,23 @@ function AdBoardList(props) {
                     leftIcon={<WarningTwoIcon />}
                     ml={10}
                     mt={4}
+                    onClick={onReportModalOpen}
                     variant={"outline"}  // Add the report icon to the left of the button text
                 >
                     Report
                 </Button>
+                <Modal isOpen={isReportModalOpen} onClose={onReportModalClose} size='4xl'>
+                        <ModalOverlay />
+                        <ModalContent >
+                            <ModalHeader>Report Form</ModalHeader>
+                            <ModalCloseButton />
+                            <ModalBody>
+                                <ReportForm></ReportForm>
+                            </ModalBody>
+
+                           
+                        </ModalContent>
+                    </Modal>
             </CardHeader>
 
         </Card>
