@@ -41,7 +41,7 @@ const ReportForm = (props) => {
                 values.images = publicId;
                 values.reportContent = text;
                 values.reference_id = info._id;
-
+                values.time = new Date().toLocaleString();
                 const apiResponse = await axios.post('http://127.0.0.1:5000/api/v1/report', values);
                 console.log(apiResponse.data);
 
@@ -54,7 +54,7 @@ const ReportForm = (props) => {
                 rp.push(apiResponse.data);
                 localStorage.setItem('report', JSON.stringify(rp));
 
-
+                localStorage.setItem(`report_${values.reference_id}`,JSON.stringify({...apiResponse.data, isReported: true}));
             } catch (error) {
                 // Handle any errors from the server
                 console.error(error);

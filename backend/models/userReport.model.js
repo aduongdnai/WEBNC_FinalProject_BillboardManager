@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 const userReportSchema = new mongoose.Schema({
+    time: String,
     type: String, // 'adboard', 'plannedLocation'
     reportType: String,
     senderName: String,

@@ -20,8 +20,9 @@ function AdBoardList(props) {
     //const { isOpen, onOpen, onClose } = useDisclosure()
     const { isOpen: isInfoModalOpen, onOpen: onInfoModalOpen, onClose: onInfoModalClose } = useDisclosure();
     const { isOpen: isReportModalOpen, onOpen: onReportModalOpen, onClose: onReportModalClose } = useDisclosure();
-    console.log(process.env.REACT_APP_CLOUDINARY_CLOUD_NAME);
-    
+    const { isOpen: isReportDetailOpen, onOpen: onReportDetailOpen, onClose: onReportDetailClose } = useDisclosure();
+    const rp = JSON.parse(localStorage.getItem(`report_${info._id}`));
+    const report = rp ? rp : { isReported: false, images: [] };
     return (
 
         <Card
@@ -78,15 +79,7 @@ function AdBoardList(props) {
                             </ModalBody>
 
                             <ModalFooter>
-                                <Button
-                                    colorScheme="red"  // Set the button color to red
-                                    leftIcon={<WarningTwoIcon />}
-                                    ml={10}
-                                    mt={4}
-                                    variant={"outline"}  // Add the report icon to the left of the button text
-                                >
-                                    Report
-                                </Button>
+                                
 
                             </ModalFooter>
                         </ModalContent>
@@ -106,15 +99,16 @@ function AdBoardList(props) {
 
                 </Flex>
                 <Button
-                    colorScheme="red"  // Set the button color to red
+                    colorScheme={report.isReported ? "yellow" : "red"}
                     leftIcon={<WarningTwoIcon />}
                     ml={10}
                     mt={4}
-                    onClick={onReportModalOpen}
-                    variant={"outline"}  // Add the report icon to the left of the button text
+                    onClick={report.isReported ?   onReportDetailOpen:onReportModalOpen}
+                    variant={"outline"}
                 >
-                    Report
+                    {report.isReported ? "Reported" : "Report"}
                 </Button>
+                
                 <Modal isOpen={isReportModalOpen} onClose={onReportModalClose} size='4xl'>
                     <ModalOverlay />
                     <ModalContent >
@@ -127,6 +121,38 @@ function AdBoardList(props) {
 
                     </ModalContent>
                 </Modal>
+
+                <Modal isOpen={isReportDetailOpen} onClose={onReportDetailClose} size='2xl'>
+                <ModalOverlay />
+                    <ModalContent>
+                        <ModalHeader>DETAIL</ModalHeader>
+                        <ModalCloseButton />
+                        <ModalBody>
+                        <Box >
+                    <CloudinaryContext cloudName={process.env.REACT_APP_CLOUDINARY_CLOUD_NAME} secure="true" upload_preset="my_unsigned_preset">
+                        <Carousel>
+                            {report.images.map((image, index) => (
+                                <CloudinaryImage key={index} publicId={image} width="300" height="150" />
+                            ))}
+                        </Carousel>
+                    </CloudinaryContext>
+                </Box>
+                <Box>
+                    <Text>Loại hình: {report.type}</Text>
+                    <Text>Loại báo cáo: {report.reportType}</Text>
+                    <Text>Tên người gửi: <b>{report.senderName}</b></Text>
+                    <Text>Email: <b>{report.email}</b></Text>
+                    <Text>Số điện thoại: <b>{report.phone}</b></Text>
+                    <Text>Nội dung:<div dangerouslySetInnerHTML={{ __html: report.reportContent }} /></Text>
+                    <br />
+                    <Text>Trạng thái: <b>{report.status}</b></Text>
+                </Box>
+                        </ModalBody>
+
+
+                    </ModalContent>
+                </Modal>
+
             </CardHeader>
 
         </Card>

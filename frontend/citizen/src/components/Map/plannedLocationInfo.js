@@ -17,15 +17,18 @@ import {
     ModalCloseButton,
 } from '@chakra-ui/react'
 import ReportForm from '../ReportForm';
-import {WarningTwoIcon } from '@chakra-ui/icons';
-
+import { WarningTwoIcon } from '@chakra-ui/icons';
+import { Carousel } from 'react-responsive-carousel';
+import { Image as CloudinaryImage, CloudinaryContext } from 'cloudinary-react';
 function PlannedLocationInfo(props) {
     const { info } = props;
     const { isOpen, onOpen, onClose } = useDisclosure();
     const [adBoards, setAdBoards] = useState([]);
 
     const { isOpen: isReportModalOpen, onOpen: onReportModalOpen, onClose: onReportModalClose } = useDisclosure();
-
+    const { isOpen: isReportDetailOpen, onOpen: onReportDetailOpen, onClose: onReportDetailClose } = useDisclosure();
+    const rp = JSON.parse(localStorage.getItem(`report_${info._id}`));
+    const report = rp ? rp : { isReported: false, images: [] };
     const displayAddress = `${info.address}`;
 
     useEffect(() => {
@@ -68,29 +71,59 @@ function PlannedLocationInfo(props) {
                     <DrawerOverlay />
                     <DrawerContent>
                         <DrawerHeader borderBottomWidth='1px'>Thông tin địa điểm quảng cáo
-                        <br></br>
-                        <Button
-                    colorScheme="red"  // Set the button color to red
-                    leftIcon={<WarningTwoIcon />}                   
-                    onClick={onReportModalOpen}
-                    variant={"outline"}  // Add the report icon to the left of the button text
-                    mt={2}
-                    size='sm'
-                >
-                    Report
-                </Button>
-                <Modal isOpen={isReportModalOpen} onClose={onReportModalClose} size='4xl'>
-                    <ModalOverlay />
-                    <ModalContent >
-                        <ModalHeader>Report Location Form</ModalHeader>
-                        <ModalCloseButton />
-                        <ModalBody>
-                            <ReportForm info={{ type: 'plannedLocation', _id: info._id }}></ReportForm>
-                        </ModalBody>
+                            <br></br>
+                            <Button
+                                colorScheme={report.isReported ? "yellow" : "red"}
+                                leftIcon={<WarningTwoIcon />}
+                                onClick={report.isReported ?   onReportDetailOpen:onReportModalOpen}
+                                variant={"outline"}  // Add the report icon to the left of the button text
+                                mt={2}
+                                size='sm'
+                            >
+                                {report.isReported ? "Reported" : "Report"}
+                            </Button>
+                            <Modal isOpen={isReportModalOpen} onClose={onReportModalClose} size='4xl'>
+                                <ModalOverlay />
+                                <ModalContent >
+                                    <ModalHeader>Report Location Form</ModalHeader>
+                                    <ModalCloseButton />
+                                    <ModalBody>
+                                        <ReportForm info={{ type: 'plannedLocation', _id: info._id }}></ReportForm>
+                                    </ModalBody>
 
 
-                    </ModalContent>
-                </Modal>
+                                </ModalContent>
+                            </Modal>
+                            <Modal isOpen={isReportDetailOpen} onClose={onReportDetailClose} size='2xl'>
+                                <ModalOverlay />
+                                <ModalContent>
+                                    <ModalHeader>DETAIL</ModalHeader>
+                                    <ModalCloseButton />
+                                    <ModalBody>
+                                        <Box >
+                                            <CloudinaryContext cloudName={process.env.REACT_APP_CLOUDINARY_CLOUD_NAME} secure="true" upload_preset="my_unsigned_preset">
+                                                <Carousel>
+                                                    {report.images.map((image, index) => (
+                                                        <CloudinaryImage key={index} publicId={image} width="300" height="150" />
+                                                    ))}
+                                                </Carousel>
+                                            </CloudinaryContext>
+                                        </Box>
+                                        <Box>
+                                            <Text>Loại hình: {report.type}</Text>
+                                            <Text>Loại báo cáo: {report.reportType}</Text>
+                                            <Text>Tên người gửi: <b>{report.senderName}</b></Text>
+                                            <Text>Email: <b>{report.email}</b></Text>
+                                            <Text>Số điện thoại: <b>{report.phone}</b></Text>
+                                            <Text>Nội dung:<div dangerouslySetInnerHTML={{ __html: report.reportContent }} /></Text>
+                                            <br />
+                                            <Text>Trạng thái: <b>{report.status}</b></Text>
+                                        </Box>
+                                    </ModalBody>
+
+
+                                </ModalContent>
+                            </Modal>
                         </DrawerHeader>
                         <DrawerBody>
                             <Box>
