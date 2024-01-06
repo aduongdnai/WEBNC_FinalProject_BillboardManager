@@ -18,7 +18,9 @@ import { useNavigate } from 'react-router-dom';
 import { useEffect } from "react";
 import axios from "axios";
 import { UserProvider, useUser } from "../LoginSignup/userContext";
+import Pagination from "./Pagination"
 
+const ITEMS_PER_PAGE = 5;
 const ReportDashboard = () => {
     const [selectedReport, setSelectedReport] = useState(null);
     const [selectedAdboard, setSelectedAdboard] = useState(null);
@@ -31,7 +33,7 @@ const ReportDashboard = () => {
     useEffect(() => {
         const fetchReport = async () => {
             try {
-                const response = await axios.get(`http://127.0.0.1:5000/api/v1/report/area/${userData.area}`);
+                const response = await axios.get(`http://127.0.0.1:5000/api/v1/report`);
 
                 const reportData = response.data;
                 // Do something with the report data
@@ -137,6 +139,11 @@ const ReportDashboard = () => {
 
 
     }
+    
+    const [currentPage, setCurrentPage] = useState(1);
+    const indexOfLastItem = currentPage * ITEMS_PER_PAGE;
+    const indexOfFirstItem = indexOfLastItem - ITEMS_PER_PAGE;
+    const currentItems = report.slice(indexOfFirstItem, indexOfLastItem);
     return (
         <Box style={{ width: "100%", height: "100vh" }}>
             <Table variant="simple">
@@ -152,7 +159,7 @@ const ReportDashboard = () => {
                     </Tr>
                 </Thead>
                 <Tbody>
-                    {report.map((item, index) => (
+                    {currentItems.map((item, index) => (
                         <Tr key={index}>
                             <Td>{item.time}</Td>
                             <Td>{item.senderName}</Td>
@@ -182,6 +189,11 @@ const ReportDashboard = () => {
                     ))}
                 </Tbody>
             </Table>
+            <Pagination
+                currentPage={currentPage}
+                totalPages={Math.ceil(report.length / ITEMS_PER_PAGE)}
+                onPageChange={setCurrentPage}
+            />
             {selectedReport && (
                 // Pass the selected report as the "info" prop and onClose event
 
