@@ -16,6 +16,7 @@ import mapAPI from '../../apis/mapApi';
 import adLocationAPI from '../../apis/adLocationApi';
 import Pin from '../Pin';
 import { clusterLayer, clusterCountLayer, unclusteredPointLayer, unclusteredPointTextLayer } from './layer';
+import FilterOverlay from '../FilterOverlay';
 
 
 function Map(props) {
@@ -23,12 +24,13 @@ function Map(props) {
     const [plannedPopupInfo, setPlannedPopupInfo] = useState(null);
     const [adLocation, setAdLocation] = useState(null);
     const [geoJsonAdLocation, setGeoJsonAdLocation] = useState(null);
+    const [filters, setFilters] = useState({ planned: false, reported: false });
     const viewport = useSelector(state => state.viewport)
     const dispatch = useDispatch()
     const mapRef = useRef(null);
     const geolocateStyle = {
         right: 10,
-        bottom: 0
+        top: 180
     };
     const fullscreenControlStyle = {
         top: 36,
@@ -50,29 +52,41 @@ function Map(props) {
     useEffect(() => {
         const fetchData = async () => {
             try {
-
-                const result = await adLocationAPI.getAllAdLocation();
-
+                console.log(filters);
+                const result = await adLocationAPI.getAdLocationByFilters(filters);
                 setAdLocation(result.data);
                 const geojson = {
                     type: 'FeatureCollection',
-                    features: result.data.map((adLocation) => ({
-                        type: 'Feature',
-                        geometry: adLocation.coordinates,
-                        properties: adLocation
-                    }))
-                };
-                setGeoJsonAdLocation(geojson);
+                    features: result.data.map((adLocation) => {
+                        const rp = JSON.parse(localStorage.getItem(`report_${adLocation._id}`)) || { isReported: false };
+                        const adjust_rp = { ...rp, rp_id: rp._id }
+                        delete adjust_rp._id;
+                        return {
+                            type: 'Feature',
+                            geometry: adLocation.coordinates,
+                            properties: {
+                                ...adLocation,
+                                ...adjust_rp,
 
+                            }
+                        };
+                    })
+                };
+                const filteredFeaturesGeojson = filters.reported ? geojson.features.filter((adLocation) => adLocation.properties.isReported === false) : geojson.features;
+                //console.log("geojson", filteredFeaturesGeojson);
+                const filteredGeojson = {
+                    type: 'FeatureCollection',
+                    features: filteredFeaturesGeojson
+                };
+                setGeoJsonAdLocation(filteredGeojson);
             } catch (error) {
                 console.error('Error fetching data:', error);
-
             }
         };
 
         // Call the fetchData function when the component mounts or when viewport changes
         fetchData();
-    }, []);
+    }, [filters]);
     const handleGeocoderViewportChange = (newViewport) => {
         const viewportData = {
             latitude: newViewport.latitude,
@@ -120,7 +134,7 @@ function Map(props) {
         if (clickedFeature) {
             // Get a property from the clicked feature
             const property = clickedFeature.properties;
-            console.log("properties: ", clickedFeature);
+            console.log("properties: ", property);
             const coordinates = JSON.parse(property.coordinates);
 
             setPlannedPopupInfo({
@@ -131,6 +145,12 @@ function Map(props) {
 
             })
         }
+    };
+
+
+    const handleFilterChange = (newFilters) => {
+        setFilters(newFilters);
+        console.log("change", filters);
     };
     return (
         <div>
@@ -186,7 +206,7 @@ function Map(props) {
                         <PlannedLocationInfo info={plannedPopupInfo} />
                     </Popup>
                 )}
-
+                <FilterOverlay onFilterChange={handleFilterChange} />
                 <GeolocateControl style={geolocateStyle} />
                 <FullscreenControl style={fullscreenControlStyle} />
                 <NavigationControl style={navStyle} />

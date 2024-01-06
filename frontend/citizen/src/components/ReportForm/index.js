@@ -10,6 +10,7 @@ import ImageUploaderWithWidget from '../ImageUploaderWithWidget';
 import CustomInput from '../CustomInput';
 const ReportForm = (props) => {
     const { info } = props;
+    console.log(info);
     const initialValues = {
         type: info.type,
         reportType: '',
@@ -54,7 +55,7 @@ const ReportForm = (props) => {
                 rp.push(apiResponse.data);
                 localStorage.setItem('report', JSON.stringify(rp));
 
-                localStorage.setItem(`report_${values.reference_id}`,JSON.stringify({...apiResponse.data, isReported: true}));
+                localStorage.setItem(`report_${values.reference_id}`, JSON.stringify({ ...apiResponse.data, isReported: true }));
             } catch (error) {
                 // Handle any errors from the server
                 console.error(error);

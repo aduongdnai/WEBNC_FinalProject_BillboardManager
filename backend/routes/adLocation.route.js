@@ -2,11 +2,37 @@ import express from 'express'
 import AdLocationModel from '../models/adLocation.model.js';
 import mongoose from 'mongoose';
 const router = express.Router();
+router.get('/filter', async (req, res) => {
+    try {
 
+        let planned = req.query.planned === 'true';
+        //let reported = Boolean(req.query.reported);
+        let data;
+        if (planned) {
+
+            data = await AdLocationModel.find({ planned: planned })
+        }
+        else {
+            data = await AdLocationModel.find()
+        }
+        if (data) {
+            res.status(200).json({
+                message: "Get All Ad Location Successfully",
+                data
+            })
+        }
+    }
+    catch (err) {
+        console.log(err);
+        res.status(500).json({
+            error: "Internal Error"
+        })
+    }
+})
 router.get('/', async (req, res) => {
     try {
         const data = await AdLocationModel.find()
-        console.log(data);
+
         if (data) {
             res.status(200).json({
                 message: "Get All Ad Location Successfully",
@@ -22,7 +48,7 @@ router.get('/', async (req, res) => {
     }
 
 })
-router.post('/findByArea', async (req,res) => {
+router.post('/findByArea', async (req, res) => {
     try {
         const data = await AdLocationModel.find(
             req.body
@@ -65,7 +91,14 @@ router.post('/', async (req, res) => {
 })
 router.get('/:id', async (req, res) => {
     try {
-        const objectId = new mongoose.Types.ObjectId(req.params.id)
+        const id = req.params.id;
+
+        // Validate the ID
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return res.status(400).send('Invalid ID');
+        }
+
+        const objectId = new mongoose.Types.ObjectId(id);
         const data = await AdLocationModel.find({ _id: objectId })
         console.log(data);
         if (data) {
@@ -83,4 +116,5 @@ router.get('/:id', async (req, res) => {
     }
 
 })
+
 export default router;
