@@ -36,7 +36,17 @@ function Login() {
         navigate('/map');
       }, 2000);
       setUser(response.data.data.user.username);
-      // setUserArea()
+      const area = (response.data.data.user.ward 
+        ? `Phường ${response.data.data.user.ward}, ` 
+        : ``) 
+      + 
+        (response.data.data.user.district 
+        ? `Quận ${response.data.data.user.district}, ` 
+        : ``)
+      + 
+        `Hồ Chí Minh`;
+      console.log(area);
+      setUserArea(area);
       // Hiển thị thông báo khi đăng nhập thành công
       toast({
         title: 'Login successful.',

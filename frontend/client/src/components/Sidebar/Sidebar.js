@@ -21,11 +21,14 @@ import { BsFillPinMapFill } from "react-icons/bs";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../LoginSignup/userContext";
 
+
+
+
 export default function Sidebar() {
   const navigate = useNavigate();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const btnRef = React.useRef();
-  const { username, logout } = useUser();
+  const { username, area, logout } = useUser();
   const handleLogout = () => {
     logout(); // Gọi hàm logout khi người dùng nhấn logout
   };
