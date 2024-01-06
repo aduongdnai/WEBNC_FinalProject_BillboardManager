@@ -15,6 +15,14 @@ router.post('/', async (req, res) => {
         res.status(409).json({ message: error.message });
     }
 });
+router.get('/', async (req, res) => {
+    try {
+        const reports = await UserReportModel.find();
+        res.status(200).json(reports);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
 router.get('/:id', async (req, res) => {
     try {
         const objectId = new mongoose.Types.ObjectId(req.params.id)
