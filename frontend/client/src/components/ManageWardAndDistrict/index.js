@@ -25,9 +25,15 @@ import PaginationTable from './pagination';
 import BootstrapTable from 'react-bootstrap-table-next';
 import paginationFactory from 'react-bootstrap-table2-paginator';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import './styles.css';
 
-
-
+function imageFormatter(cell, row, rowIndex){
+  return (
+    <CloudinaryContext cloudName={process.env.REACT_APP_CLOUDINARY_CLOUD_NAME} secure="true" upload_preset="my_unsigned_preset">
+      <CloudinaryImage key={rowIndex} publicId={row.image} width="150" height="150" />
+    </CloudinaryContext>
+  )
+}
 
 
 
@@ -57,16 +63,71 @@ function ManageWardAndDistrict(){
   }, []);
 
 
-  const columns = [{
+  const columns = [
+    {
+      dataField: 'image',
+      text: 'Image',
+      formatter: imageFormatter
+    },
+    {
     dataField: 'address',
     text: 'Address'
-  }, {
-    dataField: 'locationType',
-    text: 'locationType'
-  }, {
-    dataField: 'advertisingType',
-    text: 'advertisingType'
-  }];
+    }, 
+    {
+      dataField: 'locationType',
+      text: 'locationType'
+    }, 
+    {
+      dataField: 'advertisingType',
+      text: 'advertisingType'
+    },
+    {
+      dataField: 'planned',
+      text: 'Planned'
+    },
+    {
+      dataField: 'action',
+      isDummyField: true,
+      text: 'Action',
+      formatter: (cellContent, row) => {
+        return(
+          <div style={{display:"flex"}}>
+          <Icon 
+            variant="unstyled" 
+            as={FaEye} 
+            w={5} 
+            h={5} 
+            marginRight={5} 
+            // marginLeft={2} 
+            onClick={
+              () => navigate('/')
+            }
+            _hover={{color:'blue'}}
+          />
+          <Icon 
+            as={FaPen} 
+            w={4} 
+            h={4}
+            _hover={{color:'blue'}}
+          />
+          </div>
+        )
+      }
+    }
+  ];
+
+
+  const options = {
+    alwaysShowAllBtns: true,
+    hidePageListOnlyOnePage: true,
+    sizePerPageList: [{
+      text: '2', value: 2
+    }, {
+      text: '4', value: 4
+    }, {
+      text: '6', value: 6
+    }],
+  }
   const CaptionElement = () => <h3 style={{ borderRadius: '0.25em', textAlign: 'center', color: 'purple', border: '1px solid purple', padding: '0.5em' }}>Component as Header</h3>;
     return(
       // <TableContainer>
@@ -152,7 +213,8 @@ function ManageWardAndDistrict(){
               data={adLocation} 
               caption={<CaptionElement/>}
               columns={columns} 
-              pagination={paginationFactory()} 
+              pagination={paginationFactory(options)} 
+              bordered= {false}
             />
           ) : (
             null
