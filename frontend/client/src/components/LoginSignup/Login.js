@@ -18,7 +18,7 @@ import { useNavigate } from 'react-router-dom';
 import { useToast } from '@chakra-ui/react';
 import { useUser } from "./userContext";
 function Login() {
-  const { setUser, setUserArea } = useUser();
+  const { setUser, setUserArea, setUserData } = useUser();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -47,6 +47,9 @@ function Login() {
         `Hồ Chí Minh`;
       console.log(area);
       setUserArea(area);
+      const userData = response.data.data.user;
+      userData.area = area;
+      setUserData(JSON.stringify(userData));
       // Hiển thị thông báo khi đăng nhập thành công
       toast({
         title: 'Login successful.',
