@@ -13,6 +13,7 @@ import Sidebar from "./components/Sidebar/Sidebar";
 import AdLocationPage from "./components/adLocation/AdLocationPage";
 import AdBoardsDisplay from "./components/AdBoard/AdBoardsDisplay";
 import ViewAndReviewRequests from "./components/adLocation/ViewAndReviewRequests";
+import ReportDashboard from "./components/ReportDashboard";
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
             <Route path="/map" element={<Map />} />
             <Route path="/manage" element={<ManageWardAndDistrict />} />
             <Route path="/login" element={<Login />} />
+            <Route path="/report" element={<ReportDashboard />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/" element={<Navigate replace to="/map" />} />
             <Route path="/ad-locations" element={<AdLocationPage />} />

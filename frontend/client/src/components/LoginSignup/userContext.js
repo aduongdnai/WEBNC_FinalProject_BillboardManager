@@ -4,16 +4,27 @@ const UserContext = createContext();
 
 export const UserProvider = ({ children }) => {
   const [username, setUsername] = useState('');
+  const [area, setArea] = useState('');
+  const [userData, setData] = useState('');
   
   useEffect(() => {
     const storedUser = localStorage.getItem('username');
+    const storedUserData = localStorage.getItem('userData');
     if (storedUser) {
       setUsername(storedUser);
+      setData(JSON.parse(storedUserData));
     }
   }, []);
   const setUser = (user) => {
     setUsername(user);
     localStorage.setItem('username', user); 
+  };
+  const setUserArea = (area) => {
+    setArea(area);
+  };
+  const setUserData = (data) => {
+    setData(data);
+    localStorage.setItem('userData', data); 
   };
   const logout = () => {
     setUsername('');
@@ -21,7 +32,7 @@ export const UserProvider = ({ children }) => {
   };
 
   return (
-    <UserContext.Provider value={{ username, setUser, logout  }}>
+    <UserContext.Provider value={{ username, area, setUser, setUserArea, logout, userData, setUserData  }}>
       {children}
     </UserContext.Provider>
   );

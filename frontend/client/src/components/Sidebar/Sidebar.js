@@ -21,18 +21,20 @@ import { BsFillPinMapFill } from "react-icons/bs";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../LoginSignup/userContext";
 
+
+
+
 export default function Sidebar() {
   const navigate = useNavigate();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const btnRef = React.useRef();
-  const { username, logout } = useUser();
+  const { username, area, logout } = useUser();
   const handleLogout = () => {
     logout(); // Gọi hàm logout khi người dùng nhấn logout
   };
   return (
     <Flex
       pos="sticky"
-      marginTop="2.5vh"
       flexDir="column"
       justifyContent="space-between"
     >
@@ -48,49 +50,9 @@ export default function Sidebar() {
           <DrawerHeader>Billboard Manager</DrawerHeader>
 
           {username ? (
-            <span>
-              <DrawerHeader>Welcome, {username} </DrawerHeader> |
-              <DrawerBody>
-                <Button
-                  size="sm"
-                  rounded="md"
-                  color={["primary.500", "primary.500", "white", "white"]}
-                  bg={["white", "white", "primary.500", "primary.500"]}
-                  _hover={{
-                    bg: [
-                      "primary.100",
-                      "primary.100",
-                      "primary.600",
-                      "primary.600",
-                    ],
-                  }}
-                  onClick={handleLogout}
-                >
-                  Logout
-                </Button>{" "}
-              </DrawerBody>
-            </span>
+            <DrawerHeader>Welcome, {username} </DrawerHeader>
           ) : (
-            <Link href="/login">
-              <DrawerBody>
-                <Button
-                  size="sm"
-                  rounded="md"
-                  color={["primary.500", "primary.500", "white", "white"]}
-                  bg={["white", "white", "primary.500", "primary.500"]}
-                  _hover={{
-                    bg: [
-                      "primary.100",
-                      "primary.100",
-                      "primary.600",
-                      "primary.600",
-                    ],
-                  }}
-                >
-                  Login
-                </Button>
-              </DrawerBody>
-            </Link>
+            <DrawerHeader></DrawerHeader>
           )}
           <DrawerBody>
             <Button

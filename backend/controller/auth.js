@@ -81,14 +81,9 @@ export async function Login(req, res) {
         res.status(200).json({
             status: "success",
             message: "You have successfully logged in.",
-            data: [
-                user.email,
-                user.username,
-                user.password,
-                user.role,
-                user.district,
-                user.ward
-            ],
+            data: {
+                user,
+            },
         });
     } catch (err) {
         res.status(500).json({
