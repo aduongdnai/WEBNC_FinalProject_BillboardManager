@@ -10,6 +10,7 @@ import ImageUploaderWithWidget from '../ImageUploaderWithWidget';
 import CustomInput from '../CustomInput';
 const ReportForm = (props) => {
     const { info } = props;
+    console.log(info);
     const initialValues = {
         type: info.type,
         reportType: '',
@@ -18,6 +19,7 @@ const ReportForm = (props) => {
         phone: '',
         reportContent: '',
         images: [],
+        area: info.area,
         status: 'Pending',
         //adboard_id: '6582a64745b7528c3f429b7b',
     };
@@ -41,7 +43,8 @@ const ReportForm = (props) => {
                 values.images = publicId;
                 values.reportContent = text;
                 values.reference_id = info._id;
-                values.time = new Date().toLocaleString();
+                values.time = new Date().toISOString();
+
                 const apiResponse = await axios.post('http://127.0.0.1:5000/api/v1/report', values);
                 console.log(apiResponse.data);
 

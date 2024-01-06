@@ -17,36 +17,34 @@ import { setViewport, } from '../actions/viewportAction'
 import { useNavigate } from 'react-router-dom';
 import { useEffect } from "react";
 import axios from "axios";
-import { UserProvider, useUser  } from "../LoginSignup/userContext";
+import { UserProvider, useUser } from "../LoginSignup/userContext";
 
-const ReportDashboard =  () => {
+const ReportDashboard = () => {
     const [selectedReport, setSelectedReport] = useState(null);
     const [selectedAdboard, setSelectedAdboard] = useState(null);
     const [selectedAdboardLocation, setSelectedAdboardLocation] = useState(null);
-    
-    const { username, setUser, logout } = useUser();
-    console.log(username);
-    
+
+    const { userData } = useUser();
     //const report = JSON.parse(localStorage.getItem("report"));
     const [report, setReport] = useState([]);
 
-        useEffect(() => {
-            const fetchReport = async () => {
-                try {
-                    const response = await axios.get('http://127.0.0.1:5000/api/v1/report');
-                    
-                    const reportData = response.data;
-                    // Do something with the report data
-                    setReport(reportData);
-                   
-                } catch (error) {
-                    console.error('Error fetching report:', error.message);
-                }
-            };
+    useEffect(() => {
+        const fetchReport = async () => {
+            try {
+                const response = await axios.get(`http://127.0.0.1:5000/api/v1/report/area/${userData.area}`);
 
-            fetchReport();
-        }, []);
-        
+                const reportData = response.data;
+                // Do something with the report data
+                setReport(reportData);
+
+            } catch (error) {
+                console.error('Error fetching report:', error.message);
+            }
+        };
+
+        fetchReport();
+    }, []);
+
 
 
     //console.log(report);
@@ -92,7 +90,7 @@ const ReportDashboard =  () => {
                 if (!response.ok) {
                     throw new Error('Failed to fetch ad board details');
                 }
-    
+
                 const adboardDetails = await response.json();
                 const response2 = await fetch(`http://127.0.0.1:5000/api/v1/adlocations/${adboardDetails.data[0].location_id}`);
                 if (!response2.ok) {
@@ -106,15 +104,15 @@ const ReportDashboard =  () => {
                     longitude: locationDetails.data[0].coordinates.coordinates[0],
                     zoom: 20,
                     transitionDuration: 5000, // Adjust the zoom level as needed
-    
+
                 };
-    
+
                 dispatch(setViewport(newViewport));
-    
+
             } catch (error) {
                 console.error('Error fetching ad board details:', error.message);
             }
-        }else{
+        } else {
             try {
                 const response2 = await fetch(`http://127.0.0.1:5000/api/v1/adlocations/${report.reference_id}`);
                 if (!response2.ok) {
@@ -128,20 +126,19 @@ const ReportDashboard =  () => {
                     longitude: locationDetails.data[0].coordinates.coordinates[0],
                     zoom: 20,
                     transitionDuration: 5000, // Adjust the zoom level as needed
-    
+
                 };
-    
+
                 dispatch(setViewport(newViewport));
             } catch (error) {
                 console.error('Error fetching location details:', error.message);
             }
         }
-        
+
 
     }
     return (
         <Box style={{ width: "100%", height: "100vh" }}>
-            
             <Table variant="simple">
                 <Thead>
                     <Tr>
@@ -149,6 +146,7 @@ const ReportDashboard =  () => {
                         <Th>Tên người gửi</Th>
                         <Th>Điện thoại</Th>
                         <Th>Loại hình báo cáo</Th>
+                        <Th>Địa điểm</Th>
                         <Th>Trạng thái</Th>
                         <Th>Hành động</Th>
                     </Tr>
@@ -159,7 +157,8 @@ const ReportDashboard =  () => {
                             <Td>{item.time}</Td>
                             <Td>{item.senderName}</Td>
                             <Td>{item.phone}</Td>
-                            <Td>{item.reportType}</Td>                         
+                            <Td>{item.reportType}</Td>
+                            <Td style={{ width: "200px" }}>{item.area}</Td>
                             <Td>{item.status}</Td>
                             <Td>
                                 <Tooltip label="View Details" placement="top">

@@ -9,6 +9,7 @@ const userReportSchema = new mongoose.Schema({
     reportContent: String,
     images: [String],
     status: String, // 'Pending', 'Processed'
+    area: String,
     reference_id: {
         type: mongoose.Schema.Types.ObjectId,
     },

@@ -15,6 +15,7 @@ router.post('/', async (req, res) => {
         res.status(409).json({ message: error.message });
     }
 });
+
 router.get('/', async (req, res) => {
     try {
         const reports = await UserReportModel.find();
@@ -23,6 +24,7 @@ router.get('/', async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 });
+
 router.get('/:id', async (req, res) => {
     try {
         const objectId = new mongoose.Types.ObjectId(req.params.id)
@@ -41,6 +43,17 @@ router.get('/:id', async (req, res) => {
             error: "Internal Error"
         })
     }
+});
 
-})
+router.get('/area/:area', async (req, res) => {
+    try {
+        const area = req.params.area;
+        const reports = await UserReportModel.find({ area: { $regex: area, $options: 'i' } });
+        res.status(200).json(reports);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
+
 export default router;

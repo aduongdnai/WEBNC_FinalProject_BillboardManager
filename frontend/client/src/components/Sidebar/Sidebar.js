@@ -35,7 +35,6 @@ export default function Sidebar() {
   return (
     <Flex
       pos="sticky"
-      marginTop="2.5vh"
       flexDir="column"
       justifyContent="space-between"
     >
