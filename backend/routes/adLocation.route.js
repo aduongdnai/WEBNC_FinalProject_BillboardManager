@@ -1,5 +1,6 @@
 import express from 'express'
 import AdLocationModel from '../models/adLocation.model.js';
+import mongoose from 'mongoose';
 const router = express.Router();
 
 router.get('/', async (req, res) => {
@@ -53,6 +54,26 @@ router.post('/', async (req, res) => {
 
         })
 
+    }
+    catch (err) {
+        console.log(err);
+        res.status(500).json({
+            error: "Internal Error"
+        })
+    }
+
+})
+router.get('/:id', async (req, res) => {
+    try {
+        const objectId = new mongoose.Types.ObjectId(req.params.id)
+        const data = await AdLocationModel.find({ _id: objectId })
+        console.log(data);
+        if (data) {
+            res.status(200).json({
+                message: "Get location location ID Successfully",
+                data
+            })
+        }
     }
     catch (err) {
         console.log(err);
