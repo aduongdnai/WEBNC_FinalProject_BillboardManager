@@ -9,9 +9,11 @@ export const UserProvider = ({ children }) => {
   
   useEffect(() => {
     const storedUser = localStorage.getItem('username');
+    const storedArea = localStorage.getItem('userArea');
     const storedUserData = localStorage.getItem('userData');
     if (storedUser) {
       setUsername(storedUser);
+      setArea(storedArea);
       setData(JSON.parse(storedUserData));
     }
   }, []);
@@ -21,6 +23,7 @@ export const UserProvider = ({ children }) => {
   };
   const setUserArea = (area) => {
     setArea(area);
+    localStorage.setItem('userArea', area); 
   };
   const setUserData = (data) => {
     setData(data);
