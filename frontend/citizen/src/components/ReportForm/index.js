@@ -21,6 +21,7 @@ const ReportForm = (props) => {
         images: [],
         area: info.area,
         status: 'Pending',
+        processingMethod: '',
         //adboard_id: '6582a64745b7528c3f429b7b',
     };
 

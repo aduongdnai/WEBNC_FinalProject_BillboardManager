@@ -7,7 +7,7 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
 
         for (let i = 1; i <= totalPages; i++) {
             buttons.push(
-                <Button key={i} onClick={() => onPageChange(i)} colorScheme={currentPage === i ? 'blue' : 'gray'}>
+                <Button  key={i} onClick={() => onPageChange(i)} colorScheme={currentPage === i ? 'teal' : 'gray'}>
                     {i}
                 </Button>
             );

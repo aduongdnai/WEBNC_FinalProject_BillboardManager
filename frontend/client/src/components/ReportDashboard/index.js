@@ -4,6 +4,7 @@ import { InfoOutlineIcon, SearchIcon } from "@chakra-ui/icons";
 import { Tooltip } from "@chakra-ui/react";
 import ReportInfo from "../ReportInfo";
 import {
+    Button,
     Modal,
     ModalOverlay,
     ModalContent,
@@ -19,26 +20,28 @@ import { useEffect } from "react";
 import axios from "axios";
 import { UserProvider, useUser } from "../LoginSignup/userContext";
 import Pagination from "./Pagination"
-
-const ITEMS_PER_PAGE = 5;
+import ReportProcessForm from "../ReportProcessForm";
+const ITEMS_PER_PAGE = 10;
 const ReportDashboard = () => {
     const [selectedReport, setSelectedReport] = useState(null);
     const [selectedAdboard, setSelectedAdboard] = useState(null);
     const [selectedAdboardLocation, setSelectedAdboardLocation] = useState(null);
 
     const { userData } = useUser();
+
     //const report = JSON.parse(localStorage.getItem("report"));
     const [report, setReport] = useState([]);
 
     useEffect(() => {
         const fetchReport = async () => {
             try {
-                const response = await axios.get(`http://127.0.0.1:5000/api/v1/report`);
+                console.log(userData);
+                const response = await axios.get(`http://127.0.0.1:5000/api/v1/report/area/${userData.area}`);
 
                 const reportData = response.data;
                 // Do something with the report data
                 setReport(reportData);
-
+                console.log(report);
             } catch (error) {
                 console.error('Error fetching report:', error.message);
             }
@@ -51,7 +54,7 @@ const ReportDashboard = () => {
 
     //console.log(report);
     const { isOpen: isInfoModalOpen, onOpen: onInfoModalOpen, onClose: onInfoModalClose } = useDisclosure();
-
+    const { isOpen: isProcessModalOpen, onOpen: onProcessModalOpen, onClose: onProcessModalClose } = useDisclosure();
 
 
     const handleViewDetails = async (report) => {
@@ -139,14 +142,14 @@ const ReportDashboard = () => {
 
 
     }
-    
+
     const [currentPage, setCurrentPage] = useState(1);
     const indexOfLastItem = currentPage * ITEMS_PER_PAGE;
     const indexOfFirstItem = indexOfLastItem - ITEMS_PER_PAGE;
     const currentItems = report.slice(indexOfFirstItem, indexOfLastItem);
     return (
         <Box style={{ width: "100%", height: "100vh" }}>
-            <Table variant="simple">
+            <Table variant="striped" colorScheme='green'>
                 <Thead>
                     <Tr>
                         <Th>Thời điểm gửi</Th>
@@ -168,16 +171,22 @@ const ReportDashboard = () => {
                             <Td style={{ width: "200px" }}>{item.area}</Td>
                             <Td>{item.status}</Td>
                             <Td>
-                                <Tooltip label="View Details" placement="top">
+                                <Tooltip label="Xem chi tiết" placement="top">
                                     <IconButton
+                                        isRound={true}
+                                        variant='outline'
+                                        colorScheme='teal'
                                         mr={2}
                                         aria-label="View Details"
                                         icon={<InfoOutlineIcon />}
                                         onClick={() => handleViewDetails(item)} // Call handleViewDetails with the selected report
                                     />
                                 </Tooltip>
-                                <Tooltip label="Show Map" placement="top">
+                                <Tooltip label="Xem bản đồ" placement="top">
                                     <IconButton
+                                        isRound={true}
+                                        variant='outline'
+                                        colorScheme='teal'
                                         ml={2}
                                         aria-label="Show Map"
                                         icon={<SearchIcon />}
@@ -196,19 +205,43 @@ const ReportDashboard = () => {
             />
             {selectedReport && (
                 // Pass the selected report as the "info" prop and onClose event
+                <Box>
+                    <Modal isOpen={isInfoModalOpen} onClose={onInfoModalClose} size='4xl'>
+                        <ModalOverlay />
+                        <ModalContent>
+                            <ModalHeader>Chi tiết báo cáo</ModalHeader>
+                            <ModalCloseButton />
+                            <ModalBody>
+                                <ReportInfo info={selectedReport} adboard={selectedAdboard} location={selectedAdboardLocation} />
+                            </ModalBody>
+                            <ModalFooter>
+                                <Button
 
-                <Modal isOpen={isInfoModalOpen} onClose={onInfoModalClose} size='4xl'>
-                    <ModalOverlay />
-                    <ModalContent>
-                        <ModalHeader>DETAIL</ModalHeader>
-                        <ModalCloseButton />
-                        <ModalBody>
-                            <ReportInfo info={selectedReport} adboard={selectedAdboard} location={selectedAdboardLocation} />
-                        </ModalBody>
+                                    variant='outline'
+                                    colorScheme='teal'
+                                    onClick={()=>{
+                                        onProcessModalOpen()}}
+                                >
 
+                                    Cập nhật thông tin xử lí
+                                </Button>
+                            </ModalFooter>
 
-                    </ModalContent>
-                </Modal>
+                        </ModalContent>
+                    </Modal>
+                    <Modal isOpen={isProcessModalOpen} onClose={onProcessModalClose} size='3xl'>
+                        <ModalOverlay />
+                        <ModalContent>
+                            <ModalHeader>Xử lí báo cáo</ModalHeader>
+                            <ModalCloseButton />
+                            <ModalBody>
+                                <ReportProcessForm info={selectedReport} />
+                            </ModalBody>
+                            
+
+                        </ModalContent>
+                    </Modal></Box>
+
             )}
         </Box>
     );

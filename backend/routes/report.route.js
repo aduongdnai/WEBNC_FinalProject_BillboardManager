@@ -16,6 +16,18 @@ router.post('/', async (req, res) => {
     }
 });
 
+router.put('/:id', async (req, res) => {
+    const { id } = req.params;
+    const { processMethod, status, updatedTime } = req.body;
+
+    try {
+        const updatedReport = await UserReportModel.findByIdAndUpdate(id, { processMethod, status, updatedTime }, { new: true });
+        res.status(200).json(updatedReport);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
 router.get('/', async (req, res) => {
     try {
         const reports = await UserReportModel.find();
@@ -54,6 +66,7 @@ router.get('/area/:area', async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 });
+
 
 
 export default router;

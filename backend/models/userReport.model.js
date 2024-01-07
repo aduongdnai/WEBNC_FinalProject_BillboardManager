@@ -13,6 +13,8 @@ const userReportSchema = new mongoose.Schema({
     reference_id: {
         type: mongoose.Schema.Types.ObjectId,
     },
+    processMethod: String,
+    updatedTime: String,
 });
 
 const UserReportModel = mongoose.model('UserReport', userReportSchema);
