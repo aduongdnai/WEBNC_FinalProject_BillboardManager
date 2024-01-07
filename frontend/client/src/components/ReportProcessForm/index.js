@@ -2,16 +2,15 @@ import React, { useState } from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import axios from 'axios';
-import { ChakraProvider, Box, FormControl, FormLabel, Select, Input, Button, Heading } from '@chakra-ui/react';
+import { ChakraProvider, Box, FormControl, FormLabel, Select, Button } from '@chakra-ui/react';
 import ReactQuill from 'react-quill';
-import 'react-quill/dist/quill.snow.css'; // import styles
+import 'react-quill/dist/quill.snow.css';
 import ReCAPTCHA from "react-google-recaptcha";
-import ImageUploaderWithWidget from '../ImageUploaderWithWidget';
-import CustomInput from '../CustomInput';
-import nodemailer from 'nodemailer';
-
+import { useUser } from '../LoginSignup/userContext';
+import emailjs from '@emailjs/browser';
 const ReportProcessForm = (props) => {
     const { info } = props;
+    const {userData} = useUser();
     const initialValues = {
         status: '',
         processMethod: '',
@@ -32,30 +31,9 @@ const ReportProcessForm = (props) => {
                 values.processMethod = text;
                 const apiResponse = await axios.put(`http://127.0.0.1:5000/api/v1/report/${info._id}`, values);
                 console.log(apiResponse.data);
-
+                console.log(info);
                 // Send email to info.email              
-                const transporter = nodemailer.createTransport({
-                    service: 'Gmail',
-                    auth: {
-                        user: 'your-email@gmail.com',
-                        pass: 'your-password'
-                    }
-                });
-
-                const mailOptions = {
-                    from: 'your-email@gmail.com',
-                    to: info.email,
-                    subject: 'Phản hồi báo cáo từ Billboard Management System',
-                    text: 'Báo cáo của bản đã được xem xét và xử lí. Nội dung sử lí như sau: ' + values.processMethod + '. Xin cảm ơn!',
-                };
-
-                transporter.sendMail(mailOptions, function(error, info) {
-                    if (error) {
-                        console.error(error);
-                    } else {
-                        console.log('Email sent: ' + info.response);
-                    }
-                });
+                sendFeedback("template_9q0017f", {status:values.status,to_name: info.senderName,message: values.processMethod, from_name: `Cán bộ ${userData.area}`, to_email: info.email})
 
                 // Reset the form on successful submission
                 resetForm();
@@ -73,6 +51,18 @@ const ReportProcessForm = (props) => {
         }
 
     };
+    const sendFeedback = (templateId, variables) => {
+        emailjs.send(
+          'service_ff8v4uk',
+          templateId,
+          variables,
+          "ckL40Q7vUIBTGKW0J"
+        ).then(res => {
+          console.log('Email successfully sent!')
+        })
+        // Handle errors here however you like, or use a React error boundary
+        .catch(err => console.error('Oh well, you failed. Here some thoughts on the error that occured:', err))
+      }
     const [text, setText] = useState('');
     return (
         <ChakraProvider>

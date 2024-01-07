@@ -7,6 +7,7 @@
     "@chakra-ui/react": "^2.8.2",
     "@cloudinary/react": "^1.11.2",
     "@cloudinary/url-gen": "^1.14.0",
+    "@emailjs/browser": "^3.11.0",
     "@goongmaps/goong-geocoder-react": "^0.1.1",
     "@goongmaps/goong-map-react": "^1.1.2",
     "@reduxjs/toolkit": "^2.0.1",
