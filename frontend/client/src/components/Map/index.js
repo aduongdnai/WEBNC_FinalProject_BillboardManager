@@ -2,7 +2,7 @@ import React from 'react';
 
 import { useState, useRef, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux'
-import ReactMapGL, { GeolocateControl, NavigationControl, FullscreenControl, ScaleControl, Popup } from '@goongmaps/goong-map-react'
+import ReactMapGL, { GeolocateControl, NavigationControl, FullscreenControl, ScaleControl, Popup, Source, Layer } from '@goongmaps/goong-map-react'
 import Pins from '../Pin';
 import LocationInfo from './locationInfo';
 import PlannedLocationInfo from './plannedLocationInfo';
@@ -12,12 +12,13 @@ import '@goongmaps/goong-geocoder-react/dist/goong-geocoder.css'
 import mapAPI from '../../apis/mapApi';
 import adLocationAPI from '../../apis/adLocationApi';
 import Pin from '../Pin';
-
+import { clusterLayer, clusterCountLayer, unclusteredPointLayer, unclusteredPointTextLayer } from './layer';
 
 function Map(props) {
     const [popupInfo, setPopupInfo] = useState(null);
     const [plannedPopupInfo, setPlannedPopupInfo] = useState(null);
     const [adLocation, setAdLocation] = useState(null);
+    const [geoJsonAdLocation, setGeoJsonAdLocation] = useState(null);
     const viewport = useSelector(state => state.viewport)
     const dispatch = useDispatch()
     const mapRef = useRef(null);
@@ -26,13 +27,25 @@ function Map(props) {
             try {
 
                 const result = await adLocationAPI.getAllAdLocation();
-                console.log(result);
                 setAdLocation(result.data);
+                const geojson = {
+                    type: 'FeatureCollection',
+                    features: result.data.map((adLocation) => {
+
+                        return {
+                            type: 'Feature',
+                            geometry: adLocation.coordinates,
+                            properties: {
+                                ...adLocation,
 
 
+                            }
+                        };
+                    })
+                };
+                setGeoJsonAdLocation(geojson);
             } catch (error) {
                 console.error('Error fetching data:', error);
-
             }
         };
 
@@ -99,6 +112,26 @@ function Map(props) {
 
         })
     }
+    const handleClick = (event) => {
+        const clickedFeature = event.features.find(
+            (feature) => feature.layer.id === unclusteredPointLayer.id
+        );
+
+        if (clickedFeature) {
+            // Get a property from the clicked feature
+            const property = clickedFeature.properties;
+            //console.log("properties: ", property);
+            const coordinates = JSON.parse(property.coordinates);
+
+            setPlannedPopupInfo({
+                ...property,
+                longitude: coordinates.coordinates[0],
+                latitude: coordinates.coordinates[1],
+
+
+            })
+        }
+    };
     return (
         <div>
             <ReactMapGL
@@ -109,9 +142,23 @@ function Map(props) {
                 onViewportChange={handleGeocoderViewportChange}
                 goongApiAccessToken={"9fzxhKjU16UdOtYirE5ceN2FOd7M9ERVA3zQ3WAD"}
                 attributionControl={true}
-                onContextMenu={onClickMap} >
-
-                <Pin data={adLocation} onClick={handleOnClickPin}> </Pin>
+                onContextMenu={onClickMap}
+                interactiveLayerIds={[unclusteredPointLayer.id]}
+                onClick={handleClick}>
+                <Source
+                    id="adlocations"
+                    type="geojson"
+                    data={geoJsonAdLocation}
+                    cluster={true}
+                    clusterMaxZoom={14}
+                    clusterRadius={50}
+                >
+                    <Layer {...clusterLayer} />
+                    <Layer {...clusterCountLayer} />
+                    <Layer {...unclusteredPointLayer} />
+                    <Layer {...unclusteredPointTextLayer} />
+                </Source>
+                {/* <Pin data={adLocation} onClick={handleOnClickPin}> </Pin> */}
                 <SearchBox />
 
 
