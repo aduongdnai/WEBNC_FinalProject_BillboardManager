@@ -10,11 +10,15 @@ const ReportInfo = ({ info, adboard, location }) => {
                 <Box flex='1' m={4}>
                     <Box >
                         <CloudinaryContext cloudName={process.env.REACT_APP_CLOUDINARY_CLOUD_NAME} secure="true" upload_preset="my_unsigned_preset">
-                            <Carousel>
-                                {adboard.images.map((image, index) => (
-                                    <CloudinaryImage key={index} publicId={image} width="300" height="150" />
-                                ))}
-                            </Carousel>
+                            {adboard.images && adboard.images.length > 0 ? (
+                                <Carousel>
+                                    {adboard.images.map((image, index) => (
+                                        <CloudinaryImage key={index} publicId={image} width="300" height="150" />
+                                    ))}
+                                </Carousel>
+                            ) : (
+                                <p>No images available</p>
+                            )}
                         </CloudinaryContext>
                     </Box>
 

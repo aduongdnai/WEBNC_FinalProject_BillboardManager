@@ -13,7 +13,7 @@ import {
   Link,
   Tooltip,
 } from "@chakra-ui/react";
-import { HamburgerIcon } from "@chakra-ui/icons";
+import { HamburgerIcon, WarningTwoIcon } from "@chakra-ui/icons";
 import { CiLogin, CiLogout } from "react-icons/ci";
 import { BsTable } from "react-icons/bs";
 import { MdOutlineManageAccounts } from "react-icons/md";
@@ -78,6 +78,18 @@ export default function Sidebar() {
               onClick={() => navigate("/manage")}
             >
               Table Management
+            </Button>
+            <Button
+              background="none"
+              fontSize="15px"
+              ref={btnRef}
+              _hover={{ backgroundColor: "#AEC8CA" }}
+              leftIcon={<WarningTwoIcon />}
+              width={"270px"}
+              justifyContent={"start"}
+              onClick={() => navigate("/report")}
+            >
+              Report Management
             </Button>
             <Button
               background="none"

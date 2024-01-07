@@ -32,6 +32,7 @@ export const UserProvider = ({ children }) => {
   const logout = () => {
     setUsername('');
     localStorage.removeItem('username'); 
+    localStorage.removeItem('userData'); 
   };
 
   return (
