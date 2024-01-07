@@ -8,6 +8,8 @@ import 'react-quill/dist/quill.snow.css'; // import styles
 import ReCAPTCHA from "react-google-recaptcha";
 import ImageUploaderWithWidget from '../ImageUploaderWithWidget';
 import CustomInput from '../CustomInput';
+import nodemailer from 'nodemailer';
+
 const ReportProcessForm = (props) => {
     const { info } = props;
     const initialValues = {
@@ -31,9 +33,34 @@ const ReportProcessForm = (props) => {
                 const apiResponse = await axios.put(`http://127.0.0.1:5000/api/v1/report/${info._id}`, values);
                 console.log(apiResponse.data);
 
+                // Send email to info.email              
+                const transporter = nodemailer.createTransport({
+                    service: 'Gmail',
+                    auth: {
+                        user: 'your-email@gmail.com',
+                        pass: 'your-password'
+                    }
+                });
+
+                const mailOptions = {
+                    from: 'your-email@gmail.com',
+                    to: info.email,
+                    subject: 'Phản hồi báo cáo từ Billboard Management System',
+                    text: 'Báo cáo của bản đã được xem xét và xử lí. Nội dung sử lí như sau: ' + values.processMethod + '. Xin cảm ơn!',
+                };
+
+                transporter.sendMail(mailOptions, function(error, info) {
+                    if (error) {
+                        console.error(error);
+                    } else {
+                        console.log('Email sent: ' + info.response);
+                    }
+                });
+
                 // Reset the form on successful submission
                 resetForm();
                 alert("Update successfully!");
+                
             } catch (error) {
                 // Handle any errors from the server
                 console.error(error);

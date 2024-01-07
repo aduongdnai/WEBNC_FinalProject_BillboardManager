@@ -27,28 +27,26 @@ const ReportDashboard = () => {
     const [selectedAdboard, setSelectedAdboard] = useState(null);
     const [selectedAdboardLocation, setSelectedAdboardLocation] = useState(null);
 
-    const { userData } = useUser();
-
-    //const report = JSON.parse(localStorage.getItem("report"));
+    const { userData, username } = useUser();
     const [report, setReport] = useState([]);
 
     useEffect(() => {
         const fetchReport = async () => {
             try {
-                console.log(userData);
+             
                 const response = await axios.get(`http://127.0.0.1:5000/api/v1/report/area/${userData.area}`);
 
                 const reportData = response.data;
                 // Do something with the report data
                 setReport(reportData);
-                console.log(report);
+                
             } catch (error) {
                 console.error('Error fetching report:', error.message);
             }
         };
 
         fetchReport();
-    }, []);
+    }, [userData]);
 
 
 
