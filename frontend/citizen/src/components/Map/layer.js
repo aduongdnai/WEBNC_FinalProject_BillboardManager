@@ -31,9 +31,15 @@ export const unclusteredPointLayer = {
         'circle-color': [
             'match',
             ['to-string', ['get', 'planned']],
-            'true', '#11fbfd',
+            'true', [
+                'match',
+                ['to-string', ['get', 'status']],
+                'Pending', '#fae546',
+                'Handled', '#45ff24',
+                '#0022FF'
+            ],
             'false', '#5b5b5b',
-            '#11fbfd'
+            '#fff'
         ],
         // 'circle-color': '#1a3fb0',
         'circle-radius': 10,
@@ -55,7 +61,14 @@ export const unclusteredPointTextLayer = {
         'text-color': [
             'match',
             ['to-string', ['get', 'planned']],
-            'true', '#1a3fb0', // color for planned
+            'true', [
+                'match',
+                ['to-string', ['get', 'status']],
+                'Pending', '#000000',
+                'Handled', '#000000',
+                '#000000'
+            ],
+            // color for planned
             'false', '#ffffff', // color for not planned
             '#000000' // default color
         ]

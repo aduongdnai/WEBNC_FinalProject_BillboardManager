@@ -10,6 +10,11 @@ const adLocationAPI = {
 
         const url = `/adlocations`
         return serverClient.post(url, data)
+    },
+    getAdLocationByFilters(filters) {
+
+        const url = `/adlocations/filter`
+        return serverClient.get(url, { params: filters })
     }
 }
 export default adLocationAPI

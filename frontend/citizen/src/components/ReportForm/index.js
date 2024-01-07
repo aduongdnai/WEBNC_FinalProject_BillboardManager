@@ -57,7 +57,7 @@ const ReportForm = (props) => {
                 rp.push(apiResponse.data);
                 localStorage.setItem('report', JSON.stringify(rp));
 
-                localStorage.setItem(`report_${values.reference_id}`,JSON.stringify({...apiResponse.data, isReported: true}));
+                localStorage.setItem(`report_${values.reference_id}`, JSON.stringify({ ...apiResponse.data, isReported: true }));
             } catch (error) {
                 // Handle any errors from the server
                 console.error(error);
