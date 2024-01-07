@@ -18,7 +18,7 @@ import { setViewport, } from '../actions/viewportAction'
 import { useNavigate } from 'react-router-dom';
 import { useEffect } from "react";
 import axios from "axios";
-import { UserProvider, useUser } from "../LoginSignup/userContext";
+import {  useUser } from "../LoginSignup/userContext";
 import Pagination from "./Pagination"
 import ReportProcessForm from "../ReportProcessForm";
 const ITEMS_PER_PAGE = 10;
@@ -27,18 +27,18 @@ const ReportDashboard = () => {
     const [selectedAdboard, setSelectedAdboard] = useState(null);
     const [selectedAdboardLocation, setSelectedAdboardLocation] = useState(null);
 
-    const { userData, username } = useUser();
+    const { userData } = useUser();
     const [report, setReport] = useState([]);
 
     useEffect(() => {
         const fetchReport = async () => {
             try {
-             
-                const response = await axios.get(`http://127.0.0.1:5000/api/v1/report/area/${userData.area}`);
-
-                const reportData = response.data;
-                // Do something with the report data
-                setReport(reportData);
+                
+                if (userData && userData.area) {
+                    const response = await axios.get(`http://127.0.0.1:5000/api/v1/report/area/${userData.area}`);
+                    const reportData = response.data;
+                    setReport(reportData);
+                }
                 
             } catch (error) {
                 console.error('Error fetching report:', error.message);

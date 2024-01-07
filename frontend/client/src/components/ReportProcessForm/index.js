@@ -8,9 +8,12 @@ import 'react-quill/dist/quill.snow.css';
 import ReCAPTCHA from "react-google-recaptcha";
 import { useUser } from '../LoginSignup/userContext';
 import emailjs from '@emailjs/browser';
+import { useToast } from '@chakra-ui/react';
+
 const ReportProcessForm = (props) => {
     const { info } = props;
     const {userData} = useUser();
+    const toast = useToast();
     const initialValues = {
         status: '',
         processMethod: '',
@@ -21,7 +24,6 @@ const ReportProcessForm = (props) => {
         status: Yup.string().required('Cần cập nhật trạng thái'),
         //processingMethod: Yup.string().required('Cần nhập phương thức xử lý'),
     });
-
     const recaptchaRef = React.createRef();
     const handleSubmit = async (values, { setSubmitting, resetForm }) => {
         const recaptchaValue = recaptchaRef.current.getValue();
@@ -32,12 +34,26 @@ const ReportProcessForm = (props) => {
                 const apiResponse = await axios.put(`http://127.0.0.1:5000/api/v1/report/${info._id}`, values);
                 console.log(apiResponse.data);
                 console.log(info);
-                // Send email to info.email              
-                sendFeedback("template_9q0017f", {status:values.status,to_name: info.senderName,message: values.processMethod, from_name: `Cán bộ ${userData.area}`, to_email: info.email})
+                // Send email to info.email       
+                resetForm();  
+                   
+                setTimeout(() => {
+                    window.location.reload();
+                  }, 2000);
 
-                // Reset the form on successful submission
-                resetForm();
-                alert("Update successfully!");
+                sendFeedback("template_9q0017f", {status:values.status,to_name: info.senderName,message: values.processMethod, from_name: `Cán bộ ${userData.area}`, to_email: info.email})
+                
+               
+
+                toast({
+                    title: 'Send successful.',
+                    description: "Báo cáo đã được xử lí và gửi email cho người báo cáo.",
+                    status: 'success',
+                    duration: 2000,
+                    isClosable: true,
+                  });
+                
+                
                 
             } catch (error) {
                 // Handle any errors from the server
