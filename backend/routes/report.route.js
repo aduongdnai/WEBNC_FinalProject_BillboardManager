@@ -9,8 +9,13 @@ router.post('/', async (req, res) => {
     const newReport = new UserReportModel(reportData);
 
     try {
-        await newReport.save();
+        await newReport.save();    
         res.status(201).json(newReport);
+        for (const clientId of global.connectedClients) {
+            console.log(clientId);
+            global.io.to(clientId).emit('notification', newReport);
+        }
+
     } catch (error) {
         res.status(409).json({ message: error.message });
     }
