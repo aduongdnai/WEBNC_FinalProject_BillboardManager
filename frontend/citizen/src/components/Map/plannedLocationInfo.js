@@ -1,25 +1,25 @@
 import * as React from 'react';
 import { useState, useEffect } from 'react';
-import { Icon, useDisclosure } from '@chakra-ui/react'
+import { useDisclosure } from '@chakra-ui/react'
 import { Box, Text, Button, Drawer, DrawerOverlay, DrawerBody, DrawerHeader, DrawerContent } from '@chakra-ui/react';
-import { Card, CardHeader, CardBody, CardFooter, Flex, Heading, Avatar } from '@chakra-ui/react';
-import { ViewIcon, InfoOutlineIcon, CheckIcon } from '@chakra-ui/icons';
+import { Heading } from '@chakra-ui/react';
+import { ViewIcon } from '@chakra-ui/icons';
 import adBoardApi from '../../apis/adBoardApi';
-import { outline } from '@cloudinary/url-gen/actions/effect';
 import AdBoardList from '../adBoardList';
 import {
     Modal,
     ModalOverlay,
     ModalContent,
     ModalHeader,
-    ModalFooter,
     ModalBody,
     ModalCloseButton,
 } from '@chakra-ui/react'
 import ReportForm from '../ReportForm';
-import { WarningTwoIcon } from '@chakra-ui/icons';
+import { WarningTwoIcon, RepeatClockIcon } from '@chakra-ui/icons';
 import { Carousel } from 'react-responsive-carousel';
 import { Image as CloudinaryImage, CloudinaryContext } from 'cloudinary-react';
+import { useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 function PlannedLocationInfo(props) {
     const { info } = props;
     const { isOpen, onOpen, onClose } = useDisclosure();
@@ -27,9 +27,22 @@ function PlannedLocationInfo(props) {
 
     const { isOpen: isReportModalOpen, onOpen: onReportModalOpen, onClose: onReportModalClose } = useDisclosure();
     const { isOpen: isReportDetailOpen, onOpen: onReportDetailOpen, onClose: onReportDetailClose } = useDisclosure();
-    const rp = JSON.parse(localStorage.getItem(`report_${info._id}`));
-    const report = rp ? rp : { isReported: false, images: [] };
+    const rp = useSelector((state) => state.report.reports.find((r) => r.reference_id === info._id));
+    
+    const report = rp ? { ...rp } : { isReported: false, images: [] };
+    if (report.status === 'Pending' || report.status === 'Processing') {
+        report.isReported =  true;
+    }
+    if (report.status === 'Processed') {
+        report.isReported =  false;
+    }
     const displayAddress = `${info.address}`;
+
+    const navigate = useNavigate();
+
+    const handleViewHistory = () => {
+        navigate(`/report`);
+    }
 
     useEffect(() => {
         const fetchData = async () => {
@@ -81,6 +94,17 @@ function PlannedLocationInfo(props) {
                                 size='sm'
                             >
                                 {report.isReported ? "Reported" : "Report"}
+                            </Button>
+                            <Button
+                                colorScheme="teal"
+                                leftIcon={<RepeatClockIcon />}
+                                onClick={handleViewHistory}
+                                variant={"outline"}  // Add the report icon to the left of the button text
+                                mt={2}
+                                ml = {2}
+                                size='sm'
+                            >
+                                Report History
                             </Button>
                             <Modal isOpen={isReportModalOpen} onClose={onReportModalClose} size='4xl'>
                                 <ModalOverlay />
