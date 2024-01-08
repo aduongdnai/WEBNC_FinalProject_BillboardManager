@@ -137,7 +137,7 @@ const ReportForm = (props) => {
                                 onChange={handleChangeImageUrl}
                             >
                             </CustomInput>
-                            <ImageUploaderWithWidget onUpLoadSuccess={hanleUploadImage}></ImageUploaderWithWidget>
+                            <ImageUploaderWithWidget onUpLoadSuccess={hanleUploadImage} folder='report' ></ImageUploaderWithWidget>
 
                             <br />
                             <ReCAPTCHA ref={recaptchaRef} sitekey="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI" /> {/* Replace with your reCAPTCHA site key */}
