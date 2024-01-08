@@ -1,9 +1,7 @@
 import React from 'react';
-
 import { useState, useRef, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux'
 import ReactMapGL, { GeolocateControl, NavigationControl, FullscreenControl, ScaleControl, Popup, Source, Layer } from '@goongmaps/goong-map-react'
-import Pins from '../Pin';
 import LocationInfo from './locationInfo';
 import PlannedLocationInfo from './plannedLocationInfo';
 import SearchBox from '../SearchBox';
@@ -11,7 +9,6 @@ import { setViewport } from '../actions/viewportAction'
 import '@goongmaps/goong-geocoder-react/dist/goong-geocoder.css'
 import mapAPI from '../../apis/mapApi';
 import adLocationAPI from '../../apis/adLocationApi';
-import Pin from '../Pin';
 import { clusterLayer, clusterCountLayer, unclusteredPointLayer, unclusteredPointTextLayer } from './layer';
 
 function Map(props) {

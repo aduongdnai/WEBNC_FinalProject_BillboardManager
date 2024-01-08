@@ -14,6 +14,7 @@ import AdLocationPage from "./components/adLocation/AdLocationPage";
 import AdBoardsDisplay from "./components/AdBoard/AdBoardsDisplay";
 import ViewAndReviewRequests from "./components/adLocation/ViewAndReviewRequests";
 import ReportDashboard from "./components/ReportDashboard";
+import AdvertisingLicenseRequestList from "./components/AdvertisingLicenseRequestList";
 
 function App() {
   return (
@@ -33,11 +34,13 @@ function App() {
               path="/ad-boards/:locationId"
               element={<AdBoardsDisplay />}
             />
+            <Route path="/advertisinglicense" element={<AdvertisingLicenseRequestList />} />
             <Route path="/" element={<Navigate replace to="/map" />} />
             <Route
               path="/view-requests"
               element={<ViewAndReviewRequests />}
             />{" "}
+
           </Routes>
         </Router>
       </div>
