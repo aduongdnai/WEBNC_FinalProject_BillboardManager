@@ -28,8 +28,8 @@ function Signup() {
     password: "",
     confirmPassword: "",
     role: "",
-    district: '',
-    ward: '',
+    district: "",
+    ward: "",
   });
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -45,12 +45,12 @@ function Signup() {
       console.log("Registration successful:", response.data);
       // Handle successful registration (e.g., redirect to login page)
       setTimeout(() => {
-        navigate('/login');
+        navigate("/login");
       }, 2000);
       toast({
-        title: 'Register successful.',
+        title: "Register successful.",
         description: "You've successfully registered in.",
-        status: 'success',
+        status: "success",
         duration: 2000,
         isClosable: true,
       });
@@ -66,12 +66,12 @@ function Signup() {
       [name]: value,
     });
   };
-  const roles = ["CB-Phuong", "CB-Quan", "CB-So"];
+  const roles = ["CB-Phuong"];
   const districts = Array.from({ length: 12 }, (_, i) => `${i + 1}`); // Tạo mảng ['1', '2', ..., '12']
   const wards = Array.from({ length: 12 }, (_, i) => `${i + 1}`); // Tạo mảng ['1', '2', ..., '12']
   const roleOptions = {
-    'CB-Phuong': {
-      label: 'Phường',
+    "CB-Phuong": {
+      label: "Phường",
       districtOptions: districts.map((district) => ({
         value: district,
         label: `Quận ${district}`,
@@ -81,18 +81,18 @@ function Signup() {
         })),
       })),
     },
-    'CB-Quan': {
-      label: 'Quận',
-      districtOptions: districts.map((district) => ({
-        value: district,
-        label: `Quận ${district}`,
-      })),
-    },
-    'CB-So': { label: 'Không có lựa chọn' }, // Có thể thêm xử lý cho trường hợp khác nếu cần
+    // "CB-Quan": {
+    //   label: "Quận",
+    //   districtOptions: districts.map((district) => ({
+    //     value: district,
+    //     label: `Quận ${district}`,
+    //   })),
+    // },
+    // "CB-So": { label: "Không có lựa chọn" }, // Có thể thêm xử lý cho trường hợp khác nếu cần
   };
   const handleRoleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value, district: '', ward: '' }); // Reset giá trị quận và phường khi thay đổi vai trò
+    setFormData({ ...formData, [name]: value, district: "", ward: "" }); // Reset giá trị quận và phường khi thay đổi vai trò
   };
 
   const handleDistrictChange = (e) => {
@@ -104,8 +104,6 @@ function Signup() {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
-
-  
 
   return (
     <Box
@@ -146,102 +144,95 @@ function Signup() {
           ></Input>
         </FormControl>
         <FormControl>
-  <FormLabel>Password</FormLabel>
-  <Input
-    type="password"
-    rounded="none"
-    variant="filled"
-    name="password"
-    value={formData.password}
-    onChange={handleChange}
-  ></Input>
-</FormControl>
-<FormControl>
-  <FormLabel>Confirm Password</FormLabel>
-  <Input
-    type="password"
-    rounded="none"
-    variant="filled"
-    name="confirmPassword"
-    value={formData.confirmPassword}
-    onChange={handleChange}
-    isInvalid={passwordError} // Đánh dấu lỗi nếu có
-  ></Input>
-  {passwordError && (
-    <Text color="red.500" fontSize="sm">
-      {passwordError}
-    </Text>
-  )}
-</FormControl>
-        {/* <FormControl>
-            <FormLabel>Role</FormLabel>
-            <Select placeholder="Role">
-              <option value='option1'>1</option>
-              <option value='option1'>2</option>
-              <option value='option1'>3</option>
-            </Select>
-          </FormControl> */}
-<FormControl>
-        <FormLabel>Role</FormLabel>
-        <Select
-          rounded="none"
-          variant="filled"
-          name="role"
-          value={formData.role}
-          onChange={handleRoleChange}
-        >
-          <option value="">Select a role</option>
-          {roles.map((role) => (
-            <option key={role} value={role}>
-              {role}
-            </option>
-          ))}
-        </Select>
-      </FormControl>
-
-      {formData.role && roleOptions[formData.role] && formData.role !== 'CB-So' && (
-        <>
-          <FormControl mt={4}>
-            <FormLabel>Quận</FormLabel>
-            <Select
-              rounded="none"
-              variant="filled"
-              name="district"
-              value={formData.district}
-              onChange={handleDistrictChange}
-            >
-              <option value="">Select a district</option>
-              {roleOptions[formData.role].districtOptions.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </Select>
-          </FormControl>
-
-          {formData.district && formData.role === 'CB-Phuong' && (
-            <FormControl mt={4}>
-              <FormLabel>Phường</FormLabel>
-              <Select
-                rounded="none"
-                variant="filled"
-                name="ward"
-                value={formData.ward}
-                onChange={handleWardChange}
-              >
-                <option value="">Select a ward</option>
-                {roleOptions[formData.role].districtOptions.find(
-                  (option) => option.value === formData.district
-                )?.wards.map((ward) => (
-                  <option key={ward.value} value={ward.value}>
-                    {ward.label}
-                  </option>
-                ))}
-              </Select>
-            </FormControl>
+          <FormLabel>Password</FormLabel>
+          <Input
+            type="password"
+            rounded="none"
+            variant="filled"
+            name="password"
+            value={formData.password}
+            onChange={handleChange}
+          ></Input>
+        </FormControl>
+        <FormControl>
+          <FormLabel>Confirm Password</FormLabel>
+          <Input
+            type="password"
+            rounded="none"
+            variant="filled"
+            name="confirmPassword"
+            value={formData.confirmPassword}
+            onChange={handleChange}
+            isInvalid={passwordError} // Đánh dấu lỗi nếu có
+          ></Input>
+          {passwordError && (
+            <Text color="red.500" fontSize="sm">
+              {passwordError}
+            </Text>
           )}
-        </>
-      )}
+
+          <FormLabel>Role</FormLabel>
+          <Select
+            rounded="none"
+            variant="filled"
+            name="role"
+            value={formData.role}
+            onChange={handleRoleChange}
+          >
+            <option value="">Select a role</option>
+            {roles.map((role) => (
+              <option key={role} value={role}>
+                {role}
+              </option>
+            ))}
+          </Select>
+        </FormControl>
+
+        {formData.role &&
+          roleOptions[formData.role] &&
+          formData.role !== "CB-So" && (
+            <>
+              <FormControl mt={4}>
+                <FormLabel>Quận</FormLabel>
+                <Select
+                  rounded="none"
+                  variant="filled"
+                  name="district"
+                  value={formData.district}
+                  onChange={handleDistrictChange}
+                >
+                  <option value="">Select a district</option>
+                  {roleOptions[formData.role].districtOptions.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </Select>
+              </FormControl>
+
+              {formData.district && formData.role === "CB-Phuong" && (
+                <FormControl mt={4}>
+                  <FormLabel>Phường</FormLabel>
+                  <Select
+                    rounded="none"
+                    variant="filled"
+                    name="ward"
+                    value={formData.ward}
+                    onChange={handleWardChange}
+                  >
+                    <option value="">Select a ward</option>
+                    {roleOptions[formData.role].districtOptions
+                      .find((option) => option.value === formData.district)
+                      ?.wards.map((ward) => (
+                        <option key={ward.value} value={ward.value}>
+                          {ward.label}
+                        </option>
+                      ))}
+                  </Select>
+                </FormControl>
+              )}
+            </>
+          )}
         <Button
           rounded="none"
           colorScheme="blue"
@@ -249,12 +240,9 @@ function Signup() {
           alignSelf="end"
           type="submit"
           onClick={handleSubmit}
-
         >
           Signup
         </Button>
-
-
       </VStack>
     </Box>
   );
