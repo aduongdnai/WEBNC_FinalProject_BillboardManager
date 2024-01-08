@@ -12,25 +12,24 @@ import Signup from "./components/LoginSignup/Signup";
 import { UserProvider } from "./components/LoginSignup/userContext";
 import Sidebar from "./components/Sidebar/Sidebar";
 import { Flex } from "@chakra-ui/react";
+import Account from "./components/Account/Account";
 
-
-  
 function App() {
-  
   return (
     <UserProvider>
-<div style={{display:"flex"}}>
-    <Router>
-      <Sidebar/>
-      <Routes>
-        <Route path="/map" element={<Map/>}/>
-        <Route path="/manage" element={<ManageWardAndDistrict/>}/>
-        <Route path="/login" element={<Login/>}/>
-        <Route path="/signup" element={<Signup/>}/>
-        <Route path="/" element={<Navigate replace to="/map"/>}/>
-      </Routes>
-    </Router>
-    </div>
+      <div style={{ display: "flex" }}>
+        <Router>
+          <Sidebar />
+          <Routes>
+            <Route path="/map" element={<Map />} />
+            <Route path="/manage" element={<ManageWardAndDistrict />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<Signup />} />
+            <Route path="/account" element={<Account />} />
+            <Route path="/" element={<Navigate replace to="/map" />} />
+          </Routes>
+        </Router>
+      </div>
     </UserProvider>
   );
 }

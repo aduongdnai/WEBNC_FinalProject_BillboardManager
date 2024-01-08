@@ -9,6 +9,8 @@ import reportRoute from "./routes/report.route.js";
 import App from "./routes/LoginSignup.route.js";
 import cookieParser from "cookie-parser";
 
+
+
 const server = express();
 
 server.use(cors());
@@ -39,6 +41,7 @@ server.get("/", (req, res) => {
 server.use("/api/v1/adlocations", adLocationRoute);
 server.use("/api/v1/adboards", adBoardRoute);
 server.use("/api/v1/report", reportRoute);
+
 server.use(App);
 
 

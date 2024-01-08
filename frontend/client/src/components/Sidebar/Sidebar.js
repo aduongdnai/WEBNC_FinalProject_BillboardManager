@@ -128,7 +128,7 @@ export default function Sidebar() {
               justifyContent={"start"}
               _hover={{ backgroundColor: "#AEC8CA" }}
               leftIcon={<MdOutlineManageAccounts />}
-              onClick={() => navigate("/login")}
+              onClick={() => navigate("/account")}
             >
               Account
             </Button>

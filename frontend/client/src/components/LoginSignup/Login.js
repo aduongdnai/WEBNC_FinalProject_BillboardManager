@@ -19,7 +19,6 @@ import { useToast } from '@chakra-ui/react';
 import { useUser } from "./userContext";
 function Login() {
   const { setUser } = useUser();
-
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   let navigate = useNavigate();
@@ -33,7 +32,7 @@ function Login() {
 
       console.log(response.data); // In kết quả trả về từ server vào console
       setTimeout(() => {
-        navigate('/map');
+        navigate('/account');
       }, 2000);
       setUser(email);
       // Hiển thị thông báo khi đăng nhập thành công

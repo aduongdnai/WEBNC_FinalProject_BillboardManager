@@ -26,6 +26,7 @@ app.get("/v1/user", Verify, (req, res) => {
     res.status(200).json({
         status: "success",
         message: "Welcome to the your Dashboard!",
+        user: req.user
     });
 });
 

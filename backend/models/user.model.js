@@ -25,8 +25,8 @@ const UserSchema = new mongoose.Schema(
       max: 25,
     },
     role: { type: String, required: true, max: 100},
-    district: { type: Number, max: 100,required: false },
-    ward: { type: Number, max: 100,required: false },
+    district: { type: Number, max: 100 },
+    ward: { type: Number, max: 100 },
   },
   { timestamps: true }
 );
@@ -54,5 +54,7 @@ UserSchema.methods.generateAccessJWT = function () {
     expiresIn: "20m",
   });
 };
+
+
 
 export default mongoose.model("Users", UserSchema);
