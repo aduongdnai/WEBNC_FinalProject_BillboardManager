@@ -14,6 +14,7 @@ import AdLocationPage from "./components/adLocation/AdLocationPage";
 import AdBoardsDisplay from "./components/AdBoard/AdBoardsDisplay";
 import ReportDashboard from "./components/ReportDashboard";
 import AdvertisingLicenseRequestList from "./components/AdvertisingLicenseRequestList";
+import Account from "./components/Account/Account"
 import ReviewRequestsPage from "./components/adLocation/ReviewRequestsPage";
 import io from "socket.io-client";
 import { useEffect } from "react";
@@ -42,6 +43,7 @@ function App() {
       });
     });
   }, []);
+
   return (
     <UserProvider>
       <div style={{ display: "flex" }}>
@@ -51,8 +53,10 @@ function App() {
             <Route path="/map" element={<Map />} />
             <Route path="/manage" element={<ManageWardAndDistrict />} />
             <Route path="/login" element={<Login />} />
-            <Route path="/report" element={<ReportDashboard />} />
             <Route path="/signup" element={<Signup />} />
+            <Route path="/account" element={<Account />} />
+            <Route path="/" element={<Navigate replace to="/map" />} />
+            <Route path="/report" element={<ReportDashboard />} />
             <Route path="/" element={<Navigate replace to="/map" />} />
             <Route path="/ad-locations" element={<AdLocationPage />} />
             <Route

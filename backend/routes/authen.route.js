@@ -1,9 +1,11 @@
 import express from "express";
-import { Register } from "../controller/auth.js";
+import {  Register } from "../controller/auth.js";
 import Validate from "../middlewares/validate.mdw.js";
 import { check } from "express-validator";
 import {Login} from "../controller/auth.js"
 import { Logout } from "../controller/auth.js";
+
+
 const router = express.Router();
 
 // Register route -- POST request
