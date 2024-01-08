@@ -11,14 +11,26 @@ import {
 } from '@chakra-ui/react'
 import { Image as CloudinaryImage, CloudinaryContext } from 'cloudinary-react';
 import { InfoOutlineIcon, WarningTwoIcon } from '@chakra-ui/icons';
-import { outline } from '@cloudinary/url-gen/actions/effect';
 import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
 import { Carousel } from 'react-responsive-carousel';
-
+import ReportForm from '../ReportForm';
+import { useSelector } from 'react-redux';
 function AdBoardList(props) {
     const { info } = props;
-    const { isOpen, onOpen, onClose } = useDisclosure()
-    console.log(process.env.REACT_APP_CLOUDINARY_CLOUD_NAME);
+    //const { isOpen, onOpen, onClose } = useDisclosure()
+    const { isOpen: isInfoModalOpen, onOpen: onInfoModalOpen, onClose: onInfoModalClose } = useDisclosure();
+    const { isOpen: isReportModalOpen, onOpen: onReportModalOpen, onClose: onReportModalClose } = useDisclosure();
+    const { isOpen: isReportDetailOpen, onOpen: onReportDetailOpen, onClose: onReportDetailClose } = useDisclosure();
+
+    const rp = useSelector((state) => state.report.reports.find((r) => r.reference_id === info._id));
+    
+    const report = rp ? { ...rp } : { isReported: false, images: [] };
+    if (report.status === 'Pending' || report.status === 'Processing') {
+        report.isReported =  true;
+    }
+    if (report.status === 'Processed') {
+        report.isReported =  false;
+    }
     return (
 
         <Card
@@ -40,12 +52,12 @@ function AdBoardList(props) {
                             variant='outline'
                             colorScheme='teal'
                             mr={2}
-                            onClick={onOpen}
+                            onClick={onInfoModalOpen}
                         >
 
                         </IconButton>
                     </Tooltip>
-                    <Modal isOpen={isOpen} onClose={onClose}>
+                    <Modal isOpen={isInfoModalOpen} onClose={onInfoModalClose}>
                         <ModalOverlay />
                         <ModalContent>
                             <ModalHeader>{info.boardType}</ModalHeader>
@@ -75,15 +87,7 @@ function AdBoardList(props) {
                             </ModalBody>
 
                             <ModalFooter>
-                                <Button
-                                    colorScheme="red"  // Set the button color to red
-                                    leftIcon={<WarningTwoIcon />}
-                                    ml={10}
-                                    mt={4}
-                                    variant={"outline"}  // Add the report icon to the left of the button text
-                                >
-                                    Report
-                                </Button>
+
 
                             </ModalFooter>
                         </ModalContent>
@@ -103,14 +107,60 @@ function AdBoardList(props) {
 
                 </Flex>
                 <Button
-                    colorScheme="red"  // Set the button color to red
+                    colorScheme={report.isReported ? "yellow" : "red"}
                     leftIcon={<WarningTwoIcon />}
                     ml={10}
                     mt={4}
-                    variant={"outline"}  // Add the report icon to the left of the button text
+                    onClick={report.isReported ? onReportDetailOpen : onReportModalOpen}
+                    variant={"outline"}
                 >
-                    Report
+                    {report.isReported ? "Reported" : "Report"}
                 </Button>
+
+                <Modal isOpen={isReportModalOpen} onClose={onReportModalClose} size='4xl'>
+                    <ModalOverlay />
+                    <ModalContent >
+                        <ModalHeader>Report Form</ModalHeader>
+                        <ModalCloseButton />
+                        <ModalBody>
+                            <ReportForm info={{ type: 'adboard', _id: info._id, area:info.displayAddress }}></ReportForm>
+                        </ModalBody>
+
+
+                    </ModalContent>
+                </Modal>
+
+                <Modal isOpen={isReportDetailOpen} onClose={onReportDetailClose} size='2xl'>
+                    <ModalOverlay />
+                    <ModalContent>
+                        <ModalHeader>DETAIL</ModalHeader>
+                        <ModalCloseButton />
+                        <ModalBody>
+                            <Box >
+                                <CloudinaryContext cloudName={process.env.REACT_APP_CLOUDINARY_CLOUD_NAME} secure="true" upload_preset="my_unsigned_preset">
+                                    <Carousel>
+                                        {report.images.map((image, index) => (
+                                            <CloudinaryImage key={index} publicId={image} width="300" height="150" />
+                                        ))}
+                                    </Carousel>
+                                </CloudinaryContext>
+                            </Box>
+                            <Box>
+                                <Text>Loại hình: {report.type}</Text>
+                                <Text>Loại báo cáo: {report.reportType}</Text>
+                                <Text>Tên người gửi: <b>{report.senderName}</b></Text>
+                                <Text>Email: <b>{report.email}</b></Text>
+                                <Text>Số điện thoại: <b>{report.phone}</b></Text>
+                                <Text>Nội dung:<div dangerouslySetInnerHTML={{ __html: report.reportContent }} /></Text>
+                                <br />
+                                <Text>Trạng thái: <b>{report.status}</b></Text>
+                            </Box>
+                        </ModalBody>
+
+
+                    </ModalContent>
+                </Modal>
+
             </CardHeader>
 
         </Card>

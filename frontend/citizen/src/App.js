@@ -5,15 +5,17 @@ import {
   Navigate,
 } from "react-router-dom";
 import Map from "./components/Map";
-import ReportForm from "./components/ReportForm";
+import ReportDashboard from "./components/ReportDashboard";
+
 
 function App() {
   return (
     <div className="App">
       <Router>
+
         <Routes>
           <Route path="/" element={<Map />} />
-          <Route path="/report" element={<ReportForm />} />
+          <Route path="/report" element={<ReportDashboard />} />
         </Routes>
       </Router>
     </div>

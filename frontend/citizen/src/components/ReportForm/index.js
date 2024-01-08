@@ -8,17 +8,23 @@ import 'react-quill/dist/quill.snow.css'; // import styles
 import ReCAPTCHA from "react-google-recaptcha";
 import ImageUploaderWithWidget from '../ImageUploaderWithWidget';
 import CustomInput from '../CustomInput';
-import ReactDOM from 'react-dom';
-const ReportForm = () => {
+import store from '../../store';
+import { addReport } from '../actions/reportAction';
+const ReportForm = (props) => {
+    const { info } = props;
+    console.log(info);
     const initialValues = {
+        type: info.type,
         reportType: '',
         senderName: '',
         email: '',
         phone: '',
         reportContent: '',
         images: [],
+        area: info.area,
         status: 'Pending',
-        adboard_id: '6582a64745b7528c3f429b7b',
+        processingMethod: '',
+        //adboard_id: '6582a64745b7528c3f429b7b',
     };
 
     const validationSchema = Yup.object({
@@ -28,14 +34,47 @@ const ReportForm = () => {
         phone: Yup.string().required('Phone is required'),
         //reportContent: Yup.string().required('Report Content is required'),
         images: Yup.array().max(2, 'No more than 2 images'),
-        adboard_id: Yup.string().required('Location ID is required'),
     });
 
-    const handleSubmit = async (values, { setSubmitting }) => {
-        const response = await axios.post('http://127.0.0.1:5000/api/v1/report', values);
-        console.log(response.data);
+    const recaptchaRef = React.createRef();
+    const handleSubmit = async (values, { setSubmitting, resetForm }) => {
+        const recaptchaValue = recaptchaRef.current.getValue();
+        if (recaptchaValue) {
+            try {
+
+                // If reCAPTCHA verification is successful, make the API call
+                values.images = publicId;
+                values.reportContent = text;
+                values.reference_id = info._id;
+                values.time = new Date().toISOString();
+
+                const apiResponse = await axios.post('http://127.0.0.1:5000/api/v1/report', values);
+                console.log(apiResponse.data);
+
+                // Reset the form on successful submission
+                resetForm();
+                alert("Report submitted successfully!");
+
+                var rp = localStorage.getItem('report');
+                rp = rp ? JSON.parse(rp) : [];
+                rp.push(apiResponse.data);
+                localStorage.setItem('report', JSON.stringify(rp));
+                store.dispatch(addReport(apiResponse.data));
+                //localStorage.setItem(`report_${values.reference_id}`, JSON.stringify({ ...apiResponse.data, isReported: true }));
+            } catch (error) {
+                // Handle any errors from the server
+                console.error(error);
+            } finally {
+                // Reset the submitting state
+                setSubmitting(false);
+            }
+        } else {
+            alert("Please verify that you are a human!");
+        }
 
     };
+
+
     const [publicId, setPublicId] = useState([]);
     const [text, setText] = React.useState('');
     const hanleUploadImage = (info) => {
@@ -50,9 +89,7 @@ const ReportForm = () => {
     }
     return (
         <ChakraProvider>
-            <Box px={20}>
-                <Heading as='h2' size='xl' >Report Form</Heading>
-                <br />
+            <Box p={4}>
                 <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={handleSubmit}>
                     {({ isSubmitting }) => (
                         <Form>
@@ -102,10 +139,10 @@ const ReportForm = () => {
                                 onChange={handleChangeImageUrl}
                             >
                             </CustomInput>
-                            <ImageUploaderWithWidget onUpLoadSuccess={hanleUploadImage}></ImageUploaderWithWidget>
+                            <ImageUploaderWithWidget onUpLoadSuccess={hanleUploadImage} folder='report' ></ImageUploaderWithWidget>
 
                             <br />
-                            <ReCAPTCHA sitekey="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI" /> {/* Replace with your reCAPTCHA site key */}
+                            <ReCAPTCHA ref={recaptchaRef} sitekey="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI" /> {/* Replace with your reCAPTCHA site key */}
                             <br />
                             <Button colorScheme='red' variant='outline' type="submit" disabled={isSubmitting}>Submit</Button>
                         </Form>

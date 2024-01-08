@@ -3,20 +3,17 @@ import {
   Flex,
   Drawer,
   DrawerBody,
-  DrawerFooter,
   DrawerHeader,
   DrawerOverlay,
   DrawerContent,
   DrawerCloseButton,
   IconButton,
   useDisclosure,
-  Input,
   Button,
-  Center,
   Link,
+  Tooltip,
 } from "@chakra-ui/react";
-import { HamburgerIcon } from "@chakra-ui/icons";
-import { FiUser } from "react-icons/fi";
+import { HamburgerIcon, WarningTwoIcon } from "@chakra-ui/icons";
 import { CiLogin, CiLogout } from "react-icons/ci";
 import { BsTable } from "react-icons/bs";
 import { MdOutlineManageAccounts } from "react-icons/md";
@@ -24,18 +21,20 @@ import { BsFillPinMapFill } from "react-icons/bs";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../LoginSignup/userContext";
 
+
+
+
 export default function Sidebar() {
   const navigate = useNavigate();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const btnRef = React.useRef();
-  const { username, logout } = useUser();
+  const { username, area, logout } = useUser();
   const handleLogout = () => {
     logout(); // Gọi hàm logout khi người dùng nhấn logout
   };
   return (
     <Flex
       pos="sticky"
-      marginTop="2.5vh"
       flexDir="column"
       justifyContent="space-between"
     >
@@ -51,49 +50,9 @@ export default function Sidebar() {
           <DrawerHeader>Billboard Manager</DrawerHeader>
 
           {username ? (
-            <span>
-              <DrawerHeader>Welcome, {username} </DrawerHeader> |
-              <DrawerBody>
-                <Button
-                  size="sm"
-                  rounded="md"
-                  color={["primary.500", "primary.500", "white", "white"]}
-                  bg={["white", "white", "primary.500", "primary.500"]}
-                  _hover={{
-                    bg: [
-                      "primary.100",
-                      "primary.100",
-                      "primary.600",
-                      "primary.600",
-                    ],
-                  }}
-                  onClick={handleLogout}
-                >
-                  Logout
-                </Button>{" "}
-              </DrawerBody>
-            </span>
+            <DrawerHeader>Welcome, {username} </DrawerHeader>
           ) : (
-            <Link href="/login">
-              <DrawerBody>
-                <Button
-                  size="sm"
-                  rounded="md"
-                  color={["primary.500", "primary.500", "white", "white"]}
-                  bg={["white", "white", "primary.500", "primary.500"]}
-                  _hover={{
-                    bg: [
-                      "primary.100",
-                      "primary.100",
-                      "primary.600",
-                      "primary.600",
-                    ],
-                  }}
-                >
-                  Login
-                </Button>
-              </DrawerBody>
-            </Link>
+            <DrawerHeader></DrawerHeader>
           )}
           <DrawerBody>
             <Button
@@ -124,6 +83,18 @@ export default function Sidebar() {
               background="none"
               fontSize="15px"
               ref={btnRef}
+              _hover={{ backgroundColor: "#AEC8CA" }}
+              leftIcon={<WarningTwoIcon />}
+              width={"270px"}
+              justifyContent={"start"}
+              onClick={() => navigate("/report")}
+            >
+              Report Management
+            </Button>
+            <Button
+              background="none"
+              fontSize="15px"
+              ref={btnRef}
               width={"270px"}
               justifyContent={"start"}
               _hover={{ backgroundColor: "#AEC8CA" }}
@@ -143,16 +114,44 @@ export default function Sidebar() {
           mt={5}
           _hover={{ backgroundColor: "#AEC8CA" }}
           icon={<HamburgerIcon />}
-          onClick={onOpen}
+          onClick={username ? (onOpen): (onClose)}
         />
-        <IconButton
-          background="none"
-          mt={5}
-          fontSize="25px"
-          icon={<CiLogin />}
-          onClick={() => {}}
-          _hover={{ textDecor: "none", backgroundColor: "#AEC8CA" }}
-        />
+        {username ? 
+          (
+            <Tooltip label='Logout'>
+              <IconButton
+                background="none"
+                mt={5}
+                fontSize="25px"
+                icon={<CiLogout />}
+                onClick={handleLogout}
+                _hover={{ textDecor: "none", backgroundColor: "#AEC8CA" }}
+              />
+            </Tooltip>
+          ) :
+          (
+            <Tooltip label='Login'>
+              <IconButton
+                background="none"
+                mt={5}
+                fontSize="25px"
+                icon={<CiLogin />}
+                onClick={() => navigate('/login')}
+                _hover={{ textDecor: "none", backgroundColor: "#AEC8CA" }}
+              />
+            </Tooltip>
+          )
+        }
+        {/* <Tooltip label='Login'>
+          <IconButton
+            background="none"
+            mt={5}
+            fontSize="25px"
+            icon={<CiLogin />}
+            onClick={() => navigate('/login')}
+            _hover={{ textDecor: "none", backgroundColor: "#AEC8CA" }}
+          />
+        </Tooltip> */}
         {/* <IconButton
                     background="none"
                     mt={5}

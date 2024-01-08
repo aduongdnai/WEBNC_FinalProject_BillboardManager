@@ -6,10 +6,14 @@ const advertisingLicenseSchema = new mongoose.Schema({
     },
     companyInfo: {
         name: String,
-        email: String,
-        phone: String,
-        address: String,
+        contact: {
+            email: String,
+            phone: String,
+            address: String
+        }
     },
+    adContent: String,
+    adImage: [String],
     startDate: Date,
     endDate: Date,
     status: String, // 'Pending', 'Approved', 'Rejected'

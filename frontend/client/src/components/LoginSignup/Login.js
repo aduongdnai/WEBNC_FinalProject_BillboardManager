@@ -2,7 +2,6 @@ import {
   Box,
   Button,
   Checkbox,
-  Container,
   FormControl,
   FormLabel,
   HStack,
@@ -18,7 +17,9 @@ import { useNavigate } from 'react-router-dom';
 import { useToast } from '@chakra-ui/react';
 import { useUser } from "./userContext";
 function Login() {
-  const { setUser } = useUser();
+
+const { setUser, setUserArea, setUserData } = useUser();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   let navigate = useNavigate();
@@ -34,7 +35,21 @@ function Login() {
       setTimeout(() => {
         navigate('/account');
       }, 2000);
-      setUser(email);
+      setUser(response.data.data.user.username);
+      const area = (response.data.data.user.ward 
+        ? `Phường ${response.data.data.user.ward}, ` 
+        : ``) 
+      + 
+        (response.data.data.user.district 
+        ? `Quận ${response.data.data.user.district}, ` 
+        : ``)
+      + 
+        `Hồ Chí Minh`;
+      console.log(area);
+      setUserArea(area);
+      const userData = response.data.data.user;
+      userData.area = area;
+      setUserData(JSON.stringify(userData));
       // Hiển thị thông báo khi đăng nhập thành công
       toast({
         title: 'Login successful.',
