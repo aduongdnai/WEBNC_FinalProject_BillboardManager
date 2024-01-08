@@ -4,10 +4,16 @@ const serverClient = axios.create({
     baseURL: 'http://127.0.0.1:5000/api/v1/',
 
 })
-
 // Add a request interceptor
 serverClient.interceptors.request.use(function (config) {
-    // Do something before request is sent
+    const accessToken = localStorage.getItem('accessToken');
+    if (accessToken) {
+        config.headers.Authorization = `Bearer ${accessToken}`;
+    }
+    // const refreshToken = localStorage.getItem('refreshToken');
+    // if (refreshToken) {
+    //     config.headers.rfToken = refreshToken;
+    // }
     return config;
 }, function (error) {
     // Do something with request error
