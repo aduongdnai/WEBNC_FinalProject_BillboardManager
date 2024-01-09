@@ -8,19 +8,26 @@ import { useEffect } from 'react';
 import AdvertisingLicenseRequestListCBSO from './CB_So.js';
 import { Card, CardHeader, CardBody, CardFooter } from '@chakra-ui/react'
 import AdvertisingLicenseRequestListCBQuanPhuong from './CB_quanphuong.js';
+import { useSelector } from 'react-redux';
 
 
 function AdvertisingLicenseRequestList(props) {
-    const user = useUser();
+    const user = useSelector(state => state.auth.userData);
     const toast = useToast();
     const [requests, setRequests] = React.useState([]);
 
     useEffect(() => {
-        console.log(user.userData);
+
         const fetchData = async () => {
             try {
-                const result = await AdvertisingLicenseRequestApi.getAdvertisingLicenseRequest();
-                setRequests(result.data);
+                let result;
+                if (user.role === "CB-So") {
+                    result = await AdvertisingLicenseRequestApi.getAdvertisingLicenseRequest();
+                }
+                else {
+                    result = await AdvertisingLicenseRequestApi.getAdvertisingLicenseRequestByUserId(user._id);
+                }
+                setRequests(result.data.data);
                 console.log(result);
             } catch (error) {
                 console.log(error);
@@ -32,8 +39,11 @@ function AdvertisingLicenseRequestList(props) {
         <Box width={"100%"}>
             <Card maxW='8xl'>
                 <CardBody>
-                    <AdvertisingLicenseRequestListCBSO requests={requests}> </AdvertisingLicenseRequestListCBSO>
-                    <AdvertisingLicenseRequestListCBQuanPhuong requests={requests}> </AdvertisingLicenseRequestListCBQuanPhuong>
+                    {user.role === "CB-So" ?
+                        <AdvertisingLicenseRequestListCBSO requests={requests}> </AdvertisingLicenseRequestListCBSO>
+                        : <AdvertisingLicenseRequestListCBQuanPhuong requests={requests}> </AdvertisingLicenseRequestListCBQuanPhuong>}
+
+
                 </CardBody>
 
                 <CardFooter>

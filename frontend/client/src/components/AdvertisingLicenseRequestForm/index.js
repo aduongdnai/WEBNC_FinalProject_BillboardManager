@@ -55,6 +55,7 @@ const AdvertisingLicenseRequestForm = ({ onSubmit, adboardInfo }) => {
             endDate: values.endDate,
             user_id: userData._id,
             adboard: adboardInfo._id,
+            status: "Pending",
         };
 
         onSubmit(advertisingLicense, actions);
