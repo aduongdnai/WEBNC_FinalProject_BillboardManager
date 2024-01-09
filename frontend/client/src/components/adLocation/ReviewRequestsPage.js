@@ -40,7 +40,7 @@ const ReviewRequestsPage = () => {
   };
 
   return (
-    <div>
+    <div className="review-requests-container">
       <h1>Review Edit Requests</h1>
       <table>
         <thead>

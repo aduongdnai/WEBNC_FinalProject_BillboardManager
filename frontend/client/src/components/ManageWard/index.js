@@ -1,5 +1,14 @@
 import {
-    Icon,Button
+  Icon,
+  Button,  
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton,
+  useDisclosure,
 } from '@chakra-ui/react';
 import { FaEye,FaPen } from "react-icons/fa";
 import { CiCirclePlus } from "react-icons/ci";
@@ -15,17 +24,21 @@ import paginationFactory from 'react-bootstrap-table2-paginator';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './styles.css';
 import ToolkitProvider, { Search } from 'react-bootstrap-table2-toolkit/dist/react-bootstrap-table2-toolkit';
-
+import ReportForm from './ReportForm';
 
 
 
 
 function ManageWard(){
   const location = useLocation();
+  const { isOpen, onOpen, onClose } = useDisclosure();
+
   console.log(location.state.district);
   const district = location.state.district || "Quận 5";
   const navigate = useNavigate();
   const { area } = useUser();
+  const [name, setName] = useState('');
+  const [id, setId] = useState('');
   const [ward, setWard] = useState(null);
   useEffect(() => {
     const fetchData = async () => {
@@ -77,6 +90,13 @@ function ManageWard(){
             as={FaPen} 
             w={4} 
             h={4}
+            onClick={
+              () => {
+                setName(row?.name)
+                setId(row?._id)
+                onOpen()
+              }
+            }
             _hover={{color:'blue'}}
           />
           </div>
@@ -140,7 +160,7 @@ function ManageWard(){
           placeholder='Search'
           />
           <div style={{width:"100%",display:"flex",justifyContent:"flex-end"}}>
-          <Button leftIcon={<CiCirclePlus size="20" />} justifyContent="flex-start" width="200px" colorScheme='teal' variant='solid'>
+          <Button leftIcon={<CiCirclePlus size="20" />} justifyContent="flex-start" width="200px" colorScheme='teal' variant='solid' onClick={onOpen}>
             Add
           </Button>
           </div>
@@ -151,6 +171,16 @@ function ManageWard(){
   const CaptionElement = () => <h3 style={{ borderRadius: '0.25em', textAlign: 'center', color: 'purple', border: '1px solid purple', padding: '0.5em', marginTop:"15px" }}>{district}</h3>;
     return(
       <div style={{width:"95%"}}>
+        <Modal isOpen={isOpen} onClose={onClose}>
+          <ModalOverlay />
+          <ModalContent>
+            <ModalHeader>{name===''?("Add District"):("Update District")}</ModalHeader>
+            <ModalCloseButton />
+            <ModalBody>
+              <ReportForm name={name} id={id} district={district}/> 
+            </ModalBody>
+          </ModalContent>
+        </Modal>
         {ward ? (
           <ToolkitProvider
             keyField="id"

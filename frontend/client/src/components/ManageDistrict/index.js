@@ -14,19 +14,18 @@ import { FaEye,FaPen } from "react-icons/fa";
 import { IoSearchOutline } from "react-icons/io5";
 import { CiCirclePlus } from "react-icons/ci";
 import { SiBillboard } from "react-icons/si";
-import { FaTrashAlt } from "react-icons/fa";
 import { useNavigate } from 'react-router-dom';
 import districtAPI from '../../apis/districtApi';
 import { useEffect, useState} from 'react';
-import { Image as CloudinaryImage, CloudinaryContext } from 'cloudinary-react';
 import { useUser } from '../LoginSignup/userContext';
 // import {PaginationTable} from "table-pagination-chakra-ui";
 import BootstrapTable from 'react-bootstrap-table-next';
 import paginationFactory from 'react-bootstrap-table2-paginator';
 import 'bootstrap/dist/css/bootstrap.min.css';
+// import 'react-bootstrap-table-next/dist/react-bootstrap-table2.min.css';
 import './styles.css';
 import ToolkitProvider, { Search } from 'react-bootstrap-table2-toolkit/dist/react-bootstrap-table2-toolkit';
-
+import ReportForm from './ReportForm';
 
 
 
@@ -36,6 +35,8 @@ function ManageDistrict(){
   const { area } = useUser();
   const [district, setDistrict] = useState(null);
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const [name, setName] = useState('');
+  const [id, setId] = useState('');
   useEffect(() => {
     const fetchData = async () => {
         try {
@@ -58,7 +59,7 @@ function ManageDistrict(){
   const columns = [
     {
     dataField: 'name',
-    text: 'District'
+    text: 'District',
     }, 
     {
       dataField: 'action',
@@ -84,20 +85,23 @@ function ManageDistrict(){
             as={FaPen} 
             w={4} 
             h={4}
-            marginRight={5} 
+            marginRight={5}
+            onClick={
+              () => {
+                setName(row?.name)
+                setId(row?._id)
+                onOpen()
+              }
+            }
             _hover={{color:'blue'}}
-          />
-          <Icon 
-            as={FaTrashAlt} 
-            w={4} 
-            h={4}
-            marginRight={5} 
-            _hover={{color:'red'}}
           />
           <Icon 
             as={SiBillboard} 
             w={8} 
             h={8}
+            onClick={
+              () => navigate('/table-area',{state: { area: row?.name }})
+            }
             _hover={{color:'blue'}}
           />
           </div>
@@ -137,11 +141,11 @@ function ManageDistrict(){
     alwaysShowAllBtns: true,
     hidePageListOnlyOnePage: true,
     sizePerPageList: [{
-      text: '2', value: 2
+      text: '10', value: 10
     }, {
-      text: '4', value: 4
+      text: '15', value: 15
     }, {
-      text: '6', value: 6
+      text: '20', value: 20
     }],
   }
 
@@ -173,22 +177,15 @@ function ManageDistrict(){
     return(
       <div style={{width:"95%"}}>
         <Modal isOpen={isOpen} onClose={onClose}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Add District</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            
-          </ModalBody>
-
-          <ModalFooter>
-            <Button colorScheme='blue' mr={3} onClick={onClose}>
-              Close
-            </Button>
-            <Button variant='ghost'>Secondary Action</Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
+          <ModalOverlay />
+          <ModalContent>
+            <ModalHeader>{name===''?("Add District"):("Update District")}</ModalHeader>
+            <ModalCloseButton />
+            <ModalBody>
+              <ReportForm name={name} id={id}/> 
+            </ModalBody>
+          </ModalContent>
+        </Modal>
         {district ? (
           <ToolkitProvider
             keyField="id"
@@ -206,7 +203,9 @@ function ManageDistrict(){
                   <BootstrapTable
                     { ...props.baseProps }
                     pagination={paginationFactory(options)} 
-                    bordered= {false}
+                    striped
+                    bordered={false}
+                    rowStyle={{verticalAlign:"middle"}}
                   />
                 </div>
               )

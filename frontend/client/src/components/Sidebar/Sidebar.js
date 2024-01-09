@@ -75,7 +75,7 @@ export default function Sidebar() {
               leftIcon={<BsTable />}
               width={"270px"}
               justifyContent={"start"}
-              onClick={() => navigate("/manage")}
+              onClick={() => navigate("/table-area")}
             >
               Table Management
             </Button>

@@ -19,10 +19,13 @@ import ReviewRequestsPage from "./components/adLocation/ReviewRequestsPage";
 import io from "socket.io-client";
 import { useEffect } from "react";
 import { useToast } from "@chakra-ui/react";
-
-const socket = io("http://127.0.0.1:5000");
 import ManageDistrict from "./components/ManageDistrict";
 import ManageWard from "./components/ManageWard";
+
+
+
+const socket = io("http://127.0.0.1:5000");
+
 
 function App() {
   const toast = useToast();
@@ -53,7 +56,7 @@ function App() {
           <Sidebar />
           <Routes>
             <Route path="/map" element={<Map />} />
-            <Route path="/manage" element={<TableQueryByArea />} />
+            <Route path="/table-area" element={<TableQueryByArea />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/account" element={<Account />} />

@@ -3,7 +3,7 @@ import {
 } from '@chakra-ui/react';
 import { FaEye,FaPen } from "react-icons/fa";
 import { IoSearchOutline } from "react-icons/io5";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import adLocationAPI from '../../apis/adLocationApi';
 import { useEffect, useState} from 'react';
 import { Image as CloudinaryImage, CloudinaryContext } from 'cloudinary-react';
@@ -29,8 +29,10 @@ function imageFormatter(cell, row, rowIndex){
 
 
 function TableQueryByArea(){
+  const location = useLocation();
+  const area = location.state.area || "Quận 5";
   const navigate = useNavigate();
-  const { area } = useUser();
+  // const { area } = useUser();
   const [adLocation, setAdLocation] = useState(null);
   // const { SearchBar } = Search;
   useEffect(() => {
