@@ -26,5 +26,5 @@ serverClient.interceptors.response.use(async (response) => {
         const token = response.data.token;
         store.dispatch(updateAccessToken(token));
     }
-    return response;
+    return response.data;
 });

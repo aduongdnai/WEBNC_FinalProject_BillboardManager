@@ -27,7 +27,7 @@ function AdvertisingLicenseRequestList(props) {
                 else {
                     result = await AdvertisingLicenseRequestApi.getAdvertisingLicenseRequestByUserId(user._id);
                 }
-                setRequests(result.data.data);
+                setRequests(result.data);
                 console.log(result);
             } catch (error) {
                 console.log(error);

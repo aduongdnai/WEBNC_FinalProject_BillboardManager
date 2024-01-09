@@ -19,7 +19,7 @@ import ReviewRequestsPage from "./components/adLocation/ReviewRequestsPage";
 import io from "socket.io-client";
 import { useEffect } from "react";
 import { useToast } from "@chakra-ui/react";
-
+import ProtectedProvider from "./Providers/ProtectedProvider";
 const socket = io("http://127.0.0.1:5000");
 
 function App() {
@@ -50,13 +50,16 @@ function App() {
         <Router>
           <Sidebar />
           <Routes>
-            <Route path="/map" element={<Map />} />
-            <Route path="/manage" element={<ManageWardAndDistrict />} />
+            <Route path="/map" element={<ProtectedProvider><Map /></ProtectedProvider>} />
+            <Route path="/manage" element={
+              <ProtectedProvider>
+                <ManageWardAndDistrict />
+              </ProtectedProvider>} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/account" element={<Account />} />
-            <Route path="/" element={<Navigate replace to="/map" />} />
-            <Route path="/report" element={<ReportDashboard />} />
+
+            <Route path="/report" element={<ProtectedProvider><ReportDashboard /></ProtectedProvider>} />
             <Route path="/" element={<Navigate replace to="/map" />} />
             <Route path="/ad-locations" element={<AdLocationPage />} />
             <Route
@@ -65,10 +68,10 @@ function App() {
             />
             <Route
               path="/advertisinglicense"
-              element={<AdvertisingLicenseRequestList />}
+              element={<ProtectedProvider><AdvertisingLicenseRequestList /></ProtectedProvider>}
             />
             <Route path="/" element={<Navigate replace to="/map" />} />
-            
+
             <Route path="/view-requests" element={<ReviewRequestsPage />} />{" "}
             {/* Add the new route */}
           </Routes>

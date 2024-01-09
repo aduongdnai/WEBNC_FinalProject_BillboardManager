@@ -21,7 +21,7 @@ import store from "../../store";
 import { loginSuccess } from "../actions/authAction";
 function Login() {
 
-const { setUser, setUserArea, setUserData } = useUser();
+  const { setUser, setUserArea, setUserData } = useUser();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -38,32 +38,32 @@ const { setUser, setUserArea, setUserData } = useUser();
         password: password,
       });
 
-      console.log(response.data);
+      console.log(response);
 
-      if (response.data.success){
-        
-        localStorage.setItem('accessToken', response.data.token);
-        localStorage.setItem('refreshToken',  response.data.rfToken);
-        localStorage.setItem('isAuth',  true);
+      if (response.success) {
 
-        const area = (response.data.userData.ward 
-          ? `Phường ${response.data.userData.ward}, ` 
-          : ``) 
-        + 
-          (response.data.userData.district 
-          ? `Quận ${response.data.userData.district}, ` 
+        localStorage.setItem('accessToken', response.token);
+        localStorage.setItem('refreshToken', response.rfToken);
+        localStorage.setItem('isAuth', true);
+
+        const area = (response.userData.ward
+          ? `Phường ${response.userData.ward}, `
           : ``)
-        + 
+          +
+          (response.userData.district
+            ? `Quận ${response.userData.district}, `
+            : ``)
+          +
           `Hồ Chí Minh`;
-  
+
         setUserArea(area);
 
-        const userData = response.data.userData;
+        const userData = response.userData;
         userData.area = area;
         setUserData(JSON.stringify(userData));
 
-        response.data.userData.area = area
-        store.dispatch(loginSuccess(response.data.token, response.data.rfToken, response.data.userData))
+        response.userData.area = area
+        store.dispatch(loginSuccess(response.token, response.rfToken, response.userData))
 
         setTimeout(() => {
           navigate('/map');
@@ -77,13 +77,13 @@ const { setUser, setUserArea, setUserData } = useUser();
         });
       }
 
-      
+
       // setUser(response.data.data.user.username);
-      
-      
-      
+
+
+
       // Hiển thị thông báo khi đăng nhập thành công
-     
+
 
     } catch (error) {
       console.error(error); // Xử lý lỗi nếu có
