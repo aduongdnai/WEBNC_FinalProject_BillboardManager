@@ -28,13 +28,13 @@ function PlannedLocationInfo(props) {
     const { isOpen: isReportModalOpen, onOpen: onReportModalOpen, onClose: onReportModalClose } = useDisclosure();
     const { isOpen: isReportDetailOpen, onOpen: onReportDetailOpen, onClose: onReportDetailClose } = useDisclosure();
     const rp = useSelector((state) => state.report.reports.find((r) => r.reference_id === info._id));
-    
+
     const report = rp ? { ...rp } : { isReported: false, images: [] };
     if (report.status === 'Pending' || report.status === 'Processing') {
-        report.isReported =  true;
+        report.isReported = true;
     }
     if (report.status === 'Processed') {
-        report.isReported =  false;
+        report.isReported = false;
     }
     const displayAddress = `${info.address}`;
 
@@ -88,7 +88,7 @@ function PlannedLocationInfo(props) {
                             <Button
                                 colorScheme={report.isReported ? "yellow" : "red"}
                                 leftIcon={<WarningTwoIcon />}
-                                onClick={report.isReported ?   onReportDetailOpen:onReportModalOpen}
+                                onClick={report.isReported ? onReportDetailOpen : onReportModalOpen}
                                 variant={"outline"}  // Add the report icon to the left of the button text
                                 mt={2}
                                 size='sm'
@@ -101,7 +101,7 @@ function PlannedLocationInfo(props) {
                                 onClick={handleViewHistory}
                                 variant={"outline"}  // Add the report icon to the left of the button text
                                 mt={2}
-                                ml = {2}
+                                ml={2}
                                 size='sm'
                             >
                                 Report History
@@ -112,7 +112,7 @@ function PlannedLocationInfo(props) {
                                     <ModalHeader>Report Location Form</ModalHeader>
                                     <ModalCloseButton />
                                     <ModalBody>
-                                        <ReportForm info={{ type: 'plannedLocation', _id: info._id, area:info.area  }}></ReportForm>
+                                        <ReportForm info={{ type: 'plannedLocation', _id: info._id, area: info.area }}></ReportForm>
                                     </ModalBody>
 
 
@@ -154,32 +154,7 @@ function PlannedLocationInfo(props) {
                                 <Heading size={"md"}>Có  {adBoards.length} biển quảng cáo</Heading>
                                 {adBoards.length > 0 ? (
                                     adBoards.map((adBoard) => (
-                                        // <Card
-                                        //     bg="green.100"    // Background color for success
-                                        //     variant={outline}     // Text color
-                                        //     // Padding
-                                        //     borderRadius="md"  // Border radius
-                                        //     boxShadow="md"     // Box shadow
-                                        // >
-                                        //     <CardHeader>
-                                        //         <Flex >
-                                        //             <InfoOutlineIcon mr={4} boxSize={6} color='green.700'
-                                        //             />
-                                        //             <Flex flex='1' gap='4' alignItems='center' flexWrap='wrap'>
-                                        //                 <Box>
-                                        //                     <Heading size='sm'>Thông tin địa điểm</Heading>
-                                        //                     <Text color="gray.500">{displayAddress}</Text>
-                                        //                     <Text>Hình thức: <b>{info.advertisingType}</b></Text>
-                                        //                     <Text fontWeight={'bold'}></Text>
-                                        //                     <Text >Loại địa điểm: <b>{info.locationType}</b></Text>
 
-                                        //                 </Box>
-                                        //             </Flex>
-
-                                        //         </Flex>
-                                        //     </CardHeader>
-
-                                        // </Card>
 
 
                                         <AdBoardList key={adBoard._id} info={{ ...adBoard, amount: adBoards.length, displayAddress, locationType: info.locationType, advertisingType: info.advertisingType }}></AdBoardList>
