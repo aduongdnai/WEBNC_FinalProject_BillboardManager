@@ -53,11 +53,32 @@ router.get('/:user_id', async (req, res) => {
     }
 
 });
-router.put('/:id', async (req, res) => {
-
+router.patch('/:id', async (req, res) => {
+    try {
+        const updatedRequest = await AdvertisingLicenseRequest.findOneAndUpdate({ _id: req.params.id }, req.body, { new: true });
+        res.status(200).json({
+            data: updatedRequest,
+            msg: "success"
+        })
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            msg: "Internal Server error"
+        })
+    }
 });
 router.delete('/:id', async (req, res) => {
-
+    try {
+        const updatedRequest = await AdvertisingLicenseRequest.findOneAndDelete({ _id: req.params.id });
+        res.status(200).json({
+            msg: "Delete license request success"
+        })
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            msg: "Internal Server error"
+        })
+    }
 });
 
 export default router;

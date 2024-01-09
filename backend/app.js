@@ -6,6 +6,7 @@ import adLocationRoute from "./routes/adLocation.route.js";
 import adBoardRoute from "./routes/adBoard.route.js";
 import reportRoute from "./routes/report.route.js";
 import editRequestRoutes from "./routes/editRequest.route.js";
+import userRoute from "./routes/user.route.js";
 import advertisingLicenseRequestRoute from "./routes/advertisingLicenseRequest.route.js";
 import App from "./routes/LoginSignup.route.js";
 import cookieParser from "cookie-parser";
@@ -44,6 +45,7 @@ server.use("/api/v1/adboards", adBoardRoute);
 server.use("/api/v1/report", reportRoute);
 server.use("/api/v1/advertisingLicenseRequest", advertisingLicenseRequestRoute);
 server.use("/api/v1/editrequests", editRequestRoutes);
+server.use("/api/v1/users", userRoute);
 server.use(App);
 
 const httpServer = createServer(server);
