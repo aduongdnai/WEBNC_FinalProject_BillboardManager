@@ -43,22 +43,42 @@ export const editAdLocation = async (req, res) => {
   }
 };
 
-// Hàm gửi yêu cầu chỉnh sửa thông tin điểm đặt quảng cáo
+// Giả sử bạn đặt nó trong file adLocationController.js hoặc một file controller khác.
+
 export const sendEditRequest = async (req, res) => {
   try {
+    // Lấy dữ liệu từ yêu cầu
     const { id, updatedLocation, editReason } = req.body;
 
-    // Lưu yêu cầu vào cơ sở dữ liệu
+    // Tạo một đối tượng yêu cầu chỉnh sửa mới
     const editRequest = new EditRequestModel({
-      locationId: id,
-      updatedData: updatedLocation,
+      adLocationId: id,
+      updatedDetails: updatedLocation,
       editReason,
+      status: "pending", // hoặc trạng thái mặc định khác
     });
+
+    // Lưu yêu cầu vào cơ sở dữ liệu
     await editRequest.save();
 
-    res.status(200).json({ message: "Yêu cầu đã được gửi" });
+    // Gửi phản hồi thành công
+    res
+      .status(200)
+      .json({ message: "Yêu cầu chỉnh sửa đã được gửi thành công." });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Lỗi server", error });
+    // Xử lý lỗi
+    console.error("Error sending edit request:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+//lấy danh sách yêu cầu
+export const getEditRequests = async (req, res) => {
+  try {
+    // Truy vấn cơ sở dữ liệu để lấy danh sách yêu cầu
+    const editRequests = // Truy vấn MongoDB để lấy dữ liệu
+      res.status(200).json(editRequests);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
 };

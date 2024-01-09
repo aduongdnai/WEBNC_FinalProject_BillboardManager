@@ -71,7 +71,7 @@ const AdLocationsTable = ({ adLocations }) => {
                   colorScheme="blue"
                   onClick={() => handleEditClick(location)}
                 >
-                  Chỉnh sửa bảng quảng cáo
+                  Chỉnh sửa điểm đặt quảng cáo
                 </Button>
               </Td>
             </Tr>

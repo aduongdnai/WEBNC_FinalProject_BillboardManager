@@ -5,11 +5,12 @@ import mongoose from "mongoose";
 import adLocationRoute from "./routes/adLocation.route.js";
 import adBoardRoute from "./routes/adBoard.route.js";
 import reportRoute from "./routes/report.route.js";
+import editRequestRoutes from "./routes/editRequest.route.js";
 import advertisingLicenseRequestRoute from "./routes/advertisingLicenseRequest.route.js";
 import App from "./routes/LoginSignup.route.js";
 import cookieParser from "cookie-parser";
-import { Server as SocketIO } from 'socket.io';
-import { createServer } from 'http';
+import { Server as SocketIO } from "socket.io";
+import { createServer } from "http";
 
 
 
@@ -42,6 +43,7 @@ server.use("/api/v1/adlocations", adLocationRoute);
 server.use("/api/v1/adboards", adBoardRoute);
 server.use("/api/v1/report", reportRoute);
 server.use("/api/v1/advertisingLicenseRequest", advertisingLicenseRequestRoute);
+server.use("/api/v1/editrequests", editRequestRoutes);
 server.use(App);
 
 const httpServer = createServer(server);
@@ -79,8 +81,8 @@ io.on('connection', (socket) => {
   });
 
   // Handle disconnect
-  socket.on('disconnect', () => {
-    console.log('Client disconnected');
+  socket.on("disconnect", () => {
+    console.log("Client disconnected");
   });
 });
 

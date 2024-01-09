@@ -30,7 +30,7 @@ const EditRequestForm = ({ adLocation, onClose, onSubmit }) => {
   const handleSendRequest = async () => {
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/v1/ad-locations/send-edit-request",
+        "http://localhost:5000/api/v1/adlocations/send-edit-request",
         {
           id: adLocation._id,
           updatedLocation: {
@@ -39,6 +39,13 @@ const EditRequestForm = ({ adLocation, onClose, onSubmit }) => {
             advertisingType,
             editTime,
           },
+
+          // updatedDetails: {
+          //   locationType,
+          //   advertisingType,
+          //   editTime,
+          //   // Thêm bất kỳ trường dữ liệu nào khác được gửi từ form chỉnh sửa
+          // },
           editReason,
         }
       );
@@ -58,21 +65,36 @@ const EditRequestForm = ({ adLocation, onClose, onSubmit }) => {
           onChange={(e) => setLocationType(e.target.value)}
         >
           {/* Options cho loại điểm đặt quảng cáo */}
-          <option value="trungTamThuongMai">Trung Tâm Thương Mại</option>
-          <option value="duongPho">Đường Phố</option>
-          {/* ...Thêm options khác nếu cần*/}
+
+          <option value="Đất công/Công viên/Hành lang an toàn giao thông">
+            Đất công/Công viên/Hành lang an toàn giao thông
+          </option>
+
+          <option value="Đất tư nhân/Nhà ở riêng lẻ">
+            Đất tư nhân/Nhà ở riêng lẻ
+          </option>
+
+          <option value="Trung tâm thương mại">Trung tâm thương mại</option>
+
+          <option value="Chợ">Chợ</option>
+          <option value="Cây xăng">Cây xăng</option>
+          <option value="Nhà chờ xe buýt">Nhà chờ xe buýt</option>
         </Select>
       </FormControl>
 
       <FormControl id="advertisingType" isRequired mt={4}>
-        <FormLabel>Loại Quảng Cáo</FormLabel>
+        <FormLabel>Hình thức quảng cáo</FormLabel>
         <Select
           value={advertisingType}
           onChange={(e) => setAdvertisingType(e.target.value)}
         >
           {/* Options cho loại quảng cáo */}
-          <option value="xaHoiHoa">Xã Hội Hóa</option>
-          <option value="thuongMai">Thương Mại</option>
+          <option value="Cổ động chính trị">Cổ động chính trị</option>
+
+          <option value="Quảng cáo thương mại">Quảng cáo thương mại</option>
+
+          <option value="Xã hội hoá">Xã hội hoá</option>
+
           {/* ...Thêm options khác nếu cần*/}
         </Select>
       </FormControl>
@@ -80,7 +102,7 @@ const EditRequestForm = ({ adLocation, onClose, onSubmit }) => {
       <FormControl id="editTime" mt={4}>
         <FormLabel>Thời Điểm Chỉnh Sửa</FormLabel>
         <Input
-          type="text"
+          type="date" // Thay đổi ở đây
           value={editTime}
           onChange={(e) => setEditTime(e.target.value)}
         />

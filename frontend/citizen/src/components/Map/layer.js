@@ -65,7 +65,7 @@ export const unclusteredPointTextLayer = {
                 'match',
                 ['to-string', ['get', 'status']],
                 'Pending', '#000000',
-                'Handled', '#000000',
+                'Processed', '#000000',
                 '#000000'
             ],
             // color for planned
