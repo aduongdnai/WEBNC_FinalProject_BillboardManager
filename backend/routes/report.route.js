@@ -28,6 +28,10 @@ router.put('/:id', async (req, res) => {
     try {
         const updatedReport = await UserReportModel.findByIdAndUpdate(id, { processMethod, status, updatedTime }, { new: true });
         res.status(200).json(updatedReport);
+        for (const citizenId of global.connectedCitizens) {
+            console.log(citizenId);
+            global.io.to(citizenId).emit('notification', updatedReport);
+        }
     } catch (error) {
         res.status(500).json({ message: error.message });
     }

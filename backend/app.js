@@ -47,40 +47,46 @@ server.use(App);
 const httpServer = createServer(server);
 const io = new SocketIO(httpServer, {
   cors: {
-    origin: "http://localhost:3000", // Adjust the allowed origin(s) accordingly
+    origin: "*", // Adjust the allowed origin(s) accordingly
     methods: ["GET", "POST"],
     credentials: true,
   },
 });
 
 const connectedClients = new Set();
-
+const connectedCitizens = new Set();
 io.on('connection', (socket) => {
   console.log('Client connected');
 
   // Handle authentication
   socket.on('authenticate', (token) => {
-      // Simulate authentication logic or replace it with your actual authentication process
-      if (token === 'CLIENT') {
-          console.log('Client authenticated');
-          if (!connectedClients.has(socket.id)){
-            connectedClients.add(socket.id);
-          }
-        
-      } else {
-          console.log('Client authentication failed');
-          socket.disconnect(true);
+    // Simulate authentication logic or replace it with your actual authentication process
+    if (token === 'CLIENT') {
+      console.log('Client authenticated');
+      if (!connectedClients.has(socket.id)) {
+        connectedClients.add(socket.id);
       }
+    }
+    else if (token === 'CITIZEN') {
+      console.log('Citizen authenticated');
+      if (!connectedCitizens.has(socket.id)) {
+        connectedCitizens.add(socket.id);
+      }
+    } else {
+      console.log('Authentication failed');
+      socket.disconnect(true);
+    }
   });
 
   // Handle disconnect
   socket.on('disconnect', () => {
-      console.log('Client disconnected');
+    console.log('Client disconnected');
   });
 });
 
 global.io = io;
 global.connectedClients = connectedClients;
+global.connectedCitizens = connectedCitizens;
 
 httpServer.listen(process.env.PORT, () => {
   console.log(`Server is listening at http://127.0.0.1:${process.env.PORT}`);

@@ -60,7 +60,6 @@ export async function Login(req, res) {
       user.password
     );
 
-<<<<<<< HEAD
     if (!isPasswordValid) {
       return res.status(401).json({
         status: "failed",
@@ -68,29 +67,6 @@ export async function Login(req, res) {
         message:
           "Invalid email or password. Please try again with the correct credentials.",
       });
-=======
-        let options = {
-            maxAge: 20 * 60 * 1000, 
-            httpOnly: true, 
-            secure: true,
-            sameSite: "None",
-        };
-        const token = user.generateAccessJWT(); // generate session token for user
-        res.cookie("SessionID", token, options); // set the token to response header, so that the client sends it back on each subsequent request
-        res.status(200).json({
-            status: "success",
-            message: "You have successfully logged in.",
-            data: {
-                user,
-            },
-        });
-    } catch (err) {
-        res.status(500).json({
-            status: "error",
-            code: 500,
-            message: "Internal Server Error",
-        });
->>>>>>> fe9b1a638d2e155eb2277fb20651067f5bcc12fc
     }
 
     let options = {
@@ -183,4 +159,3 @@ export async function Logout(req, res) {
   }
   res.end();
 }
-
