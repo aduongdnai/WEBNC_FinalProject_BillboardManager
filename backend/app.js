@@ -52,11 +52,9 @@ server.use("/api/v1/advertisingLicenseRequest", advertisingLicenseRequestRoute);
 server.use("/api/v1/editrequests", editRequestRoutes);
 server.use("/api/v1/users", userRoute);
 
-//server.use(App);
 server.use("/api/v1/district", districtRoute);
 server.use("/api/v1/ward", wardRoute);
 
-server.use(App);
 
 const httpServer = createServer(server);
 const io = new SocketIO(httpServer, {
