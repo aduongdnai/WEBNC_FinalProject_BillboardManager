@@ -24,6 +24,7 @@ function Map(props) {
             try {
 
                 const result = await adLocationAPI.getAllAdLocation();
+
                 setAdLocation(result.data);
                 const geojson = {
                     type: 'FeatureCollection',

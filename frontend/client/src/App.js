@@ -24,6 +24,7 @@ import ManageWard from "./components/ManageWard";
 
 
 
+import ProtectedProvider from "./Providers/ProtectedProvider";
 const socket = io("http://127.0.0.1:5000");
 
 
@@ -55,13 +56,16 @@ function App() {
         <Router>
           <Sidebar />
           <Routes>
-            <Route path="/map" element={<Map />} />
-            <Route path="/table-area" element={<TableQueryByArea />} />
+            <Route path="/map" element={<ProtectedProvider><Map /></ProtectedProvider>} />
+            <Route path="/table-area" element={
+              <ProtectedProvider>
+                <TableQueryByArea />
+              </ProtectedProvider>} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/account" element={<Account />} />
-            <Route path="/" element={<Navigate replace to="/map" />} />
-            <Route path="/report" element={<ReportDashboard />} />
+
+            <Route path="/report" element={<ProtectedProvider><ReportDashboard /></ProtectedProvider>} />
             <Route path="/" element={<Navigate replace to="/map" />} />
             <Route path="/ad-locations" element={<AdLocationPage />} />
             <Route path="/manage-district" element={<ManageDistrict />} />
@@ -72,10 +76,10 @@ function App() {
             />
             <Route
               path="/advertisinglicense"
-              element={<AdvertisingLicenseRequestList />}
+              element={<ProtectedProvider><AdvertisingLicenseRequestList /></ProtectedProvider>}
             />
             <Route path="/" element={<Navigate replace to="/map" />} />
-            
+
             <Route path="/view-requests" element={<ReviewRequestsPage />} />{" "}
             {/* Add the new route */}
           </Routes>

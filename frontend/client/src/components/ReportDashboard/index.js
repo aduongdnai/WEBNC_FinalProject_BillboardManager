@@ -21,13 +21,16 @@ import axios from "axios";
 import {  useUser } from "../LoginSignup/userContext";
 import Pagination from "./Pagination"
 import ReportProcessForm from "../ReportProcessForm";
+import {useSelector} from "react-redux"
 const ITEMS_PER_PAGE = 10;
 const ReportDashboard = () => {
     const [selectedReport, setSelectedReport] = useState(null);
     const [selectedAdboard, setSelectedAdboard] = useState(null);
     const [selectedAdboardLocation, setSelectedAdboardLocation] = useState(null);
 
-    const { userData } = useUser();
+    const userData = useSelector((state)=>state.auth.userData)
+    //console.log(userData);
+    //const { userData } = useUser();
     const [report, setReport] = useState([]);
 
     useEffect(() => {

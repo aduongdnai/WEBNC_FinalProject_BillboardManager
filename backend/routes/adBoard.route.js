@@ -51,8 +51,30 @@ router.post('/', async (req, res) => {
 
 
         res.status(200).json({
-            result
+            result,
+            msg: "success"
 
+        })
+
+    }
+    catch (err) {
+        console.log(err);
+        res.status(500).json({
+            error: "Internal Error"
+        })
+    }
+
+})
+router.patch('/:id', async (req, res) => {
+    try {
+
+        const result = await AdBoardModel.findOneAndUpdate({ _id: req.params.id },
+            req.body, { new: true })
+
+
+        res.status(200).json({
+            data: result,
+            msg: "success"
         })
 
     }
