@@ -7,11 +7,11 @@ import adBoardRoute from "./routes/adBoard.route.js";
 import reportRoute from "./routes/report.route.js";
 import editRequestRoutes from "./routes/editRequest.route.js";
 import advertisingLicenseRequestRoute from "./routes/advertisingLicenseRequest.route.js";
-import App from "./routes/LoginSignup.route.js";
+//import App from "./routes/LoginSignup.route.js";
 import cookieParser from "cookie-parser";
 import { Server as SocketIO } from "socket.io";
 import { createServer } from "http";
-
+import authRoute from "./routes/authen.route.js"
 
 
 const server = express();
@@ -39,12 +39,13 @@ server.get("/", (req, res) => {
 });
 
 // Routes
+server.use('/api/v1/auth', authRoute);
 server.use("/api/v1/adlocations", adLocationRoute);
 server.use("/api/v1/adboards", adBoardRoute);
 server.use("/api/v1/report", reportRoute);
 server.use("/api/v1/advertisingLicenseRequest", advertisingLicenseRequestRoute);
 server.use("/api/v1/editrequests", editRequestRoutes);
-server.use(App);
+//server.use(App);
 
 const httpServer = createServer(server);
 const io = new SocketIO(httpServer, {

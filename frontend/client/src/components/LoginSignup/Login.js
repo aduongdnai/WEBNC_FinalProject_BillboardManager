@@ -16,6 +16,9 @@ import axios from "axios";
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@chakra-ui/react';
 import { useUser } from "./userContext";
+import * as authApi from "../../apis/authApi"
+import store from "../../store";
+import { loginSuccess } from "../actions/authAction";
 function Login() {
 
 const { setUser, setUserArea, setUserData } = useUser();
@@ -26,38 +29,61 @@ const { setUser, setUserArea, setUserData } = useUser();
   const toast = useToast();
   const handleLogin = async () => {
     try {
-      const response = await axios.post("http://127.0.0.1:5000/v1/auth/login", {
+      // const response = await axios.post("http://127.0.0.1:5000/v1/auth/login", {
+      //   email: email,
+      //   password: password,
+      // });
+      const response = await authApi.login({
         email: email,
         password: password,
       });
 
-      console.log(response.data); // In kết quả trả về từ server vào console
-      setTimeout(() => {
-        navigate('/account');
-      }, 2000);
-      setUser(response.data.data.user.username);
-      const area = (response.data.data.user.ward 
-        ? `Phường ${response.data.data.user.ward}, ` 
-        : ``) 
-      + 
-        (response.data.data.user.district 
-        ? `Quận ${response.data.data.user.district}, ` 
-        : ``)
-      + 
-        `Hồ Chí Minh`;
-      console.log(area);
-      setUserArea(area);
-      const userData = response.data.data.user;
-      userData.area = area;
-      setUserData(JSON.stringify(userData));
+      console.log(response.data);
+
+      if (response.data.success){
+        
+        localStorage.setItem('accessToken', response.data.token);
+        localStorage.setItem('refreshToken',  response.data.rfToken);
+        localStorage.setItem('isAuth',  true);
+
+        const area = (response.data.userData.ward 
+          ? `Phường ${response.data.userData.ward}, ` 
+          : ``) 
+        + 
+          (response.data.userData.district 
+          ? `Quận ${response.data.userData.district}, ` 
+          : ``)
+        + 
+          `Hồ Chí Minh`;
+  
+        setUserArea(area);
+
+        const userData = response.data.userData;
+        userData.area = area;
+        setUserData(JSON.stringify(userData));
+
+        response.data.userData.area = area
+        store.dispatch(loginSuccess(response.data.token, response.data.rfToken, response.data.userData))
+
+        setTimeout(() => {
+          navigate('/map');
+        }, 2000);
+        toast({
+          title: 'Login successful.',
+          description: "You've successfully logged in.",
+          status: 'success',
+          duration: 2000,
+          isClosable: true,
+        });
+      }
+
+      
+      // setUser(response.data.data.user.username);
+      
+      
+      
       // Hiển thị thông báo khi đăng nhập thành công
-      toast({
-        title: 'Login successful.',
-        description: "You've successfully logged in.",
-        status: 'success',
-        duration: 2000,
-        isClosable: true,
-      });
+     
 
     } catch (error) {
       console.error(error); // Xử lý lỗi nếu có

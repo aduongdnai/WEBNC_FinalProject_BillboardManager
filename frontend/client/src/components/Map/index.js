@@ -24,10 +24,11 @@ function Map(props) {
             try {
 
                 const result = await adLocationAPI.getAllAdLocation();
-                setAdLocation(result.data);
+
+                setAdLocation(result.data.data);
                 const geojson = {
                     type: 'FeatureCollection',
-                    features: result.data.map((adLocation) => {
+                    features: result.data.data.map((adLocation) => {
 
                         return {
                             type: 'Feature',

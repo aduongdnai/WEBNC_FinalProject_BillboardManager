@@ -54,7 +54,8 @@ function ManageWardAndDistrict(){
         try {
 
             const result = await adLocationAPI.getAdLocationByArea({"area": area});
-            setAdLocation(result.data);
+            
+            setAdLocation(result.data.data);
             console.log(adLocation);
 
         } catch (error) {
