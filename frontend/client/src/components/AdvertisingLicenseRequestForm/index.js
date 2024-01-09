@@ -22,10 +22,11 @@ const validationSchema = Yup.object({
     endDate: Yup.date().required('Required').min(Yup.ref('startDate'), 'End date can\'t be before start date'),
 });
 
-const AdvertisingLicenseForm = ({ onSubmit }) => {
+const AdvertisingLicenseRequestForm = ({ onSubmit, adboardInfo }) => {
     const [error, setError] = useState(null);
     const [publicId, setPublicId] = useState([]);
     const { userData } = useUser();
+    console.log("ll", adboardInfo);
     const handleChangeImageUrl = (e) => {
         setPublicId(e.target.value);
 
@@ -53,6 +54,7 @@ const AdvertisingLicenseForm = ({ onSubmit }) => {
             startDate: values.startDate,
             endDate: values.endDate,
             user_id: userData._id,
+            adboard: adboardInfo._id,
         };
 
         onSubmit(advertisingLicense, actions);
@@ -144,4 +146,4 @@ const AdvertisingLicenseForm = ({ onSubmit }) => {
     );
 };
 
-export default AdvertisingLicenseForm;
+export default AdvertisingLicenseRequestForm;
