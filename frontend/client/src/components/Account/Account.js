@@ -67,6 +67,7 @@ function Account() {
   //   // Xuất ra console log để hiển thị access token
   //   console.log("Access Token:", accessToken);
   // }, []);
+  
   useEffect(() => {
     const storedUserInfo = localStorage.getItem("userData");
     if (storedUserInfo) {
@@ -128,12 +129,17 @@ function Account() {
                     name="username"
                   />
                   <FormLabel>password:</FormLabel>
+                  <Flex>
                   <Input
                     type="password"
                     variant="filled"
                     value={userData.password}
                     isReadOnly
+                    w={"50%"}
                   />
+                  <Button ml={5} colorScheme="blue" w={"40%"}>Đổi mật khẩu</Button>
+                  </Flex>
+
                   <FormLabel>role:</FormLabel>
                   <Input variant="filled" value={userData.role} isReadOnly />
                   {userData.ward !== null && ( // Kiểm tra nếu giá trị của ward không phải null thì hiển thị input
@@ -170,7 +176,7 @@ function Account() {
             Chỉnh sửa
           </Button>
         )}
-        <Link to="/premium"><Button colorScheme="blue">Nâng cấp lên gói CB_Quận/CB_Sở</Button></Link>
+        <Link to="/premium"><Button ml={5} colorScheme="blue">Nâng cấp lên gói CB_Quận/CB_Sở</Button></Link>
       </Box>
     </>
   );
