@@ -8,11 +8,11 @@ import reportRoute from "./routes/report.route.js";
 import editRequestRoutes from "./routes/editRequest.route.js";
 import userRoute from "./routes/user.route.js";
 import advertisingLicenseRequestRoute from "./routes/advertisingLicenseRequest.route.js";
-import App from "./routes/LoginSignup.route.js";
+//import App from "./routes/LoginSignup.route.js";
 import cookieParser from "cookie-parser";
 import { Server as SocketIO } from "socket.io";
 import { createServer } from "http";
-
+import authRoute from "./routes/authen.route.js"
 
 
 const server = express();
@@ -40,38 +40,46 @@ server.get("/", (req, res) => {
 });
 
 // Routes
+server.use('/api/v1/auth', authRoute);
 server.use("/api/v1/adlocations", adLocationRoute);
 server.use("/api/v1/adboards", adBoardRoute);
 server.use("/api/v1/report", reportRoute);
 server.use("/api/v1/advertisingLicenseRequest", advertisingLicenseRequestRoute);
 server.use("/api/v1/editrequests", editRequestRoutes);
 server.use("/api/v1/users", userRoute);
-server.use(App);
+
+//server.use(App);
 
 const httpServer = createServer(server);
 const io = new SocketIO(httpServer, {
   cors: {
-    origin: "http://localhost:3000", // Adjust the allowed origin(s) accordingly
+    origin: "*", // Adjust the allowed origin(s) accordingly
     methods: ["GET", "POST"],
     credentials: true,
   },
 });
 
 const connectedClients = new Set();
-
-io.on("connection", (socket) => {
-  console.log("Client connected");
+const connectedCitizens = new Set();
+io.on('connection', (socket) => {
+  console.log('Client connected');
 
   // Handle authentication
-  socket.on("authenticate", (token) => {
+  socket.on('authenticate', (token) => {
     // Simulate authentication logic or replace it with your actual authentication process
-    if (token === "CLIENT") {
-      console.log("Client authenticated");
+    if (token === 'CLIENT') {
+      console.log('Client authenticated');
       if (!connectedClients.has(socket.id)) {
         connectedClients.add(socket.id);
       }
+    }
+    else if (token === 'CITIZEN') {
+      console.log('Citizen authenticated');
+      if (!connectedCitizens.has(socket.id)) {
+        connectedCitizens.add(socket.id);
+      }
     } else {
-      console.log("Client authentication failed");
+      console.log('Authentication failed');
       socket.disconnect(true);
     }
   });
@@ -84,6 +92,7 @@ io.on("connection", (socket) => {
 
 global.io = io;
 global.connectedClients = connectedClients;
+global.connectedCitizens = connectedCitizens;
 
 httpServer.listen(process.env.PORT, () => {
   console.log(`Server is listening at http://127.0.0.1:${process.env.PORT}`);

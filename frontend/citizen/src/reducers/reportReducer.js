@@ -18,8 +18,6 @@ const reportReducer = (state = initialState, action) => {
             };
         case 'GET_ALL_REPORTS':
             return state.reports;
-        case 'GET_REPORT_BY_ID':
-            return state.reports.find(report => report._id === action.payload);
         default:
             return state;
     }

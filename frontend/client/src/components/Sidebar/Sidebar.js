@@ -20,18 +20,24 @@ import { MdOutlineManageAccounts } from "react-icons/md";
 import { BsFillPinMapFill } from "react-icons/bs";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../LoginSignup/userContext";
-
-
+import store from "../../store";
+import { logout } from "../actions/authAction";
+import {useSelector} from "react-redux" 
 
 
 export default function Sidebar() {
   const navigate = useNavigate();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const btnRef = React.useRef();
-  const { username, area, logout } = useUser();
+  //const { username, area } = useUser();
   const handleLogout = () => {
-    logout(); // Gọi hàm logout khi người dùng nhấn logout
+    store.dispatch(logout())
+    navigate('/login')
+    
   };
+
+  const userData = useSelector((state) => state.auth.userData);
+
   return (
     <Flex
       pos="sticky"
@@ -49,8 +55,8 @@ export default function Sidebar() {
           <DrawerCloseButton />
           <DrawerHeader>Billboard Manager</DrawerHeader>
 
-          {username ? (
-            <DrawerHeader>Welcome, {username} </DrawerHeader>
+          {userData ? (
+            <DrawerHeader>Welcome, {userData.username} </DrawerHeader>
           ) : (
             <DrawerHeader></DrawerHeader>
           )}
@@ -114,9 +120,9 @@ export default function Sidebar() {
           mt={5}
           _hover={{ backgroundColor: "#AEC8CA" }}
           icon={<HamburgerIcon />}
-          onClick={username ? (onOpen): (onClose)}
+          onClick={userData ? (onOpen): (onClose)}
         />
-        {username ? 
+        {userData ? 
           (
             <Tooltip label='Logout'>
               <IconButton
