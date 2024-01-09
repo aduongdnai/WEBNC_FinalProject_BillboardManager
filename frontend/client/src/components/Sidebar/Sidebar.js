@@ -32,6 +32,8 @@ export default function Sidebar() {
   //const { username, area } = useUser();
   const handleLogout = () => {
     store.dispatch(logout())
+    navigate('/login')
+    
   };
 
   const userData = useSelector((state) => state.auth.userData);
