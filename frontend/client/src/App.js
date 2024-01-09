@@ -5,7 +5,7 @@ import {
   Route,
   Navigate,
 } from "react-router-dom";
-import ManageWardAndDistrict from "./components/ManageWardAndDistrict";
+import TableQueryByArea from "./components/TableQueryByArea";
 import Login from "./components/LoginSignup/Login";
 import Signup from "./components/LoginSignup/Signup";
 import { UserProvider } from "./components/LoginSignup/userContext";
@@ -21,7 +21,11 @@ import { useEffect } from "react";
 import { useToast } from "@chakra-ui/react";
 import Premium from "./components/Account/Premium";
 
+
+
+import ProtectedProvider from "./Providers/ProtectedProvider";
 const socket = io("http://127.0.0.1:5000");
+
 
 function App() {
   const toast = useToast();
@@ -51,13 +55,16 @@ function App() {
         <Router>
           <Sidebar />
           <Routes>
-            <Route path="/map" element={<Map />} />
-            <Route path="/manage" element={<ManageWardAndDistrict />} />
+            <Route path="/map" element={<ProtectedProvider><Map /></ProtectedProvider>} />
+            <Route path="/table-area" element={
+              <ProtectedProvider>
+                <TableQueryByArea />
+              </ProtectedProvider>} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/account" element={<Account />} />
-            <Route path="/" element={<Navigate replace to="/map" />} />
-            <Route path="/report" element={<ReportDashboard />} />
+
+            <Route path="/report" element={<ProtectedProvider><ReportDashboard /></ProtectedProvider>} />
             <Route path="/" element={<Navigate replace to="/map" />} />
             <Route path="/ad-locations" element={<AdLocationPage />} />
             <Route path="/premium" element={<Premium />} />
@@ -67,10 +74,10 @@ function App() {
             />
             <Route
               path="/advertisinglicense"
-              element={<AdvertisingLicenseRequestList />}
+              element={<ProtectedProvider><AdvertisingLicenseRequestList /></ProtectedProvider>}
             />
             <Route path="/" element={<Navigate replace to="/map" />} />
-            
+
             <Route path="/view-requests" element={<ReviewRequestsPage />} />{" "}
             {/* Add the new route */}
           </Routes>

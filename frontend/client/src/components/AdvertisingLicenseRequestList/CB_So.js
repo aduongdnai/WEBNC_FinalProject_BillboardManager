@@ -25,6 +25,7 @@ function AdvertisingLicenseRequestListCBSO({ requests }) {
     const handleViewRequest = async (request) => {
 
         try {
+            console.log(request);
             const result = await userApi.getUserByID(request.user_id);
             console.log(result);
             setRequest({ ...request, poster_email: result.data.email });

@@ -1,4 +1,4 @@
-table {
+/* table {
   width: 100%;
   border-collapse: collapse;
 }
@@ -37,4 +37,49 @@ button {
 
 button:hover {
   opacity: 0.8;
+} */
+
+
+/* reviewRequest.css */
+
+.review-requests-container table {
+  width: 100%;
+  border-collapse: collapse;
 }
+
+.review-requests-container th,
+.review-requests-container td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+
+.review-requests-container th {
+  background-color: #f2f2f2;
+}
+
+.review-requests-container tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+.review-requests-container button {
+  padding: 5px 10px;
+  margin: 5px;
+  border: none;
+  cursor: pointer;
+}
+
+.review-requests-container .approve-btn {
+  background-color: #4caf50;
+  color: white;
+}
+
+.review-requests-container .reject-btn {
+  background-color: #f44336;
+  color: white;
+}
+
+.review-requests-container button:hover {
+  opacity: 0.8;
+}
+

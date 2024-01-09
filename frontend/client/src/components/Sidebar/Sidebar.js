@@ -15,14 +15,14 @@ import {
 } from "@chakra-ui/react";
 import { HamburgerIcon, WarningTwoIcon } from "@chakra-ui/icons";
 import { CiLogin, CiLogout } from "react-icons/ci";
-import { BsTable } from "react-icons/bs";
+import { BsTable, BsClipboard2Check } from "react-icons/bs";
 import { MdOutlineManageAccounts } from "react-icons/md";
 import { BsFillPinMapFill } from "react-icons/bs";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../LoginSignup/userContext";
 import store from "../../store";
 import { logout } from "../actions/authAction";
-import {useSelector} from "react-redux" 
+import { useSelector } from "react-redux"
 
 
 export default function Sidebar() {
@@ -33,7 +33,7 @@ export default function Sidebar() {
   const handleLogout = () => {
     store.dispatch(logout())
     navigate('/login')
-    
+
   };
 
   const userData = useSelector((state) => state.auth.userData);
@@ -81,7 +81,7 @@ export default function Sidebar() {
               leftIcon={<BsTable />}
               width={"270px"}
               justifyContent={"start"}
-              onClick={() => navigate("/manage")}
+              onClick={() => navigate("/table-area")}
             >
               Table Management
             </Button>
@@ -96,6 +96,18 @@ export default function Sidebar() {
               onClick={() => navigate("/report")}
             >
               Report Management
+            </Button>
+            <Button
+              background="none"
+              fontSize="15px"
+              ref={btnRef}
+              _hover={{ backgroundColor: "#AEC8CA" }}
+              leftIcon={<BsClipboard2Check />}
+              width={"270px"}
+              justifyContent={"start"}
+              onClick={() => navigate("/advertisinglicense")}
+            >
+              Advertising License Management
             </Button>
             <Button
               background="none"
@@ -120,9 +132,9 @@ export default function Sidebar() {
           mt={5}
           _hover={{ backgroundColor: "#AEC8CA" }}
           icon={<HamburgerIcon />}
-          onClick={userData ? (onOpen): (onClose)}
+          onClick={userData ? (onOpen) : (onClose)}
         />
-        {userData ? 
+        {userData ?
           (
             <Tooltip label='Logout'>
               <IconButton

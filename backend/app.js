@@ -15,6 +15,10 @@ import { createServer } from "http";
 import authRoute from "./routes/authen.route.js"
 
 
+import districtRoute from "./routes/district.route.js";
+import wardRoute from "./routes/ward.route.js";
+
+
 const server = express();
 
 server.use(cors());
@@ -48,7 +52,9 @@ server.use("/api/v1/advertisingLicenseRequest", advertisingLicenseRequestRoute);
 server.use("/api/v1/editrequests", editRequestRoutes);
 server.use("/api/v1/users", userRoute);
 
-//server.use(App);
+server.use("/api/v1/district", districtRoute);
+server.use("/api/v1/ward", wardRoute);
+
 
 const httpServer = createServer(server);
 const io = new SocketIO(httpServer, {
