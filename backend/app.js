@@ -8,6 +8,9 @@ import adBoardRoute from "./routes/adBoard.route.js";
 import reportRoute from "./routes/report.route.js";
 import App from "./routes/LoginSignup.route.js";
 import cookieParser from "cookie-parser";
+import districtRoute from "./routes/district.route.js";
+import wardRoute from "./routes/ward.route.js";
+
 
 const server = express();
 
@@ -39,6 +42,9 @@ server.get("/", (req, res) => {
 server.use("/api/v1/adlocations", adLocationRoute);
 server.use("/api/v1/adboards", adBoardRoute);
 server.use("/api/v1/report", reportRoute);
+server.use("/api/v1/district", districtRoute);
+server.use("/api/v1/ward", wardRoute);
+
 server.use(App);
 
 

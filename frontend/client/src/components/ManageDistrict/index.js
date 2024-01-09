@@ -1,10 +1,22 @@
 import {
-    Icon,
+  Icon,
+  Button,  
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton,
+  useDisclosure,
 } from '@chakra-ui/react';
 import { FaEye,FaPen } from "react-icons/fa";
 import { IoSearchOutline } from "react-icons/io5";
+import { CiCirclePlus } from "react-icons/ci";
+import { SiBillboard } from "react-icons/si";
+import { FaTrashAlt } from "react-icons/fa";
 import { useNavigate } from 'react-router-dom';
-import adLocationAPI from '../../apis/adLocationApi';
+import districtAPI from '../../apis/districtApi';
 import { useEffect, useState} from 'react';
 import { Image as CloudinaryImage, CloudinaryContext } from 'cloudinary-react';
 import { useUser } from '../LoginSignup/userContext';
@@ -17,29 +29,20 @@ import ToolkitProvider, { Search } from 'react-bootstrap-table2-toolkit/dist/rea
 
 
 
-function imageFormatter(cell, row, rowIndex){
-  return (
-    <CloudinaryContext cloudName={process.env.REACT_APP_CLOUDINARY_CLOUD_NAME} secure="true" upload_preset="my_unsigned_preset">
-      <CloudinaryImage key={rowIndex} publicId={row.image} width="150" height="150" />
-    </CloudinaryContext>
-  )
-}
 
 
-
-
-function ManageWardAndDistrict(){
+function ManageDistrict(){
   const navigate = useNavigate();
   const { area } = useUser();
-  const [adLocation, setAdLocation] = useState(null);
-  // const { SearchBar } = Search;
+  const [district, setDistrict] = useState(null);
+  const { isOpen, onOpen, onClose } = useDisclosure();
   useEffect(() => {
     const fetchData = async () => {
         try {
 
-            const result = await adLocationAPI.getAdLocationByArea({"area": area});
-            setAdLocation(result.data);
-            console.log(adLocation);
+            const result = await districtAPI.getAllDistrict();
+            setDistrict(result.data);
+            console.log(result);
 
         } catch (error) {
             console.error('Error fetching data:', error);
@@ -52,40 +55,19 @@ function ManageWardAndDistrict(){
   }, []);
 
 
-  useEffect(() =>{
-    console.log(area);
-  });
-
-
   const columns = [
     {
-      dataField: 'image',
-      text: 'Image',
-      formatter: imageFormatter
-    },
-    {
-    dataField: 'address',
-    text: 'Address'
+    dataField: 'name',
+    text: 'District'
     }, 
-    {
-      dataField: 'locationType',
-      text: 'locationType'
-    }, 
-    {
-      dataField: 'advertisingType',
-      text: 'advertisingType'
-    },
-    {
-      dataField: 'planned',
-      text: 'Planned'
-    },
     {
       dataField: 'action',
       isDummyField: true,
       text: 'Action',
       formatter: (cellContent, row) => {
+        console.log(row.name);
         return(
-          <div style={{display:"flex"}}>
+          <div style={{display:"flex", alignItems:"center"}}>
           <Icon 
             variant="unstyled" 
             as={FaEye} 
@@ -94,7 +76,7 @@ function ManageWardAndDistrict(){
             marginRight={5} 
             // marginLeft={2} 
             onClick={
-              () => navigate('/')
+              () => navigate('/manage-ward',{state: { district: row?.name }})
             }
             _hover={{color:'blue'}}
           />
@@ -102,6 +84,20 @@ function ManageWardAndDistrict(){
             as={FaPen} 
             w={4} 
             h={4}
+            marginRight={5} 
+            _hover={{color:'blue'}}
+          />
+          <Icon 
+            as={FaTrashAlt} 
+            w={4} 
+            h={4}
+            marginRight={5} 
+            _hover={{color:'red'}}
+          />
+          <Icon 
+            as={SiBillboard} 
+            w={8} 
+            h={8}
             _hover={{color:'blue'}}
           />
           </div>
@@ -164,6 +160,11 @@ function ManageWardAndDistrict(){
           }}
           placeholder='Search'
           />
+          <div style={{width:"100%",display:"flex",justifyContent:"flex-end"}}>
+          <Button leftIcon={<CiCirclePlus size="20" />} justifyContent="flex-start" width="200px" colorScheme='teal' variant='solid' onClick={onOpen}>
+            Add
+          </Button>
+          </div>
         </div>
     );
   };
@@ -171,10 +172,27 @@ function ManageWardAndDistrict(){
   const CaptionElement = () => <h3 style={{ borderRadius: '0.25em', textAlign: 'center', color: 'purple', border: '1px solid purple', padding: '0.5em', marginTop:"15px" }}>{area}</h3>;
     return(
       <div style={{width:"95%"}}>
-        {adLocation ? (
+        <Modal isOpen={isOpen} onClose={onClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Add District</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            
+          </ModalBody>
+
+          <ModalFooter>
+            <Button colorScheme='blue' mr={3} onClick={onClose}>
+              Close
+            </Button>
+            <Button variant='ghost'>Secondary Action</Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+        {district ? (
           <ToolkitProvider
             keyField="id"
-            data={ adLocation }
+            data={ district }
             columns={ columns }
             search
           >
@@ -187,7 +205,6 @@ function ManageWardAndDistrict(){
                   />
                   <BootstrapTable
                     { ...props.baseProps }
-                    // caption={<CaptionElement/>}
                     pagination={paginationFactory(options)} 
                     bordered= {false}
                   />
@@ -204,7 +221,7 @@ function ManageWardAndDistrict(){
 }
 
 
-export default ManageWardAndDistrict;
+export default ManageDistrict;
 
 
 

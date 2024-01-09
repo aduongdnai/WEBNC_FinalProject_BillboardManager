@@ -5,7 +5,7 @@ import {
   Route,
   Navigate,
 } from "react-router-dom";
-import ManageWardAndDistrict from "./components/ManageWardAndDistrict";
+import TableQueryByArea from "./components/TableQueryByArea";
 import Login from "./components/LoginSignup/Login";
 import Signup from "./components/LoginSignup/Signup";
 import { UserProvider } from "./components/LoginSignup/userContext";
@@ -14,6 +14,8 @@ import AdLocationPage from "./components/adLocation/AdLocationPage";
 import AdBoardsDisplay from "./components/AdBoard/AdBoardsDisplay";
 import ViewAndReviewRequests from "./components/adLocation/ViewAndReviewRequests";
 import ReportDashboard from "./components/ReportDashboard";
+import ManageDistrict from "./components/ManageDistrict";
+import ManageWard from "./components/ManageWard";
 
 function App() {
   return (
@@ -23,12 +25,14 @@ function App() {
           <Sidebar />
           <Routes>
             <Route path="/map" element={<Map />} />
-            <Route path="/manage" element={<ManageWardAndDistrict />} />
+            <Route path="/manage" element={<TableQueryByArea />} />
             <Route path="/login" element={<Login />} />
             <Route path="/report" element={<ReportDashboard />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/" element={<Navigate replace to="/map" />} />
             <Route path="/ad-locations" element={<AdLocationPage />} />
+            <Route path="/manage-district" element={<ManageDistrict />} />
+            <Route path="/manage-ward" element={<ManageWard />} />
             <Route
               path="/ad-boards/:locationId"
               element={<AdBoardsDisplay />}
