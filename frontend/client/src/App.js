@@ -19,6 +19,7 @@ import ReviewRequestsPage from "./components/adLocation/ReviewRequestsPage";
 import io from "socket.io-client";
 import { useEffect } from "react";
 import { useToast } from "@chakra-ui/react";
+import Premium from "./components/Account/Premium";
 
 const socket = io("http://127.0.0.1:5000");
 
@@ -59,6 +60,7 @@ function App() {
             <Route path="/report" element={<ReportDashboard />} />
             <Route path="/" element={<Navigate replace to="/map" />} />
             <Route path="/ad-locations" element={<AdLocationPage />} />
+            <Route path="/premium" element={<Premium />} />
             <Route
               path="/ad-boards/:locationId"
               element={<AdBoardsDisplay />}

@@ -8,7 +8,7 @@ POST http://127.0.0.1:5000/v1/auth/register
 Content-Type: application/json
 
 {
-    "email": "admin1@gmail.com",
+    "email": "admin15@gmail.com",
     "password": 123123123,
     "username": "hoang",
     "role": "CB-Phuong",
@@ -19,7 +19,7 @@ Content-Type: application/json
 
 ###login
 
-POST http://127.0.0.1:5000/v1/auth/login
+POST http://127.0.0.1:5000/api/v1/auth/login
 Content-Type: application/json
 
 {
@@ -28,9 +28,9 @@ Content-Type: application/json
 }
 
 ###logout
-GET http://127.0.0.1:5000/v1/auth/logout
+GET http://127.0.0.1:5000/api/v1/auth/logout
 ###user
-GET http://127.0.0.1:5000/v1/user
+GET http://127.0.0.1:5000/api/v1/users/659519f5ccce2036500c2bcd
 
 
 

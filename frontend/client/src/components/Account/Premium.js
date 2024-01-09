@@ -8,6 +8,7 @@ import {
   FormLabel,
   Heading,
   Input,
+  Select,
   Stack,
   Text,
   VStack,
@@ -18,8 +19,9 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
-function Account() {
+function Premium() {
   const toast = useToast();
+  const [isRoleSelectDisabled, setIsRoleSelectDisabled] = useState(true);
   const [userData, setUserData] = useState({
     email: "",
     username: "",
@@ -31,6 +33,7 @@ function Account() {
   const [isEditing, setIsEditing] = useState(false);
   const handleEditClick = () => {
     setIsEditing(!isEditing);
+    setIsRoleSelectDisabled(false);
   };
 
   const handleInputChange = (e) => {
@@ -49,9 +52,9 @@ function Account() {
       setIsEditing(false);
       console.log("User updated successfully", response.data);
       toast({
-        title: 'Update successful.',
+        title: "Update successful.",
         description: "You've successfully updated.",
-        status: 'success',
+        status: "success",
         duration: 2000,
         isClosable: true,
       });
@@ -60,13 +63,17 @@ function Account() {
       // Xử lý lỗi khi cập nhật thông tin người dùng
     }
   };
-  // useEffect(() => {
-  //   // Lấy access token từ localStorage
-  //   const accessToken = localStorage.getItem('accessToken');
-
-  //   // Xuất ra console log để hiển thị access token
-  //   console.log("Access Token:", accessToken);
-  // }, []);
+  const handleRoleChange = (e) => {
+    const { value } = e.target;
+  
+    // Nếu giá trị role thay đổi thành CB_Sở, đặt ward và district về null
+    if (value === 'CB_Sở') {
+      setUserData({ ...userData, role: value, ward: null, district: null });
+    } else {
+      // Nếu giá trị role không phải CB_Sở, chỉ cập nhật giá trị của role
+      setUserData({ ...userData, role: value });
+    }
+  };
   useEffect(() => {
     const storedUserInfo = localStorage.getItem("userData");
     if (storedUserInfo) {
@@ -100,7 +107,7 @@ function Account() {
         borderRadius={10}
       >
         <Heading size="md" mb={4}>
-          User Profile
+          Role user
         </Heading>
         <Flex align="center" w={"60vw"}>
           <Stack w="100%" direction="row" spacing={8}>
@@ -117,26 +124,21 @@ function Account() {
                   </WrapItem>
                 </Box>
                 <Stack spacing={2} w="50%">
-                  <FormLabel>E-mail Address</FormLabel>
-                  <Input variant="filled" value={userData.email} isReadOnly />
-                  <FormLabel>Username:</FormLabel>
-                  <Input
-                    variant="filled"
-                    value={userData.username}
-                    isReadOnly={!isEditing}
-                    onChange={handleInputChange}
-                    name="username"
-                  />
-                  <FormLabel>password:</FormLabel>
-                  <Input
-                    type="password"
-                    variant="filled"
-                    value={userData.password}
-                    isReadOnly
-                  />
                   <FormLabel>role:</FormLabel>
-                  <Input variant="filled" value={userData.role} isReadOnly />
-                  {userData.ward !== null && ( // Kiểm tra nếu giá trị của ward không phải null thì hiển thị input
+                  <Select
+                    disabled={isRoleSelectDisabled}
+                    variant="filled"
+                    value={userData.role}
+                    isReadOnly={!isEditing}
+                    onChange={handleRoleChange}
+                    // Tùy chọn roles
+                  >
+                    <option value="CB_Phường">CB_Phường</option>
+                    <option value="CB_Quận">CB_Quận</option>
+                    <option value="CB_Sở">CB_Sở</option>
+                    {/* Các tùy chọn khác nếu có */}
+                  </Select>
+                  {userData.role !== "CB_Sở" && ( // Nếu role không phải là CB_Sở thì hiển thị trường ward
                     <>
                       <FormLabel>ward:</FormLabel>
                       <Input
@@ -148,14 +150,18 @@ function Account() {
                       />
                     </>
                   )}
-                  <FormLabel>district:</FormLabel>
-                  <Input
-                    variant="filled"
-                    value={userData.district}
-                    isReadOnly={!isEditing}
-                    onChange={handleInputChange}
-                    name="district"
-                  />
+                  {userData.role !== "CB_Sở" && ( // Nếu role không phải là CB_Sở thì hiển thị trường district
+                    <>
+                      <FormLabel>district:</FormLabel>
+                      <Input
+                        variant="filled"
+                        value={userData.district}
+                        isReadOnly={!isEditing}
+                        onChange={handleInputChange}
+                        name="district"
+                      />
+                    </>
+                  )}
                 </Stack>
               </Flex>
             </Box>
@@ -167,13 +173,12 @@ function Account() {
           </Button>
         ) : (
           <Button colorScheme="blue" onClick={handleEditClick}>
-            Chỉnh sửa
+            Nâng cấp
           </Button>
         )}
-        <Link to="/premium"><Button colorScheme="blue">Nâng cấp lên gói CB_Quận/CB_Sở</Button></Link>
       </Box>
     </>
   );
 }
 
-export default Account;
+export default Premium;
