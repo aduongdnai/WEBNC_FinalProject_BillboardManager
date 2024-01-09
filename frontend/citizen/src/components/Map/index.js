@@ -26,6 +26,7 @@ function Map(props) {
     const [geoJsonAdLocation, setGeoJsonAdLocation] = useState(null);
     const [filters, setFilters] = useState({ planned: false, reported: false });
     const viewport = useSelector(state => state.viewport)
+    const report = useSelector(state => state.report.reports)
     const dispatch = useDispatch()
     const mapRef = useRef(null);
     const geolocateStyle = {
@@ -58,7 +59,8 @@ function Map(props) {
                 const geojson = {
                     type: 'FeatureCollection',
                     features: result.data.map((adLocation) => {
-                        const rp = JSON.parse(localStorage.getItem(`report_${adLocation._id}`)) || { isReported: false };
+                        const rp = report.find((report) => report.reference_id === adLocation._id && report.type === "plannedLocation") || { isReported: false };
+                        console.log("rp", rp);
                         const adjust_rp = { ...rp, rp_id: rp._id }
                         delete adjust_rp._id;
                         return {

@@ -14,14 +14,23 @@ import { InfoOutlineIcon, WarningTwoIcon } from '@chakra-ui/icons';
 import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
 import { Carousel } from 'react-responsive-carousel';
 import ReportForm from '../ReportForm';
+import { useSelector } from 'react-redux';
 function AdBoardList(props) {
     const { info } = props;
     //const { isOpen, onOpen, onClose } = useDisclosure()
     const { isOpen: isInfoModalOpen, onOpen: onInfoModalOpen, onClose: onInfoModalClose } = useDisclosure();
     const { isOpen: isReportModalOpen, onOpen: onReportModalOpen, onClose: onReportModalClose } = useDisclosure();
     const { isOpen: isReportDetailOpen, onOpen: onReportDetailOpen, onClose: onReportDetailClose } = useDisclosure();
-    const rp = JSON.parse(localStorage.getItem(`report_${info._id}`));
-    const report = rp ? rp : { isReported: false, images: [] };
+
+    const rp = useSelector((state) => state.report.reports.find((r) => r.reference_id === info._id));
+    
+    const report = rp ? { ...rp } : { isReported: false, images: [] };
+    if (report.status === 'Pending' || report.status === 'Processing') {
+        report.isReported =  true;
+    }
+    if (report.status === 'Processed') {
+        report.isReported =  false;
+    }
     return (
 
         <Card

@@ -8,6 +8,8 @@ import 'react-quill/dist/quill.snow.css'; // import styles
 import ReCAPTCHA from "react-google-recaptcha";
 import ImageUploaderWithWidget from '../ImageUploaderWithWidget';
 import CustomInput from '../CustomInput';
+import store from '../../store';
+import { addReport } from '../actions/reportAction';
 const ReportForm = (props) => {
     const { info } = props;
     console.log(info);
@@ -57,8 +59,8 @@ const ReportForm = (props) => {
                 rp = rp ? JSON.parse(rp) : [];
                 rp.push(apiResponse.data);
                 localStorage.setItem('report', JSON.stringify(rp));
-
-                localStorage.setItem(`report_${values.reference_id}`, JSON.stringify({ ...apiResponse.data, isReported: true }));
+                store.dispatch(addReport(apiResponse.data));
+                //localStorage.setItem(`report_${values.reference_id}`, JSON.stringify({ ...apiResponse.data, isReported: true }));
             } catch (error) {
                 // Handle any errors from the server
                 console.error(error);
@@ -137,7 +139,7 @@ const ReportForm = (props) => {
                                 onChange={handleChangeImageUrl}
                             >
                             </CustomInput>
-                            <ImageUploaderWithWidget onUpLoadSuccess={hanleUploadImage}></ImageUploaderWithWidget>
+                            <ImageUploaderWithWidget onUpLoadSuccess={hanleUploadImage} folder='report' ></ImageUploaderWithWidget>
 
                             <br />
                             <ReCAPTCHA ref={recaptchaRef} sitekey="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI" /> {/* Replace with your reCAPTCHA site key */}

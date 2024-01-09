@@ -12,6 +12,10 @@ const advertisingLicenseSchema = new mongoose.Schema({
             address: String
         }
     },
+    user_id: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+    },
     adContent: String,
     adImage: [String],
     startDate: Date,
@@ -19,5 +23,5 @@ const advertisingLicenseSchema = new mongoose.Schema({
     status: String, // 'Pending', 'Approved', 'Rejected'
 });
 
-const AdvertisingLicenseModel = mongoose.model('AdvertisingLicense', advertisingLicenseSchema);
+const AdvertisingLicenseModel = mongoose.model('AdvertisingLicenseRequest', advertisingLicenseSchema);
 export default AdvertisingLicenseModel;

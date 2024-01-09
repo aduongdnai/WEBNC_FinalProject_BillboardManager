@@ -9,8 +9,13 @@ router.post('/', async (req, res) => {
     const newReport = new UserReportModel(reportData);
 
     try {
-        await newReport.save();
+        await newReport.save();    
         res.status(201).json(newReport);
+        for (const clientId of global.connectedClients) {
+            console.log(clientId);
+            global.io.to(clientId).emit('notification', newReport);
+        }
+
     } catch (error) {
         res.status(409).json({ message: error.message });
     }
@@ -23,6 +28,10 @@ router.put('/:id', async (req, res) => {
     try {
         const updatedReport = await UserReportModel.findByIdAndUpdate(id, { processMethod, status, updatedTime }, { new: true });
         res.status(200).json(updatedReport);
+        for (const citizenId of global.connectedCitizens) {
+            console.log(citizenId);
+            global.io.to(citizenId).emit('notification', updatedReport);
+        }
     } catch (error) {
         res.status(500).json({ message: error.message });
     }

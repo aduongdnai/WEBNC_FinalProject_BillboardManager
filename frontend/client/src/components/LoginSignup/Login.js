@@ -17,7 +17,8 @@ import { useNavigate } from 'react-router-dom';
 import { useToast } from '@chakra-ui/react';
 import { useUser } from "./userContext";
 function Login() {
-  const { setUser, setUserArea, setUserData } = useUser();
+
+const { setUser, setUserArea, setUserData } = useUser();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -32,7 +33,7 @@ function Login() {
 
       console.log(response.data); // In kết quả trả về từ server vào console
       setTimeout(() => {
-        navigate('/map');
+        navigate('/account');
       }, 2000);
       setUser(response.data.data.user.username);
       const area = (response.data.data.user.ward 
