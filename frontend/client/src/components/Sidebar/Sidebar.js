@@ -15,7 +15,7 @@ import {
 } from "@chakra-ui/react";
 import { HamburgerIcon, WarningTwoIcon } from "@chakra-ui/icons";
 import { CiLogin, CiLogout } from "react-icons/ci";
-import { BsTable, BsClipboard2Check } from "react-icons/bs";
+import { BsTable, BsClipboard2Check, BsPersonFillAdd  } from "react-icons/bs";
 import { MdOutlineManageAccounts } from "react-icons/md";
 import { BsFillPinMapFill } from "react-icons/bs";
 import { useNavigate } from "react-router-dom";
@@ -121,6 +121,18 @@ export default function Sidebar() {
             >
               Account
             </Button>
+            {userData && userData.role === "CB-So" ? (<Button
+              background="none"
+              fontSize="15px"
+              ref={btnRef}
+              width={"270px"}
+              justifyContent={"start"}
+              _hover={{ backgroundColor: "#AEC8CA" }}
+              leftIcon={<BsPersonFillAdd  />}
+              onClick={() => navigate("/signup")}
+            >
+              Cấp phát tài khoản
+            </Button>):(<></>)}
           </DrawerBody>
         </DrawerContent>
       </Drawer>
