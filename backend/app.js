@@ -14,7 +14,7 @@ import { Server as SocketIO } from "socket.io";
 import { createServer } from "http";
 import authRoute from "./routes/authen.route.js"
 
-
+import reportTypeRoute from "./routes/reportType.route.js";
 import districtRoute from "./routes/district.route.js";
 import wardRoute from "./routes/ward.route.js";
 
@@ -51,7 +51,7 @@ server.use("/api/v1/report", reportRoute);
 server.use("/api/v1/advertisingLicenseRequest", advertisingLicenseRequestRoute);
 server.use("/api/v1/editrequests", editRequestRoutes);
 server.use("/api/v1/users", userRoute);
-
+server.use("/api/v1/reportTypes", reportTypeRoute);
 server.use("/api/v1/district", districtRoute);
 server.use("/api/v1/ward", wardRoute);
 

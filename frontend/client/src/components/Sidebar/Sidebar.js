@@ -15,7 +15,7 @@ import {
 } from "@chakra-ui/react";
 import { HamburgerIcon, WarningTwoIcon } from "@chakra-ui/icons";
 import { CiLogin, CiLogout } from "react-icons/ci";
-import { BsTable, BsClipboard2Check, BsPersonFillAdd  } from "react-icons/bs";
+import { BsTable, BsClipboard2Check, BsPersonFillAdd, BsArrowRightCircle   } from "react-icons/bs";
 import { MdOutlineManageAccounts } from "react-icons/md";
 import { BsFillPinMapFill } from "react-icons/bs";
 import { useNavigate } from "react-router-dom";
@@ -109,6 +109,7 @@ export default function Sidebar() {
             >
               Advertising License Management
             </Button>
+            
             <Button
               background="none"
               fontSize="15px"
@@ -121,7 +122,7 @@ export default function Sidebar() {
             >
               Account
             </Button>
-            {userData && userData.role === "CB-So" ? (<Button
+            {userData && userData.role === "CB-So" ? (<><Button
               background="none"
               fontSize="15px"
               ref={btnRef}
@@ -132,7 +133,19 @@ export default function Sidebar() {
               onClick={() => navigate("/signup")}
             >
               Cấp phát tài khoản
-            </Button>):(<></>)}
+            </Button>
+            <Button
+            background="none"
+            fontSize="15px"
+            ref={btnRef}
+            width={"270px"}
+            justifyContent={"start"}
+            _hover={{ backgroundColor: "#AEC8CA" }}
+            leftIcon={<BsArrowRightCircle  />}
+            onClick={() => navigate("/report-types")}
+          >
+            Report Types Management
+          </Button></>):(<></>)}
           </DrawerBody>
         </DrawerContent>
       </Drawer>

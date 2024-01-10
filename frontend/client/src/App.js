@@ -27,6 +27,7 @@ import NotifyProvider from "./Providers/NotifyProvider";
 
 import ProtectedProvider from "./Providers/ProtectedProvider";
 import ReportDetail from "./components/ReportDetail";
+import ReportTypesManagement from "./components/ReportTypesManagement";
 const socket = io("http://127.0.0.1:5000");
 
 
@@ -94,6 +95,7 @@ function App() {
 
             <Route path="/report" element={<ProtectedProvider><ReportDashboard /></ProtectedProvider>} />
             <Route path="/report/:rpId" element={<ProtectedProvider><ReportDetail /></ProtectedProvider>} />
+            <Route path="/report-types" element={<ProtectedProvider><ReportTypesManagement /></ProtectedProvider>} />
             <Route path="/" element={<Navigate replace to="/map" />} />
             <Route path="/ad-locations" element={<AdLocationPage />} />
             <Route path="/premium" element={<Premium />} />

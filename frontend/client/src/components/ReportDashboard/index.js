@@ -153,7 +153,7 @@ const ReportDashboard = () => {
     const currentItems = report.slice(indexOfFirstItem, indexOfLastItem);
     return (
         <Box style={{ width: "100%", height: "100vh" }}>
-            <Table variant="striped" colorScheme='green'>
+            <Table colorScheme='green'>
                 <Thead>
                     <Tr>
                         <Th>Thời điểm gửi</Th>
