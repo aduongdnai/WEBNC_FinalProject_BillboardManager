@@ -53,5 +53,37 @@ router.put('/:id', async (req, res) => {
     }
 });
 
+router.post("/findDistrict", async (req, res) => {
+    try {
+      const data = await DistrictModel.find({
+        name: { $regex: req.body.area, $options: 'i' },
+      });
+      console.log(req.body.area);
+      if (data) {
+        res.status(200).json({
+          message: "findDistrict",
+          data,
+        });
+      }
+    } catch (err) {
+      console.log(err);
+      res.status(500).json({
+        error: "Internal Error",
+      });
+    }
+});
+
+
+
+router.delete("/:id", async (req, res) => {
+  const { id } = req.params;
+
+  try {
+      const deleteDistrict = await DistrictModel.findByIdAndDelete(id);
+      res.status(200).json(deleteDistrict);
+  } catch (error) {
+      res.status(500).json({ message: error.message });
+  }
+})
 
 export default router;

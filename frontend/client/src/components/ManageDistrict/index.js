@@ -9,9 +9,11 @@ import {
   ModalBody,
   ModalCloseButton,
   useDisclosure,
+  useToast
 } from '@chakra-ui/react';
 import { FaEye,FaPen } from "react-icons/fa";
 import { IoSearchOutline } from "react-icons/io5";
+import { FaTrashAlt } from "react-icons/fa";
 import { CiCirclePlus } from "react-icons/ci";
 import { SiBillboard } from "react-icons/si";
 import { useNavigate } from 'react-router-dom';
@@ -26,6 +28,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './styles.css';
 import ToolkitProvider, { Search } from 'react-bootstrap-table2-toolkit/dist/react-bootstrap-table2-toolkit';
 import ReportForm from './ReportForm';
+import axios from 'axios';
 
 
 
@@ -37,6 +40,7 @@ function ManageDistrict(){
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [name, setName] = useState('');
   const [id, setId] = useState('');
+  const [isDelete, setIsDelete] = useState(false);
   useEffect(() => {
     const fetchData = async () => {
         try {
@@ -82,6 +86,16 @@ function ManageDistrict(){
             _hover={{color:'blue'}}
           />
           <Icon 
+            as={SiBillboard} 
+            w={8} 
+            h={8}
+            marginRight={5}
+            onClick={
+              () => navigate('/table-area',{state: { area: row?.name }})
+            }
+            _hover={{color:'blue'}}
+          />
+          <Icon 
             as={FaPen} 
             w={4} 
             h={4}
@@ -96,13 +110,19 @@ function ManageDistrict(){
             _hover={{color:'blue'}}
           />
           <Icon 
-            as={SiBillboard} 
-            w={8} 
-            h={8}
+            as={FaTrashAlt} 
+            w={4} 
+            h={4}
+            marginRight={5}
             onClick={
-              () => navigate('/table-area',{state: { area: row?.name }})
+              () => {
+                setName(row?.name)
+                setId(row?._id)
+                setIsDelete(true)
+                onOpen()
+              }
             }
-            _hover={{color:'blue'}}
+            _hover={{color:'red'}}
           />
           </div>
         )
@@ -165,7 +185,14 @@ function ManageDistrict(){
           placeholder='Search'
           />
           <div style={{width:"100%",display:"flex",justifyContent:"flex-end"}}>
-          <Button leftIcon={<CiCirclePlus size="20" />} justifyContent="flex-start" width="200px" colorScheme='teal' variant='solid' onClick={onOpen}>
+          <Button leftIcon={<CiCirclePlus size="20" />} justifyContent="flex-start" width="200px" colorScheme='teal' variant='solid' 
+            onClick={() =>{
+              setName('')
+              setId('')
+              onOpen()
+              }
+            }
+          >
             Add
           </Button>
           </div>
@@ -182,7 +209,7 @@ function ManageDistrict(){
             <ModalHeader>{name===''?("Add District"):("Update District")}</ModalHeader>
             <ModalCloseButton />
             <ModalBody>
-              <ReportForm name={name} id={id}/> 
+              <ReportForm name={name} id={id} isDelete={isDelete} onClose={onClose}/> 
             </ModalBody>
           </ModalContent>
         </Modal>

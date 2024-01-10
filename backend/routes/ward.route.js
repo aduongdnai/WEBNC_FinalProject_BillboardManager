@@ -8,7 +8,7 @@ const router = express.Router();
 router.post('/findByDistrict', async (req, res) => {
     try {
         const data = await WardModel.find(
-            {'district': {$regex: req.body.district}}
+            {'district': {$regex: req.body.district, $options: 'i'}}
         )
         if (data) {
             res.status(200).json({

@@ -12,6 +12,8 @@ import { UserProvider } from "./components/LoginSignup/userContext";
 import Sidebar from "./components/Sidebar/Sidebar";
 import AdLocationPage from "./components/adLocation/AdLocationPage";
 import AdBoardsDisplay from "./components/AdBoard/AdBoardsDisplay";
+import ManageDistrict from "./components/ManageDistrict";
+import ManageWard from "./components/ManageWard";
 import ReportDashboard from "./components/ReportDashboard";
 import AdvertisingLicenseRequestList from "./components/AdvertisingLicenseRequestList";
 import Account from "./components/Account/Account"
@@ -72,6 +74,20 @@ function App() {
               <ProtectedProvider>
                 <TableQueryByArea />
               </ProtectedProvider>} />
+            <Route path="/manage-district" 
+              element={
+                <ProtectedProvider>
+                  <ManageDistrict />
+                </ProtectedProvider>
+              } 
+            /> 
+            <Route path="/manage-ward" 
+              element={
+                <ProtectedProvider>
+                  <ManageWard />
+                </ProtectedProvider>
+              } 
+            /> 
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/account" element={<Account />} />
