@@ -17,36 +17,48 @@ import AdvertisingLicenseRequestList from "./components/AdvertisingLicenseReques
 import Account from "./components/Account/Account"
 import ReviewRequestsPage from "./components/adLocation/ReviewRequestsPage";
 import io from "socket.io-client";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useToast } from "@chakra-ui/react";
 import Premium from "./components/Account/Premium";
-
+import NotifyProvider from "./Providers/NotifyProvider";
 
 
 import ProtectedProvider from "./Providers/ProtectedProvider";
+import ReportDetail from "./components/ReportDetail";
 const socket = io("http://127.0.0.1:5000");
 
 
 function App() {
   const toast = useToast();
+  const [report, setReport] = useState();
+  const [isClick, setIsClick] = useState();
 
   useEffect(() => {
     // Simulate authentication with a secret token
     socket.emit("authenticate", "CLIENT");
-
     // Listen for messages from the server
     socket.on("notification", (data) => {
       console.log("Received notification:", data);
+      toast.closeAll();
+      setIsClick(false)
 
       toast({
         title: `Báo cáo mới`,
-        description: `Bạn có báo cáo mới từ ${data.senderName}, \nKiểu loại: ${data.reportType}, \nKhu vực: ${data.area}`,
+        description: (
+          <>
+            Bạn có báo cáo mới từ {data.senderName}, <br />
+            Kiểu loại: {data.reportType}<br />
+            Khu vực: {data.area} <br />
+            <button onClick={()=>{setIsClick(true)}}><b>Xem chi tiết</b></button>
+          </>),
         duration: 5000,
         isClosable: true,
         variant: "left-accent",
         position: "bottom-right",
       });
+      setReport(data);
     });
+
   }, []);
 
   return (
@@ -55,7 +67,7 @@ function App() {
         <Router>
           <Sidebar />
           <Routes>
-            <Route path="/map" element={<ProtectedProvider><Map /></ProtectedProvider>} />
+            <Route path="/map" element={<ProtectedProvider><NotifyProvider isClick={isClick} report={report}><Map /></NotifyProvider></ProtectedProvider>} />
             <Route path="/table-area" element={
               <ProtectedProvider>
                 <TableQueryByArea />
@@ -65,6 +77,7 @@ function App() {
             <Route path="/account" element={<Account />} />
 
             <Route path="/report" element={<ProtectedProvider><ReportDashboard /></ProtectedProvider>} />
+            <Route path="/report/:rpId" element={<ProtectedProvider><ReportDetail /></ProtectedProvider>} />
             <Route path="/" element={<Navigate replace to="/map" />} />
             <Route path="/ad-locations" element={<AdLocationPage />} />
             <Route path="/premium" element={<Premium />} />
