@@ -9,6 +9,13 @@ import {
   Input,
   Text,
   VStack,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay, useDisclosure, Flex
 } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
 import React, { useState } from "react";
@@ -19,6 +26,7 @@ import { useUser } from "./userContext";
 import * as authApi from "../../apis/authApi"
 import store from "../../store";
 import { loginSuccess } from "../actions/authAction";
+import emailjs from '@emailjs/browser';
 function Login() {
 
   const { setUser, setUserArea, setUserData } = useUser();
@@ -97,7 +105,97 @@ function Login() {
       });
     }
   };
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [currentEmail, setCurrentEmail] = useState("");
+  const [otp, setOtp] = useState("");
+  const [_otp, set_Otp] = useState("");
 
+  const sendEmail = (templateId, variables) => {
+    emailjs.send(
+      'service_ff8v4uk',
+      templateId,
+      variables,
+      "ckL40Q7vUIBTGKW0J"
+    ).then(res => {
+      console.log('Email successfully sent!')
+    })
+      // Handle errors here however you like, or use a React error boundary
+      .catch(err => console.error('Oh well, you failed. Here some thoughts on the error that occured:', err))
+  }
+  const handleSendOtp = async () => {
+    set_Otp((prevOtp) => {
+      // Generate a new OTP
+      const newOtp = Math.floor(1000 + Math.random() * 9000).toString();
+  
+      // Send email with the new OTP
+      sendEmail("template_lej7tf9", { to_name: currentEmail, message: `OTP của bạn là: ${newOtp}`, to_email: currentEmail });
+  
+      // Display success message
+      toast({
+        title: 'Please check your email',
+        description: "",
+        status: 'success',
+        duration: 2000,
+        isClosable: true,
+      });
+  
+      // Log the new OTP
+      console.log("New OTP:", newOtp);
+  
+      // Return the new OTP to update the state
+      return newOtp;
+    });
+  }
+
+  const sendPw = async () => {
+    console.log(otp, _otp);
+    sendEmail("template_lej7tf9", { to_name: currentEmail, message: `Mật khẩu mới của bạn là: 12345678`, to_email: currentEmail })
+  }
+
+  const handleForgetPassword = async () => {
+    console.log(otp, _otp);
+    try {
+      
+      if (otp === _otp) {
+        const response = await axios.post(`http://127.0.0.1:5000/api/v1/users/resetpassword`, {
+          email: currentEmail,
+          resetToken: "RESETTOKEN",
+        });
+        console.log(response);
+        if (response.status === 200) {
+          sendPw()
+          toast({
+            title: 'Please check your email',
+            description: "",
+            status: 'success',
+            duration: 2000,
+            isClosable: true,
+          });
+          onClose();
+        }
+      } else {
+        toast({
+          title: 'Invalid OTP',
+          description: "Please check your otp and try again.",
+          status: 'error',
+          duration: 2000,
+          isClosable: true,
+        });
+      }
+
+
+    } catch (error) {
+      console.error(error); // Xử lý lỗi nếu có
+      // Hiển thị thông báo khi đăng nhập thất bại
+      toast({
+        title: 'Login failed.',
+        description: "Please check your credentials and try again.",
+        status: 'error',
+        duration: 2000,
+        isClosable: true,
+      });
+    }
+  }
 
   return (
     <Box
@@ -112,7 +210,7 @@ function Login() {
       <VStack spacing={4} align="flex-start" w="full">
         <VStack spacing={1} align={['flex-start', 'center']} w='full'>
           <Heading>Login</Heading>
-          
+
         </VStack>
         <FormControl>
           <FormLabel>E-mail Address</FormLabel>
@@ -135,7 +233,7 @@ function Login() {
         </FormControl>
         <HStack w="full" justify="space-between">
           <Checkbox>Remember me.</Checkbox>
-          <Button variant="link" colorScheme="blue">
+          <Button variant="link" colorScheme="blue" onClick={onOpen}>
             Forgot password?
           </Button>
         </HStack>
@@ -149,6 +247,47 @@ function Login() {
           Login
         </Button>
       </VStack>
+      <Modal isOpen={isOpen} onClose={onClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Quên mật khẩu</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <FormLabel>Email</FormLabel>
+            <Flex flexDirection="column">
+              <Input
+                type="email"
+                variant="filled"
+                placeholder="Email"
+                value={currentEmail}
+                onChange={(e) => setCurrentEmail(e.target.value)}
+                mb={3}
+              />
+              <FormLabel>OTP</FormLabel>
+              <Input
+                type="otp"
+                variant="filled"
+                placeholder="OTP"
+                value={otp}
+                onChange={(e) => setOtp(e.target.value)}
+                mb={3}
+              />
+              <Button colorScheme="blue" onClick={handleSendOtp}>
+                Gửi OTP
+              </Button>
+            </Flex>
+          </ModalBody>
+
+          <ModalFooter>
+            <Button variant="ghost" mr={3} onClick={onClose}>
+              Close
+            </Button>
+            <Button colorScheme="blue" onClick={handleForgetPassword}>
+              Xác nhận
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </Box>
   );
 }

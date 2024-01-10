@@ -86,4 +86,38 @@ router.put('/change-password/:id', async (req, res) => {
         });
     }
 });
+router.post('/resetpassword', async (req, res) => {
+    const { email, resetToken } = req.body;
+    try {
+        const user = await userModel.findOne({ email: email });
+        if (!user) {
+            return res.status(404).json({ msg: "User not found" });
+        }
+
+        // Check if the resetToken matches the token associated with the user
+        if (resetToken !== "RESETTOKEN") {
+            return res.status(400).json({ msg: "Invalid token" });
+        }
+
+        // Hash the new password
+        const hashedPassword = await bcrypt.hash('12345678', 10);
+
+        // Update the user's password field with the new hashed password
+        user.password = hashedPassword;
+
+        // Save the updated user information to the database
+        const updatedUser = await user.save();
+
+        res.status(200).json({
+            data: updatedUser,
+            msg: "Password updated successfully"
+        });
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({
+            msg: "Internal Server error"
+        });
+    }
+});
+
 export default router;
