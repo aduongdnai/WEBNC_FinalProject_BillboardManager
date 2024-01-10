@@ -10,7 +10,7 @@ import { useToast, Input } from '@chakra-ui/react';
 import { useEffect } from 'react';
 
 const ReportForm = (props) => {
-    const { name,id, isDelete, onClose } = props;
+    const { name,id, isDelete, onClose, setUpdate } = props;
     // const [isExist, setIsExist] = useState(null);
     const toast = useToast();
     if(!isDelete){
@@ -41,7 +41,10 @@ const ReportForm = (props) => {
                         console.log(apiCheck.data.data);
                         if(apiCheck.data.data.length === 0){
                             apiResponse = await axios.post(`http://127.0.0.1:5000/api/v1/district`, values);
+                            initialValues.name = values.name
+                            setUpdate(true);
                             isExist = false
+                            isContain = false
                         }
                         if(apiCheck.data.data.length > 0) {
                             isExist = true
@@ -54,6 +57,8 @@ const ReportForm = (props) => {
                         if(apiCheck.data.data.length === 0){
                             if(apiContain.data.data.length === 0){
                                 apiResponse = await axios.put(`http://127.0.0.1:5000/api/v1/district/${id}`,values);
+                                initialValues.name = values.name
+                                setUpdate(true);
                                 isContain = false;
                             }
                             else isContain = true;
@@ -66,8 +71,8 @@ const ReportForm = (props) => {
                     if(isExist === false && isContain === false) {
                         resetForm();  
                         setTimeout(() => {
-                            window.location.reload();
-                        }, 2000);
+                            onClose()
+                        }, 1000);
                     }               
                     
                     toast({
@@ -123,14 +128,15 @@ const ReportForm = (props) => {
                 if(apiContain.data.data.length === 0){
                     console.log("get here");
                     const apiResponse = await axios.delete(`http://127.0.0.1:5000/api/v1/district/${id}`);
+                    setUpdate(true);
                     isContain = false;
                 }
                 else isContain = true;
                 if(isContain === false) {
-                    resetForm();  
+                    resetForm();
                     setTimeout(() => {
-                        window.location.reload();
-                    }, 2000);
+                        onClose()
+                    }, 1000);
                 }
                 toast({
                     title: isContain? ('Error') : ('Successful.'),

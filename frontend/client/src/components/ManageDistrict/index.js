@@ -15,7 +15,7 @@ import { FaEye,FaPen } from "react-icons/fa";
 import { IoSearchOutline } from "react-icons/io5";
 import { FaTrashAlt } from "react-icons/fa";
 import { CiCirclePlus } from "react-icons/ci";
-import { SiBillboard } from "react-icons/si";
+import { RiAdvertisementFill } from "react-icons/ri";
 import { useNavigate } from 'react-router-dom';
 import districtAPI from '../../apis/districtApi';
 import { useEffect, useState} from 'react';
@@ -37,6 +37,7 @@ function ManageDistrict(){
   const navigate = useNavigate();
   const { area } = useUser();
   const [district, setDistrict] = useState(null);
+  const [update, setUpdate] = useState(true);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [name, setName] = useState('');
   const [id, setId] = useState('');
@@ -47,6 +48,7 @@ function ManageDistrict(){
 
             const result = await districtAPI.getAllDistrict();
             setDistrict(result.data);
+            setUpdate(false);
             console.log(result);
 
         } catch (error) {
@@ -57,7 +59,7 @@ function ManageDistrict(){
 
     // Call the fetchData function when the component mounts or when viewport changes
     fetchData();
-  }, []);
+  }, [update]);
 
 
   const columns = [
@@ -86,9 +88,9 @@ function ManageDistrict(){
             _hover={{color:'blue'}}
           />
           <Icon 
-            as={SiBillboard} 
-            w={8} 
-            h={8}
+            as={RiAdvertisementFill} 
+            w={5}
+            h={5}
             marginRight={5}
             onClick={
               () => navigate('/table-area',{state: { area: row?.name }})
@@ -104,6 +106,7 @@ function ManageDistrict(){
               () => {
                 setName(row?.name)
                 setId(row?._id)
+                setIsDelete(false)
                 onOpen()
               }
             }
@@ -189,6 +192,7 @@ function ManageDistrict(){
             onClick={() =>{
               setName('')
               setId('')
+              setIsDelete(false)
               onOpen()
               }
             }
@@ -209,7 +213,7 @@ function ManageDistrict(){
             <ModalHeader>{name===''?("Add District"):("Update District")}</ModalHeader>
             <ModalCloseButton />
             <ModalBody>
-              <ReportForm name={name} id={id} isDelete={isDelete} onClose={onClose}/> 
+              <ReportForm name={name} id={id} isDelete={isDelete} onClose={onClose} setUpdate={setUpdate}/> 
             </ModalBody>
           </ModalContent>
         </Modal>
