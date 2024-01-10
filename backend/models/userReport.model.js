@@ -15,6 +15,8 @@ const userReportSchema = new mongoose.Schema({
     },
     processMethod: String,
     updatedTime: String,
+    longitude: Number,
+    latitude: Number,
 });
 
 const UserReportModel = mongoose.model('UserReport', userReportSchema);

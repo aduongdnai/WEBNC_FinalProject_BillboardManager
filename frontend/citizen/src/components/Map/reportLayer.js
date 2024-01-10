@@ -1,7 +1,7 @@
-export const clusterLayer = {
-    id: 'clusters',
+export const reportclusterLayer = {
+    id: 'report-clusters',
     type: 'circle',
-    source: 'adlocations',
+    source: 'reportLocations',
     filter: ['has', 'point_count'],
     paint: {
         'circle-color': ['step', ['get', 'point_count'], '#51bbd6', 20, '#f1f075', 50, '#f28cb1'],
@@ -9,10 +9,10 @@ export const clusterLayer = {
     }
 };
 
-export const clusterCountLayer = {
-    id: 'cluster-count',
+export const reportclusterCountLayer = {
+    id: 'report-cluster-count',
     type: 'symbol',
-    source: 'adlocations',
+    source: 'reportLocations',
     filter: ['has', 'point_count'],
     layout: {
         'text-field': '{point_count_abbreviated}',
@@ -21,18 +21,18 @@ export const clusterCountLayer = {
     }
 };
 
-export const unclusteredPointLayer = {
-    id: 'unclustered-point',
+export const reportunclusteredPointLayer = {
+    id: 'report-unclustered-point',
     type: 'circle',
-    source: 'adlocations',
+    source: 'reportLocations',
     filter: ['!', ['has', 'point_count']],
     interactive: true,
     paint: {
         'circle-color': [
             'match',
-            ['to-string', ['get', 'planned']],
-            'true', '#0022FF',
-            'false', '#5b5b5b',
+            ['to-string', ['get', 'status']],
+            'Pending', '#fffc3c',
+            'Processed', '#45ff3c',
             '#fff'
         ],
         // 'circle-color': '#1a3fb0',
@@ -41,23 +41,23 @@ export const unclusteredPointLayer = {
         'circle-stroke-color': '#fff'
     }
 };
-export const unclusteredPointTextLayer = {
-    id: 'unclustered-point-text',
+export const reportunclusteredPointTextLayer = {
+    id: 'report-unclustered-point-text',
     type: 'symbol',
-    source: 'adlocations',
+    source: 'reportLocations',
     filter: ['!', ['has', 'point_count']],
     layout: {
-        'text-field': 'QC',
+        'text-field': 'BC',
         'text-font': ['Roboto Regular'],
         'text-size': 12,
     },
     paint: {
         'text-color': [
             'match',
-            ['to-string', ['get', 'planned']],
-            'true', '#000000',
+            ['to-string', ['get', 'status']],
+            'Pending', '#000000',
             // color for planned
-            'false', '#ffffff', // color for not planned
+            'Processed', '#ffffff', // color for not planned
             '#000000' // default color
         ]
     }

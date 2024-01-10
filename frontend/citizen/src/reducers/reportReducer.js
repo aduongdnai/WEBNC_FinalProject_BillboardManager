@@ -1,5 +1,6 @@
 const initialState = {
     reports: JSON.parse(localStorage.getItem('report')) || [],
+    reportLocations: JSON.parse(localStorage.getItem('reportLocation')) || [],
 };
 
 const reportReducer = (state = initialState, action) => {
@@ -18,6 +19,11 @@ const reportReducer = (state = initialState, action) => {
             };
         case 'GET_ALL_REPORTS':
             return state.reports;
+        case 'ADD_REPORT_LOCATION':
+            return {
+                ...state,
+                reportLocations: [...state.reportLocations, action.payload],
+            };
         default:
             return state;
     }

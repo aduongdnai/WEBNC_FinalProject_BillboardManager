@@ -9,7 +9,7 @@ router.post('/', async (req, res) => {
     const newReport = new UserReportModel(reportData);
 
     try {
-        await newReport.save();    
+        await newReport.save();
         res.status(201).json(newReport);
         for (const clientId of global.connectedClients) {
             console.log(clientId);
@@ -41,6 +41,16 @@ router.get('/', async (req, res) => {
     try {
         const reports = await UserReportModel.find();
         res.status(200).json(reports);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+router.get('/type/:type', async (req, res) => {
+    try {
+        const reports = await UserReportModel.find({ type: req.params.type });
+        res.status(200).json({
+            data: reports,
+        });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
