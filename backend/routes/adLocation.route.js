@@ -56,7 +56,7 @@ router.get("/", async (req, res) => {
 router.post("/findByArea", async (req, res) => {
   try {
     const data = await AdLocationModel.find({
-      area: { $regex: req.body.area },
+      area: { $regex: req.body.area, $options: 'i' },
     });
     console.log(req.body.area);
     if (data) {
