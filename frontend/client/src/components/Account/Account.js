@@ -19,6 +19,20 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
 function Account() {
+  const [showChangePassword, setShowChangePassword] = useState(false);
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+
+  const handleChangePasswordClick = () => {
+    setShowChangePassword(true);
+  };
+  const handleSavePasswordClick = () => {
+    console.log("Current Password:", currentPassword);
+    console.log("New Password:", newPassword);
+    setCurrentPassword("");
+    setNewPassword("");
+    setShowChangePassword(false);
+  };
   const toast = useToast();
   const [userData, setUserData] = useState({
     email: "",
@@ -49,9 +63,9 @@ function Account() {
       setIsEditing(false);
       console.log("User updated successfully", response.data);
       toast({
-        title: 'Update successful.',
+        title: "Update successful.",
         description: "You've successfully updated.",
-        status: 'success',
+        status: "success",
         duration: 2000,
         isClosable: true,
       });
@@ -67,7 +81,7 @@ function Account() {
   //   // Xuất ra console log để hiển thị access token
   //   console.log("Access Token:", accessToken);
   // }, []);
-  
+
   useEffect(() => {
     const storedUserInfo = localStorage.getItem("userData");
     if (storedUserInfo) {
@@ -129,16 +143,50 @@ function Account() {
                     name="username"
                   />
                   <FormLabel>password:</FormLabel>
-                  <Flex>
-                  <Input
-                    type="password"
-                    variant="filled"
-                    value={userData.password}
-                    isReadOnly
-                    w={"50%"}
-                  />
-                  <Button ml={5} colorScheme="blue" w={"40%"}>Đổi mật khẩu</Button>
-                  </Flex>
+                  {!showChangePassword ? (
+                    <Flex>
+                      <Input
+                        type="password"
+                        variant="filled"
+                        value={userData.password}
+                        isReadOnly
+                        w={"50%"}
+                      />
+                      <Button
+                        ml={5}
+                        colorScheme="blue"
+                        w={"40%"}
+                        onClick={handleChangePasswordClick}
+                      >
+                        Đổi mật khẩu
+                      </Button>
+                    </Flex>
+                  ) : (
+                    <Flex flexDirection="column">
+                      <Input
+                        type="password"
+                        variant="filled"
+                        placeholder="Mật khẩu hiện tại"
+                        value={currentPassword}
+                        onChange={(e) => setCurrentPassword(e.target.value)}
+                        mb={3}
+                      />
+                      <Input
+                        type="password"
+                        variant="filled"
+                        placeholder="Mật khẩu mới"
+                        value={newPassword}
+                        onChange={(e) => setNewPassword(e.target.value)}
+                        mb={3}
+                      />
+                      <Button
+                        colorScheme="blue"
+                        onClick={handleSavePasswordClick}
+                      >
+                        Lưu mật khẩu mới
+                      </Button>
+                    </Flex>
+                  )}
 
                   <FormLabel>role:</FormLabel>
                   <Input variant="filled" value={userData.role} isReadOnly />
@@ -176,7 +224,11 @@ function Account() {
             Chỉnh sửa
           </Button>
         )}
-        <Link to="/premium"><Button ml={5} colorScheme="blue">Nâng cấp lên gói CB_Quận/CB_Sở</Button></Link>
+        <Link to="/premium">
+          <Button ml={5} colorScheme="blue">
+            Nâng cấp lên gói CB_Quận/CB_Sở
+          </Button>
+        </Link>
       </Box>
     </>
   );
