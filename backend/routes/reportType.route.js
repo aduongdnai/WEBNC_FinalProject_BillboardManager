@@ -1,5 +1,5 @@
 import express from 'express'
-import DistrictModel from '../models/district.model.js';
+import ReportTypeModel from '../models/reportType.model.js';
 import mongoose from 'mongoose';
 const router = express.Router();
 
@@ -7,11 +7,11 @@ const router = express.Router();
 
 router.get('/', async (req, res) => {
     try {
-        const data = await DistrictModel.find()
+        const data = await ReportTypeModel.find()
         
         if (data) {
             res.status(200).json({
-                message: "Get All District Successfully",
+                message: "Get All Report Type Successfully",
                 data
             })
         }
@@ -27,13 +27,13 @@ router.get('/', async (req, res) => {
 
 
 router.post('/', async (req, res) => {
-    const district = req.body;
+    const rpType = req.body;
     //console.log(req.body);
-    const newDistrict = new DistrictModel(district);
+    const newRpType = new ReportTypeModel(rpType);
 
     try {
-        await newDistrict.save();    
-        res.status(201).json(newDistrict);
+        await newRpType.save();    
+        res.status(201).json(newRpType);
     } catch (error) {
         res.status(409).json({ message: error.message });
     }
@@ -46,8 +46,8 @@ router.put('/:id', async (req, res) => {
     const { name } = req.body;
 
     try {
-        const updatedDistrict = await DistrictModel.findByIdAndUpdate(id, { name }, { new: true });
-        res.status(200).json(updatedDistrict);
+        const updatedRpType = await ReportTypeModel.findByIdAndUpdate(id, { name }, { new: true });
+        res.status(200).json(updatedRpType);
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
@@ -55,13 +55,13 @@ router.put('/:id', async (req, res) => {
 
 router.post("/findDistrict", async (req, res) => {
     try {
-      const data = await DistrictModel.find({
+      const data = await ReportTypeModel.find({
         name: { $regex: req.body.area, $options: 'i' },
       });
       console.log(req.body.area);
       if (data) {
         res.status(200).json({
-          message: "findDistrict",
+          message: "find Report Type",
           data,
         });
       }
@@ -79,8 +79,8 @@ router.delete("/:id", async (req, res) => {
   const { id } = req.params;
 
   try {
-      const deleteDistrict = await DistrictModel.findByIdAndDelete(id);
-      res.status(200).json(deleteDistrict);
+      const deleteRpType = await ReportTypeModel.findByIdAndDelete(id);
+      res.status(200).json(deleteRpType);
   } catch (error) {
       res.status(500).json({ message: error.message });
   }

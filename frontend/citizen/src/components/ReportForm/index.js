@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import axios from 'axios';
@@ -98,6 +98,16 @@ const ReportForm = (props) => {
         setPublicId(e.target.value);
 
     }
+    const [rpTypes, setRpTypes] = useState([]);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            const types = await axios.get('http://127.0.0.1:5000/api/v1/reportTypes/')
+            setRpTypes(types.data.data);
+        }
+        fetchData();
+            
+    }, []);
     return (
         <ChakraProvider>
             <Box p={4}>
@@ -108,10 +118,14 @@ const ReportForm = (props) => {
                                 <FormLabel htmlFor="reportType">Report Type</FormLabel>
                                 <Field as={Select} id="reportType" name="reportType">
                                     <option value="">Select Report Type</option>
-                                    <option value="Tố giác sai phạm">Tố giác sai phạm</option>
+                                    {/* <option value="Tố giác sai phạm">Tố giác sai phạm</option>
                                     <option value="Đăng ký nội dung">Đăng ký nội dung</option>
                                     <option value="Đóng góp ý kiến">Đóng góp ý kiến</option>
-                                    <option value="Giải đáp thắc mắc">Giải đáp thắc mắc</option>
+                                    <option value="Giải đáp thắc mắc">Giải đáp thắc mắc</option> */}
+                                    {rpTypes.map((type) => (
+                                            <option key={type.id} value={type.name}>{type.name}</option>
+                                        ))}
+                                    
                                 </Field>
                                 <ErrorMessage name="reportType" component="div" className="error-message" style={{ color: 'red' }} />
                             </FormControl>

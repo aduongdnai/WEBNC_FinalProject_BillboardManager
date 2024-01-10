@@ -9,11 +9,13 @@ import {
   ModalBody,
   ModalCloseButton,
   useDisclosure,
+  useToast
 } from '@chakra-ui/react';
 import { FaEye,FaPen } from "react-icons/fa";
 import { IoSearchOutline } from "react-icons/io5";
+import { FaTrashAlt } from "react-icons/fa";
 import { CiCirclePlus } from "react-icons/ci";
-import { SiBillboard } from "react-icons/si";
+import { RiAdvertisementFill } from "react-icons/ri";
 import { useNavigate } from 'react-router-dom';
 import districtAPI from '../../apis/districtApi';
 import { useEffect, useState} from 'react';
@@ -26,6 +28,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './styles.css';
 import ToolkitProvider, { Search } from 'react-bootstrap-table2-toolkit/dist/react-bootstrap-table2-toolkit';
 import ReportForm from './ReportForm';
+import axios from 'axios';
 
 
 
@@ -34,15 +37,18 @@ function ManageDistrict(){
   const navigate = useNavigate();
   const { area } = useUser();
   const [district, setDistrict] = useState(null);
+  const [update, setUpdate] = useState(true);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [name, setName] = useState('');
   const [id, setId] = useState('');
+  const [isDelete, setIsDelete] = useState(false);
   useEffect(() => {
     const fetchData = async () => {
         try {
 
             const result = await districtAPI.getAllDistrict();
             setDistrict(result.data);
+            setUpdate(false);
             console.log(result);
 
         } catch (error) {
@@ -53,7 +59,7 @@ function ManageDistrict(){
 
     // Call the fetchData function when the component mounts or when viewport changes
     fetchData();
-  }, []);
+  }, [update]);
 
 
   const columns = [
@@ -82,6 +88,16 @@ function ManageDistrict(){
             _hover={{color:'blue'}}
           />
           <Icon 
+            as={RiAdvertisementFill} 
+            w={5}
+            h={5}
+            marginRight={5}
+            onClick={
+              () => navigate('/table-area',{state: { area: row?.name }})
+            }
+            _hover={{color:'blue'}}
+          />
+          <Icon 
             as={FaPen} 
             w={4} 
             h={4}
@@ -90,19 +106,26 @@ function ManageDistrict(){
               () => {
                 setName(row?.name)
                 setId(row?._id)
+                setIsDelete(false)
                 onOpen()
               }
             }
             _hover={{color:'blue'}}
           />
           <Icon 
-            as={SiBillboard} 
-            w={8} 
-            h={8}
+            as={FaTrashAlt} 
+            w={4} 
+            h={4}
+            marginRight={5}
             onClick={
-              () => navigate('/table-area',{state: { area: row?.name }})
+              () => {
+                setName(row?.name)
+                setId(row?._id)
+                setIsDelete(true)
+                onOpen()
+              }
             }
-            _hover={{color:'blue'}}
+            _hover={{color:'red'}}
           />
           </div>
         )
@@ -165,7 +188,15 @@ function ManageDistrict(){
           placeholder='Search'
           />
           <div style={{width:"100%",display:"flex",justifyContent:"flex-end"}}>
-          <Button leftIcon={<CiCirclePlus size="20" />} justifyContent="flex-start" width="200px" colorScheme='teal' variant='solid' onClick={onOpen}>
+          <Button leftIcon={<CiCirclePlus size="20" />} justifyContent="flex-start" width="200px" colorScheme='teal' variant='solid' 
+            onClick={() =>{
+              setName('')
+              setId('')
+              setIsDelete(false)
+              onOpen()
+              }
+            }
+          >
             Add
           </Button>
           </div>
@@ -182,7 +213,7 @@ function ManageDistrict(){
             <ModalHeader>{name===''?("Add District"):("Update District")}</ModalHeader>
             <ModalCloseButton />
             <ModalBody>
-              <ReportForm name={name} id={id}/> 
+              <ReportForm name={name} id={id} isDelete={isDelete} onClose={onClose} setUpdate={setUpdate}/> 
             </ModalBody>
           </ModalContent>
         </Modal>
