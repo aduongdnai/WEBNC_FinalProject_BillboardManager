@@ -8,10 +8,18 @@ import {
   FormLabel,
   Heading,
   Input,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
   Stack,
   Text,
   VStack,
   WrapItem,
+  useDisclosure,
   useToast,
 } from "@chakra-ui/react";
 import axios from "axios";
@@ -22,6 +30,7 @@ function Account() {
   const [showChangePassword, setShowChangePassword] = useState(false);
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   const handleChangePasswordClick = () => {
     setShowChangePassword(true);
@@ -142,25 +151,15 @@ function Account() {
                     onChange={handleInputChange}
                     name="username"
                   />
-                  <FormLabel>password:</FormLabel>
-                  {!showChangePassword ? (
-                    <Flex>
-                      <Input
-                        type="password"
-                        variant="filled"
-                        value={userData.password}
-                        isReadOnly
-                        w={"50%"}
-                      />
-                      <Button
-                        ml={5}
-                        colorScheme="blue"
-                        w={"40%"}
-                        onClick={handleChangePasswordClick}
-                      >
-                        Đổi mật khẩu
-                      </Button>
-                    </Flex>
+
+                  {/* {!showChangePassword ? (
+                    <Button
+                      colorScheme="blue"
+                      w={"100%"}
+                      onClick={handleChangePasswordClick}
+                    >
+                      Đổi mật khẩu
+                    </Button>
                   ) : (
                     <Flex flexDirection="column">
                       <Input
@@ -186,7 +185,7 @@ function Account() {
                         Lưu mật khẩu mới
                       </Button>
                     </Flex>
-                  )}
+                  )} */}
 
                   <FormLabel>role:</FormLabel>
                   <Input variant="filled" value={userData.role} isReadOnly />
@@ -224,6 +223,57 @@ function Account() {
             Chỉnh sửa
           </Button>
         )}
+        <Button ml={5} colorScheme="blue" onClick={onOpen}>
+          Đổi mật khẩu
+        </Button>
+
+        <Modal isOpen={isOpen} onClose={onClose}>
+          <ModalOverlay />
+          <ModalContent>
+            <ModalHeader>Đổi mật khẩu</ModalHeader>
+            <ModalCloseButton />
+            <ModalBody>
+              <FormLabel>Mật khẩu hiện tại</FormLabel>
+              <Flex flexDirection="column">
+                <Input
+                  type="password"
+                  variant="filled"
+                  placeholder="Mật khẩu hiện tại"
+                  value={currentPassword}
+                  onChange={(e) => setCurrentPassword(e.target.value)}
+                  mb={3}
+                />
+                <FormLabel>Mật khẩu Mới</FormLabel>
+                <Input
+                  type="password"
+                  variant="filled"
+                  placeholder="Mật khẩu mới"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  mb={3}
+                />
+                <FormLabel>Xác nhận mật khẩu Mới</FormLabel>
+                <Input
+                  type="password"
+                  variant="filled"
+                  placeholder="Xác nhận mật khẩu mới"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  mb={3}
+                />
+              </Flex>
+            </ModalBody>
+
+            <ModalFooter>
+              <Button variant="ghost" mr={3} onClick={onClose}>
+                Close
+              </Button>
+              <Button colorScheme="blue" onClick={handleSavePasswordClick}>
+                Lưu mật khẩu mới
+              </Button>
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
         <Link to="/premium">
           <Button ml={5} colorScheme="blue">
             Nâng cấp lên gói CB_Quận/CB_Sở
