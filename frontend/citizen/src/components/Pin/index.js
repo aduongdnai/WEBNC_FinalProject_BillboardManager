@@ -9,7 +9,7 @@ const SIZE = 20;
 
 // Important for perf: the markers never change, avoid rerender when the map viewport changes
 function Pins(props) {
-    const { data, onClick, fill } = props;
+    const { data, onClick } = props;
     if (!data) {
         return <></>
     }
@@ -20,7 +20,7 @@ function Pins(props) {
                 viewBox="0 0 24 24"
                 style={{
                     cursor: 'pointer',
-                    fill: fill || '#d00',
+                    fill: city.status === "Pending" ? '#d00' : '#00d',
                     stroke: 'none',
                     transform: `translate(${-SIZE / 2}px,${-SIZE}px)`
                 }}

@@ -45,9 +45,10 @@ router.get('/', async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 });
-router.get('/type/:type', async (req, res) => {
+router.post('/type/:type', async (req, res) => {
     try {
-        const reports = await UserReportModel.find({ type: req.params.type });
+        const area = req.body.area || "";
+        const reports = await UserReportModel.find({ type: req.params.type, area: { $regex: area, $options: 'i' } });
         res.status(200).json({
             data: reports,
         });

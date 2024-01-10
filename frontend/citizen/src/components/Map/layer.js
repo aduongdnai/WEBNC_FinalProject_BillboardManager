@@ -31,7 +31,13 @@ export const unclusteredPointLayer = {
         'circle-color': [
             'match',
             ['to-string', ['get', 'planned']],
-            'true', '#0022FF',
+            'true', [
+                'match',
+                ['to-string', ['get', 'hasAdBoard']],
+                'true', '#45ff3c',
+                'false', '#0022FF',
+                '#0022FF'
+            ],
             'false', '#5b5b5b',
             '#fff'
         ],

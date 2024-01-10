@@ -10,37 +10,53 @@ import '@goongmaps/goong-geocoder-react/dist/goong-geocoder.css'
 import mapAPI from '../../apis/mapApi';
 import adLocationAPI from '../../apis/adLocationApi';
 import { clusterLayer, clusterCountLayer, unclusteredPointLayer, unclusteredPointTextLayer } from './layer';
+import FilterOverlay from '../FilterOverlay';
+import reportApi from '../../apis/reportApi';
+import ReportLocationInfo from './reportLocationInfo';
+import Pin from '../Pin';
+
 
 function Map(props) {
     const [popupInfo, setPopupInfo] = useState(null);
     const [plannedPopupInfo, setPlannedPopupInfo] = useState(null);
-    const [adLocation, setAdLocation] = useState(null);
+    const [reportLocationInfo, setReportLocationInfo] = useState(null);
+    const [reportLocations, setReportLocations] = useState(null);
     const [geoJsonAdLocation, setGeoJsonAdLocation] = useState(null);
     const viewport = useSelector(state => state.viewport)
     const dispatch = useDispatch()
     const mapRef = useRef(null);
+    const [filters, setFilters] = useState({ planned: true, reported: true });
+    const user = useSelector(state => state.auth.userData);
+    const userArea = localStorage.getItem("userArea") || "";
     useEffect(() => {
         const fetchData = async () => {
             try {
+                console.log("userArea: ", userArea);
+                const result = await adLocationAPI.getAdLocationByArea({ area: userArea });
+                const reportResult = await reportApi.getReportByType("plannedLocation", userArea);
+                console.log(reportResult.data);
+                setReportLocations(reportResult.data);
+                const features = await Promise.all(result.data.map(async (adLocation) => {
+                    const hasAdBoard = await adLocationAPI.doesAdLocationHaveAdBoard(adLocation._id);
 
-                const result = await adLocationAPI.getAllAdLocation();
+                    return {
+                        type: 'Feature',
+                        geometry: adLocation.coordinates,
+                        properties: {
+                            ...adLocation,
+                            hasAdBoard: hasAdBoard
+                        }
+                    };
+                }));
 
-                setAdLocation(result.data);
                 const geojson = {
                     type: 'FeatureCollection',
-                    features: result.data.map((adLocation) => {
-
-                        return {
-                            type: 'Feature',
-                            geometry: adLocation.coordinates,
-                            properties: {
-                                ...adLocation,
-
-
-                            }
-                        };
-                    })
+                    features: features
                 };
+                if (!filters.planned) {
+                    geojson.features = []
+                }
+
                 setGeoJsonAdLocation(geojson);
             } catch (error) {
                 console.error('Error fetching data:', error);
@@ -49,7 +65,7 @@ function Map(props) {
 
         // Call the fetchData function when the component mounts or when viewport changes
         fetchData();
-    }, []);
+    }, [filters.planned]);
     const handleGeocoderViewportChange = (newViewport) => {
         const viewportData = {
             latitude: newViewport.latitude,
@@ -63,7 +79,7 @@ function Map(props) {
     };
     const geolocateStyle = {
         right: 10,
-        bottom: 0
+        top: 180
     };
     const fullscreenControlStyle = {
         top: 36,
@@ -82,7 +98,10 @@ function Map(props) {
         left: 0,
         padding: '10px'
     };
+    const handleFilterChange = (newFilters) => {
+        setFilters(newFilters);
 
+    };
     const onClickMap = async event => {
         event.preventDefault();
         //console.log(event);
@@ -100,10 +119,10 @@ function Map(props) {
     }
 
     const handleOnClickPin = (location) => {
-        setPlannedPopupInfo({
+        setReportLocationInfo({
             ...location,
-            longitude: location.coordinates.coordinates[0],
-            latitude: location.coordinates.coordinates[1],
+            longitude: location.longitude,
+            latitude: location.latitude,
             planned: true,
             address: location.address,
             area: location.area,
@@ -135,7 +154,7 @@ function Map(props) {
             <ReactMapGL
                 ref={mapRef}
                 {...viewport}
-                width="100vw"
+                width="96vw"
                 height="100vh"
                 onViewportChange={handleGeocoderViewportChange}
                 goongApiAccessToken={"9fzxhKjU16UdOtYirE5ceN2FOd7M9ERVA3zQ3WAD"}
@@ -156,7 +175,10 @@ function Map(props) {
                     <Layer {...unclusteredPointLayer} />
                     <Layer {...unclusteredPointTextLayer} />
                 </Source>
-                {/* <Pin data={adLocation} onClick={handleOnClickPin}> </Pin> */}
+                {filters.reported && (
+                    <Pin data={reportLocations} onClick={handleOnClickPin} filter={filters.reported}> </Pin>
+
+                )}
                 <SearchBox />
 
 
@@ -184,7 +206,20 @@ function Map(props) {
                         <PlannedLocationInfo info={plannedPopupInfo} />
                     </Popup>
                 )}
+                {reportLocationInfo && (
 
+                    <Popup
+                        tipSize={5}
+                        anchor="top"
+                        longitude={reportLocationInfo.longitude}
+                        latitude={reportLocationInfo.latitude}
+                        closeOnClick={false}
+                        onClose={setReportLocationInfo}
+                    >
+                        <ReportLocationInfo info={reportLocationInfo} />
+                    </Popup>
+                )}
+                <FilterOverlay onFilterChange={handleFilterChange}></FilterOverlay>
                 <GeolocateControl style={geolocateStyle} />
                 <FullscreenControl style={fullscreenControlStyle} />
                 <NavigationControl style={navStyle} />

@@ -20,6 +20,7 @@ import { reportclusterLayer, reportclusterCountLayer, reportunclusteredPointLaye
 import FilterOverlay from '../FilterOverlay';
 import reportApi from '../../apis/reportApi';
 import ReportLocationInfo from './reportLocationInfo';
+import adBoardApi from '../../apis/adBoardApi';
 
 
 function Map(props) {
@@ -28,7 +29,7 @@ function Map(props) {
     const [adLocation, setAdLocation] = useState(null);
     const [reportLocationInfo, setReportLocationInfo] = useState(null);
     const [geoJsonAdLocation, setGeoJsonAdLocation] = useState(null);
-    const [filters, setFilters] = useState({ planned: false, reported: false });
+    const [filters, setFilters] = useState({ planned: true, reported: true });
     const viewport = useSelector(state => state.viewport)
     const report = useSelector(state => state.report.reports)
     const reportLocations = useSelector(state => state.report.reportLocations)
@@ -58,31 +59,32 @@ function Map(props) {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                console.log(filters);
-                const result = await adLocationAPI.getAdLocationByFilters(filters);
-                console.log("reportList", reportLocations);
+
+                const result = await adLocationAPI.getAllAdLocation();
+
                 setAdLocation(result.data);
+                const features = await Promise.all(result.data.map(async (adLocation) => {
+                    const hasAdBoard = await adLocationAPI.doesAdLocationHaveAdBoard(adLocation._id);
+
+                    return {
+                        type: 'Feature',
+                        geometry: adLocation.coordinates,
+                        properties: {
+                            ...adLocation,
+                            hasAdBoard: hasAdBoard
+                        }
+                    };
+                }));
+
                 const geojson = {
                     type: 'FeatureCollection',
-                    features: result.data.map((adLocation) => {
-
-                        return {
-                            type: 'Feature',
-                            geometry: adLocation.coordinates,
-                            properties: {
-                                ...adLocation,
-                            }
-                        };
-                    })
+                    features: features
                 };
+                if (!filters.planned) {
+                    geojson.features = []
+                }
 
-                const filteredFeaturesGeojson = filters.reported ? geojson.features.filter((adLocation) => adLocation.properties.isReported === false) : geojson.features;
-                //console.log("geojson", filteredFeaturesGeojson);
-                const filteredGeojson = {
-                    type: 'FeatureCollection',
-                    features: filteredFeaturesGeojson
-                };
-                setGeoJsonAdLocation(filteredGeojson);
+                setGeoJsonAdLocation(geojson);
 
             } catch (error) {
                 console.error('Error fetching data:', error);
@@ -107,7 +109,6 @@ function Map(props) {
 
     const onClickMap = async event => {
         event.preventDefault();
-        //console.log(event);
         const address = await mapAPI.geoCodeToAddress(event.lngLat[1], event.lngLat[0])
         const area = `${address.results[0].compound.commune}, ${address.results[0].compound.district}, ${address.results[0].compound.province}`
 
@@ -133,6 +134,9 @@ function Map(props) {
         })
     }
     const handleClick = (event) => {
+        if (event.srcEvent.button === 2) {
+            return;
+        }
         const clickedFeature = event.features.find(
             (feature) => feature.layer.id === unclusteredPointLayer.id
         );
@@ -156,7 +160,7 @@ function Map(props) {
 
     const handleFilterChange = (newFilters) => {
         setFilters(newFilters);
-        console.log("change", filters);
+
     };
     return (
         <div>
@@ -184,8 +188,10 @@ function Map(props) {
                     <Layer {...unclusteredPointLayer} />
                     <Layer {...unclusteredPointTextLayer} />
                 </Source>
+                {filters.reported && (
+                    <Pin data={reportLocations} onClick={handleOnClickPin} filter={filters.reported}> </Pin>
 
-                <Pin data={reportLocations} onClick={handleOnClickPin}> </Pin>
+                )}
                 <SearchBox />
 
 
