@@ -22,6 +22,7 @@ import {  useUser } from "../LoginSignup/userContext";
 import Pagination from "./Pagination"
 import ReportProcessForm from "../ReportProcessForm";
 import {useSelector} from "react-redux"
+import { BsMap, BsArrowRightCircle  } from "react-icons/bs";
 const ITEMS_PER_PAGE = 10;
 const ReportDashboard = () => {
     const [selectedReport, setSelectedReport] = useState(null);
@@ -143,7 +144,9 @@ const ReportDashboard = () => {
 
 
     }
-
+    const changViewDetail = async (report) => {
+        navigate(`/report/${report._id}`);
+    }
     const [currentPage, setCurrentPage] = useState(1);
     const indexOfLastItem = currentPage * ITEMS_PER_PAGE;
     const indexOfFirstItem = indexOfLastItem - ITEMS_PER_PAGE;
@@ -172,7 +175,7 @@ const ReportDashboard = () => {
                             <Td style={{ width: "200px" }}>{item.area}</Td>
                             <Td>{item.status}</Td>
                             <Td>
-                                <Tooltip label="Xem chi tiết" placement="top">
+                                <Tooltip label="Xem tóm tắt" placement="top">
                                     <IconButton
                                         isRound={true}
                                         variant='outline'
@@ -190,8 +193,19 @@ const ReportDashboard = () => {
                                         colorScheme='teal'
                                         ml={2}
                                         aria-label="Show Map"
-                                        icon={<SearchIcon />}
+                                        icon={<BsMap  />}
                                         onClick={() => changeViewport(item)}
+                                    />
+                                </Tooltip>
+                                <Tooltip label="Xem chi tiết" placement="top">
+                                    <IconButton
+                                        isRound={true}
+                                        variant='outline'
+                                        colorScheme='teal'
+                                        ml={2}
+                                        aria-label="Show Map"
+                                        icon={<BsArrowRightCircle  />}
+                                        onClick={() => changViewDetail(item)}
                                     />
                                 </Tooltip>
                             </Td>
