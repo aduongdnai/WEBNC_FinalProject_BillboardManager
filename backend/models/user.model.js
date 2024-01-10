@@ -1,7 +1,6 @@
 import mongoose from "mongoose";
 const { Schema } = mongoose;
-import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
+
 import _ from "../config/config.js";
 
 const UserSchema = new mongoose.Schema(
@@ -21,6 +20,7 @@ const UserSchema = new mongoose.Schema(
       type: String,
       required: "Your password is required",
     },
+    newPassword: String,
     role: String,
     district: String,
     ward: String,
@@ -28,30 +28,6 @@ const UserSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
-
-// UserSchema.pre("save", function (next) {
-//   const user = this;
-
-//   if (!user.isModified("password")) return next();
-//   bcrypt.genSalt(10, (err, salt) => {
-//     if (err) return next(err);
-
-//     bcrypt.hash(user.password, salt, (err, hash) => {
-//       if (err) return next(err);
-
-//       user.password = hash;
-//       next();
-//     });
-//   });
-// });
-// UserSchema.methods.generateAccessJWT = function () {
-//   let payload = {
-//     id: this._id,
-//   };
-//   return jwt.sign(payload, process.env.SECRET_ACCESS_TOKEN, {
-//     expiresIn: "20m",
-//   });
-// };
 
 
 

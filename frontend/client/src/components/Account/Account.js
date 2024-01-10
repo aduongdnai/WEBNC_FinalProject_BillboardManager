@@ -27,21 +27,60 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
 function Account() {
-  const [showChangePassword, setShowChangePassword] = useState(false);
+
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  const handleChangePasswordClick = () => {
-    setShowChangePassword(true);
+  const [confirmNewPassword, setConfirmNewPassword] = useState("");
+
+  const handleSavePasswordClick = async () => {
+    if (newPassword !== confirmNewPassword) {
+      // Check if the new password and confirmation password match
+      toast({
+        title: "Password confirmation failed",
+        description: "New password and confirmation password do not match.",
+        status: "error",
+        duration: 2000,
+        isClosable: true,
+      });
+      return; // Prevent further execution if passwords don't match
+    }
+    try {
+      const response = await axios.put(
+        `http://127.0.0.1:5000/api/v1/users/change-password/${userData._id}`, 
+        {
+          oldPassword: currentPassword,
+          newPassword: newPassword
+        }
+      );
+  
+      console.log("Password changed successfully", response.data);
+      toast({
+        title: "Password changed successfully",
+        description: "Your password has been updated.",
+        status: "success",
+        duration: 2000,
+        isClosable: true,
+      });
+  
+      setCurrentPassword("");
+      setNewPassword("");
+      onClose(); // Close the modal after password change
+    } catch (error) {
+      console.error("Error changing password:", error);
+      // Handle error here
+      toast({
+        title: "Error changing password",
+        description: "An error occurred while changing your password.",
+        status: "error",
+        duration: 2000,
+        isClosable: true,
+      });
+    }
   };
-  const handleSavePasswordClick = () => {
-    console.log("Current Password:", currentPassword);
-    console.log("New Password:", newPassword);
-    setCurrentPassword("");
-    setNewPassword("");
-    setShowChangePassword(false);
-  };
+  
+
   const toast = useToast();
   const [userData, setUserData] = useState({
     email: "",
@@ -64,11 +103,11 @@ function Account() {
   const handleSaveClick = async () => {
     try {
       const response = await axios.put(
-        `http://127.0.0.1:5000/api/v1/users/${userData._id}`, // Endpoint cập nhật người dùng
-        userData // Dữ liệu người dùng cần cập nhật
+        `http://127.0.0.1:5000/api/v1/users/${userData._id}`, 
+        userData 
       );
 
-      // Nếu cập nhật thành công, thiết lập trạng thái chỉnh sửa về false
+
       setIsEditing(false);
       console.log("User updated successfully", response.data);
       toast({
@@ -83,13 +122,7 @@ function Account() {
       // Xử lý lỗi khi cập nhật thông tin người dùng
     }
   };
-  // useEffect(() => {
-  //   // Lấy access token từ localStorage
-  //   const accessToken = localStorage.getItem('accessToken');
 
-  //   // Xuất ra console log để hiển thị access token
-  //   console.log("Access Token:", accessToken);
-  // }, []);
 
   useEffect(() => {
     const storedUserInfo = localStorage.getItem("userData");
@@ -152,40 +185,7 @@ function Account() {
                     name="username"
                   />
 
-                  {/* {!showChangePassword ? (
-                    <Button
-                      colorScheme="blue"
-                      w={"100%"}
-                      onClick={handleChangePasswordClick}
-                    >
-                      Đổi mật khẩu
-                    </Button>
-                  ) : (
-                    <Flex flexDirection="column">
-                      <Input
-                        type="password"
-                        variant="filled"
-                        placeholder="Mật khẩu hiện tại"
-                        value={currentPassword}
-                        onChange={(e) => setCurrentPassword(e.target.value)}
-                        mb={3}
-                      />
-                      <Input
-                        type="password"
-                        variant="filled"
-                        placeholder="Mật khẩu mới"
-                        value={newPassword}
-                        onChange={(e) => setNewPassword(e.target.value)}
-                        mb={3}
-                      />
-                      <Button
-                        colorScheme="blue"
-                        onClick={handleSavePasswordClick}
-                      >
-                        Lưu mật khẩu mới
-                      </Button>
-                    </Flex>
-                  )} */}
+
 
                   <FormLabel>role:</FormLabel>
                   <Input variant="filled" value={userData.role} isReadOnly />
@@ -257,8 +257,9 @@ function Account() {
                   type="password"
                   variant="filled"
                   placeholder="Xác nhận mật khẩu mới"
-                  value={newPassword}
-                  onChange={(e) => setNewPassword(e.target.value)}
+                  value={confirmNewPassword}  
+                  onChange={(e) => setConfirmNewPassword(e.target.value)}
+
                   mb={3}
                 />
               </Flex>
