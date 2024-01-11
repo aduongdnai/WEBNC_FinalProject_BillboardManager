@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>APIS LOGGER</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css"
+    integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
+  <style>
+
+  </style>
+</head>
+
+<body>
+  <div class="container mt-5">
+    <h1>Billboard Management LOGGER</h1>
+    <form>
+      <div class="form-group">
+        <h3><label for="selectBox">Level</label></h3>
+        <select class="form-control" id="selectBox">
+          <option value="all">All</option>
+          <option value="info">info</option>
+          <option value="warn">warn</option>
+          <option value="error">error</option>
+          <option value="critical">critical</option>
+        </select>
+      </div>
+      <h3>Created Time</h3>
+      <div class="form-group">
+        <label for="fromDateTime">From:</label>
+        <input type="datetime-local" class="form-control" id="fromDateTime">
+      </div>
+
+      <div class="form-group">
+        <label for="toDateTime">To:</label>
+        <input type="datetime-local" class="form-control" id="toDateTime">
+      </div>
+      <div class="form-group">
+        <h3><label for="searchBar">URL</label></h3>
+        <input type="text" class="form-control" id="searchBar" placeholder="Enter your search term">
+      </div>
+
+      <button type="button" class="btn btn-primary" id="searchButton">Search</button>
+
+      <div class="mt-3">
+        <h2>Log Results:</h2>
+        <div id="searchResults">
+          <table class="table" id="log-table">
+            <thead>
+              <tr>
+                <th>Level</th>
+                <th>Method</th>
+                <th>Url</th>
+                <th>Response Time</th>
+                <th>Status code</th>
+                <th>Created Time</th>
+                <th>Detail</th>
+              </tr>
+            </thead>
+            <tbody id="log-container"></tbody>
+          </table>
+          <!-- Search results will be displayed here -->
+        </div>
+      </div>
+    </form>
+  </div>
+
+
+
+
+
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"
+    integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN"
+    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.min.js"
+    integrity="sha384-+sLIOodYLS7CIrQpBjl+C7nPvqq+FbNUBDunl/OZv93DB7Ln/533i8e/mZXLi/P+"
+    crossorigin="anonymous"></script>
+  <script>
+    $('#searchButton').on('click', function () {
+
+
+      $('#log-table tbody').empty();
+
+      $.ajax({
+        url: 'http://localhost:5000/api/v1/logs/',
+        type: 'GET'
+      }).done(function (res) {
+        var selectedValue = $('#selectBox').val();
+        var searchValue = $('#searchBar').val();
+        var fromDateTime = new Date($('#fromDateTime').val());
+        var toDateTime = new Date($('#toDateTime').val());
+
+        var fromValid = !isNaN(fromDateTime.getTime());
+        var toValid = !isNaN(toDateTime.getTime());
+        if (!toValid) {
+          toDateTime = new Date();
+        }
+        console.log(res);
+        for (const log of res) {
+          if (log.meta.req.url.includes(searchValue)) {
+            var logDateTime = new Date(log.timestamp);
+            if (!fromValid || logDateTime >=  fromDateTime && logDateTime <= toDateTime){
+            if (selectedValue === "all" || log.level.includes(selectedValue)) {
+              const jsonData = JSON.stringify(log);
+              const encodedData = encodeURIComponent(jsonData);
+
+              const tr = `<tr>
+                      <td>${log.level}</td>
+                      <td>${log.meta.req.method}</td>
+                      <td>${log.meta.req.url}</td>
+                      <td>${log.meta.responseTime}ms</td>
+                      <td>${log.meta.res.statusCode} </td>
+                      <td>${log.timestamp}</td>    
+                      <td><a href="detail.html?data=${encodedData}">See more</a>
+                      </td>                
+                    </tr>`;
+              $('#log-container').append(tr);
+            }
+          }
+        }
+
+        }
+      });
+    });
+  </script>
+
+</body>
+
+</html>

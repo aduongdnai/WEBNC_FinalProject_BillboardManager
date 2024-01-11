@@ -1,8 +1,9 @@
 import express from "express";
 import AdLocationModel from "../models/adLocation.model.js";
 import mongoose from "mongoose";
+import { routeLogger } from "../middlewares/logger.mdw.js";
 const router = express.Router();
-
+router.use(routeLogger);
 import {
   sendEditRequest,
   editAdLocation,

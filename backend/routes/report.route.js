@@ -1,8 +1,9 @@
 import express from 'express';
 import UserReportModel from '../models/userReport.model.js';
 import mongoose from 'mongoose';
+import { routeLogger } from '../middlewares/logger.mdw.js'
 const router = express.Router();
-
+router.use(routeLogger);
 router.post('/', async (req, res) => {
     const reportData = req.body;
     //console.log(req.body);

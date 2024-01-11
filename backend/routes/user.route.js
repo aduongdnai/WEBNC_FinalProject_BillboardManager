@@ -1,7 +1,11 @@
 import express from 'express';
 import userModel from '../models/user.model.js';
 import bcrypt from "bcrypt";
+import { routeLogger } from '../middlewares/logger.mdw.js'
 const router = express.Router();
+
+router.use(routeLogger);
+
 router.get('/:id', async (req, res) => {
     try {
         const user = await userModel.findById(req.params.id);
