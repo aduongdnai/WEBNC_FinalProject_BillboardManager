@@ -23,13 +23,13 @@ function AdBoardList(props) {
     const { isOpen: isReportDetailOpen, onOpen: onReportDetailOpen, onClose: onReportDetailClose } = useDisclosure();
 
     const rp = useSelector((state) => state.report.reports.find((r) => r.reference_id === info._id));
-    
+
     const report = rp ? { ...rp } : { isReported: false, images: [] };
     if (report.status === 'Pending' || report.status === 'Processing') {
-        report.isReported =  true;
+        report.isReported = true;
     }
     if (report.status === 'Processed') {
-        report.isReported =  false;
+        report.isReported = false;
     }
     return (
 
@@ -81,7 +81,7 @@ function AdBoardList(props) {
                                         <Text>Kích thước: {info.height}m x {info.width}m </Text>
                                         <Text>Hình thức: <b>{info.advertisingType}</b></Text>
                                         <Text >Loại địa điểm: <b>{info.locationType}</b></Text>
-
+                                        {info.expiryDate && <Text>Ngày hết hạn: {new Date(info.expiryDate).toLocaleDateString()}</Text>}
                                     </Box>
                                 </Flex>
                             </ModalBody>
@@ -123,7 +123,7 @@ function AdBoardList(props) {
                         <ModalHeader>Report Form</ModalHeader>
                         <ModalCloseButton />
                         <ModalBody>
-                            <ReportForm info={{ type: 'adboard', _id: info._id, area:info.displayAddress }}></ReportForm>
+                            <ReportForm info={{ type: 'adboard', _id: info._id, area: info.displayAddress }}></ReportForm>
                         </ModalBody>
 
 

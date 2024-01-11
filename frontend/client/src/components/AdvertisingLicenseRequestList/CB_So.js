@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Box, Table, Thead, Tbody, Tr, Th, Td, Text, ButtonGroup, Button, Center, useToast } from '@chakra-ui/react';
 import { ViewIcon, SmallCloseIcon, InfoOutlineIcon } from '@chakra-ui/icons';
 import {
@@ -17,11 +17,29 @@ import { Image as CloudinaryImage, CloudinaryContext } from 'cloudinary-react';
 import { Carousel } from 'react-responsive-carousel';
 import userApi from '../../apis/userApi';
 import AdvertisingLicenseRequestApi from '../../apis/advertisingLicenseRequestApi.js';
+import adBoardApi from '../../apis/adBoardApi.js';
+import { useSelector } from 'react-redux';
 
 function AdvertisingLicenseRequestListCBSO({ requests }) {
     const [request, setRequest] = React.useState(null);
+    const [requestList, setRequestsList] = React.useState(requests);
+    const user = useSelector(state => state.auth.userData);
     const { isOpen, onOpen, onClose } = useDisclosure()
     const toast = useToast();
+    const [update, setUpdate] = React.useState(false);
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const result = await AdvertisingLicenseRequestApi.getAdvertisingLicenseRequest();
+                setRequestsList(result.data);
+                setUpdate(false);
+            } catch (error) {
+                console.log(error);
+            }
+        }
+        fetchData();
+
+    }, [update]);
     const handleViewRequest = async (request) => {
 
         try {
@@ -41,6 +59,7 @@ function AdvertisingLicenseRequestListCBSO({ requests }) {
         const result = await AdvertisingLicenseRequestApi.updateAdvertisingLicenseRequest(request._id, { status: "Approved" });
         console.log(result);
         if (result.msg === "success") {
+            const adboarResult = await adBoardApi.updateAdboard(request.adBoard, { images: request.adImage, expiryDate: request.endDate })
             toast({
                 title: 'Approve thành công.',
                 description: "Đơn dăng ký đã được approve thành công.",
@@ -48,7 +67,7 @@ function AdvertisingLicenseRequestListCBSO({ requests }) {
                 duration: 2000,
                 isClosable: true,
             });
-
+            setUpdate(true);
         }
         onClose();
     }
@@ -63,7 +82,7 @@ function AdvertisingLicenseRequestListCBSO({ requests }) {
                 duration: 2000,
                 isClosable: true,
             });
-
+            setUpdate(true);
         }
         onClose();
     }
@@ -135,7 +154,7 @@ function AdvertisingLicenseRequestListCBSO({ requests }) {
                             Close
                         </Button>
                         {request && request.status === "Pending" &&
-                            <Button colorScheme='green' onClick={handleApproveRequest}>Approve</Button>
+                            <Button mr={3} colorScheme='green' onClick={handleApproveRequest}>Approve</Button>
                         }
                         {request && request.status === "Pending" &&
                             <Button colorScheme="red" onClick={handleRejectRequest}>Reject</Button>

@@ -70,7 +70,7 @@ router.post('/', async (req, res) => {
 })
 router.patch('/:id', async (req, res) => {
     try {
-
+        console.log(req.body);
         const result = await AdBoardModel.findOneAndUpdate({ _id: req.params.id },
             req.body, { new: true })
 

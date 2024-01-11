@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { useState, useEffect } from 'react';
-import { Icon, useDisclosure } from '@chakra-ui/react'
+import { Divider, Icon, useDisclosure, Tooltip, IconButton, Flex } from '@chakra-ui/react'
 import { ButtonGroup, VStack, Heading, Box, Text, Button, Drawer, DrawerOverlay, DrawerBody, DrawerHeader, DrawerContent } from '@chakra-ui/react';
-import { AddIcon, ViewIcon } from '@chakra-ui/icons';
+import { AddIcon, ViewIcon, EditIcon } from '@chakra-ui/icons';
 import {
     Modal,
     ModalOverlay,
@@ -15,13 +15,16 @@ import {
 import AdBoardList from '../adBoardList';
 import adBoardApi from '../../apis/adBoardApi';
 import AdBoardForm from '../AdBoardForm';
+import { Carousel } from 'react-responsive-carousel';
+import { Image as CloudinaryImage, CloudinaryContext } from 'cloudinary-react';
+import { useSelector } from 'react-redux';
 
 function PlannedLocationInfo(props) {
     const { info } = props;
     const { isOpen, onOpen, onClose } = useDisclosure();
     const { isOpen: isAddAdBoardOpen, onOpen: onAddAdBoardOpen, onClose: onAddAdBoardClose } = useDisclosure();
     const [adBoards, setAdBoards] = useState([]);
-
+    const user = useSelector(state => state.auth.userData);
     const displayAddress = `${info.address}`;
 
     useEffect(() => {
@@ -74,10 +77,50 @@ function PlannedLocationInfo(props) {
                     <DrawerOverlay />
                     <DrawerContent>
                         <DrawerHeader borderBottomWidth='1px'>
-                            <Heading size={"md"}>Thông tin địa điểm quảng cáo </Heading>
+                            <Flex justifyContent='space-between' alignItems='center'>
+                                <Heading size={"md"}>Thông tin địa điểm quảng cáo </Heading>
+                                {user.role !== "CB-So" &&
+                                    <Tooltip label='Gửi yêu cầu chỉnh sửa thông tin điểm đặt' placement='bottom'>
+                                        <IconButton
+                                            icon={<EditIcon />}
+                                            fontSize='20px'
+                                            variant='outline'
+                                            colorScheme='teal'
+                                            mr={2}
 
-                            <Button size="sm" leftIcon={<AddIcon></AddIcon>} colorScheme='green' variant="outline" onClick={onAddAdBoardOpen} >Thêm bảng quảng cáo</Button></DrawerHeader>
+                                        >
+
+                                        </IconButton>
+                                    </Tooltip>}
+                                {info.planned && adBoards.length < info.numberAdBoard && user.role === "CB-So" &&
+                                    <Tooltip label='Thêm bảng quảng cáo' placement='bottom'>
+                                        <IconButton
+                                            icon={<AddIcon />}
+                                            fontSize='20px'
+                                            variant='outline'
+                                            colorScheme='teal'
+                                            mr={2}
+                                            onClick={onAddAdBoardOpen}
+                                        >
+                                        </IconButton>
+                                    </Tooltip>}
+                            </Flex>
+
+
+                        </DrawerHeader>
                         <DrawerBody>
+                            <Box>
+                                <CloudinaryContext cloudName={process.env.REACT_APP_CLOUDINARY_CLOUD_NAME} secure="true" upload_preset="my_unsigned_preset">
+                                    <Carousel>
+                                        <CloudinaryImage publicId={info.image} width="150" height="50" />
+                                    </Carousel>
+                                </CloudinaryContext>
+                                <Text><strong>Loại quảng cáo:</strong> {info.advertisingType}</Text>
+                                <Text><strong>Loại địa điểm:</strong> {info.locationType}</Text>
+                                <Text><strong>Địa chỉ :</strong> {displayAddress}</Text>
+                                <Text><strong>Tình trạng:</strong> {info.planned ? "Đã Quy Hoạch" : "Chưa Quy Hoạch"}</Text>
+                            </Box>
+                            <Divider></Divider>
                             <Box>
                                 <Heading size={"md"}>Có  {adBoards.length} biển quảng cáo</Heading>
 

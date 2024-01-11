@@ -16,6 +16,7 @@ import ReportLocationInfo from './reportLocationInfo';
 import Pin from '../Pin';
 
 
+
 function Map(props) {
     const [popupInfo, setPopupInfo] = useState(null);
     const [plannedPopupInfo, setPlannedPopupInfo] = useState(null);
@@ -28,6 +29,7 @@ function Map(props) {
     const [filters, setFilters] = useState({ planned: true, reported: true });
     const user = useSelector(state => state.auth.userData);
     const userArea = localStorage.getItem("userArea") || "";
+    const [update, setUpdate] = useState(false);
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -58,6 +60,7 @@ function Map(props) {
                 }
 
                 setGeoJsonAdLocation(geojson);
+                setUpdate(false);
             } catch (error) {
                 console.error('Error fetching data:', error);
             }
@@ -65,7 +68,7 @@ function Map(props) {
 
         // Call the fetchData function when the component mounts or when viewport changes
         fetchData();
-    }, [filters.planned]);
+    }, [filters.planned, update]);
     const handleGeocoderViewportChange = (newViewport) => {
         const viewportData = {
             latitude: newViewport.latitude,
@@ -191,7 +194,7 @@ function Map(props) {
                         closeOnClick={false}
                         onClose={setPopupInfo}
                     >
-                        <LocationInfo info={popupInfo} />
+                        <LocationInfo info={popupInfo} setUpdate={setUpdate} />
                     </Popup>
                 )}
                 {plannedPopupInfo && (

@@ -16,8 +16,9 @@ import ManageDistrict from "./components/ManageDistrict";
 import ManageWard from "./components/ManageWard";
 import ReportDashboard from "./components/ReportDashboard";
 import AdvertisingLicenseRequestList from "./components/AdvertisingLicenseRequestList";
-import Account from "./components/Account/Account"
+import Account from "./components/Account/Account";
 import ReviewRequestsPage from "./components/adLocation/ReviewRequestsPage";
+import ReviewBoardRequestsPage from "./components/AdBoard/ReviewBoardRequestsPage";
 import io from "socket.io-client";
 import { useEffect, useState } from "react";
 import { useToast } from "@chakra-ui/react";
@@ -31,7 +32,6 @@ import ReportDetail from "./components/ReportDetail";
 import ReportTypesManagement from "./components/ReportTypesManagement";
 const socket = io("http://127.0.0.1:5000");
 
-
 function App() {
   const toast = useToast();
   const [report, setReport] = useState();
@@ -44,17 +44,25 @@ function App() {
     socket.on("notification", (data) => {
       console.log("Received notification:", data);
       toast.closeAll();
-      setIsClick(false)
+      setIsClick(false);
 
       toast({
         title: `Báo cáo mới`,
         description: (
           <>
             Bạn có báo cáo mới từ {data.senderName}, <br />
-            Kiểu loại: {data.reportType}<br />
+            Kiểu loại: {data.reportType}
+            <br />
             Khu vực: {data.area} <br />
-            <button onClick={()=>{setIsClick(true)}}><b>Xem chi tiết</b></button>
-          </>),
+            <button
+              onClick={() => {
+                setIsClick(true);
+              }}
+            >
+              <b>Xem chi tiết</b>
+            </button>
+          </>
+        ),
         duration: 5000,
         isClosable: true,
         variant: "left-accent",
@@ -62,7 +70,6 @@ function App() {
       });
       setReport(data);
     });
-
   }, []);
 
   return (
@@ -71,46 +78,83 @@ function App() {
         <Router>
           <Sidebar />
           <Routes>
-            <Route path="/map" element={<ProtectedProvider><NotifyProvider isClick={isClick} report={report}><Map /></NotifyProvider></ProtectedProvider>} />
-            <Route path="/table-area" element={
-              <ProtectedProvider>
-                <TableQueryByArea />
-              </ProtectedProvider>} />
-            <Route path="/manage-district" 
+            <Route
+              path="/map"
+              element={
+                <ProtectedProvider>
+                  <NotifyProvider isClick={isClick} report={report}>
+                    <Map />
+                  </NotifyProvider>
+                </ProtectedProvider>
+              }
+            />
+            <Route
+              path="/table-area"
+              element={
+                <ProtectedProvider>
+                  <TableQueryByArea />
+                </ProtectedProvider>
+              }
+            />
+            <Route
+              path="/manage-district"
               element={
                 <ProtectedProvider>
                   <ManageDistrict />
                 </ProtectedProvider>
-              } 
-            /> 
-            <Route path="/manage-ward" 
+              }
+            />
+            <Route
+              path="/manage-ward"
               element={
                 <ProtectedProvider>
                   <ManageWard />
                 </ProtectedProvider>
-              } 
-            /> 
-            <Route path="/manage-advertising-type" 
+              }
+            />
+            <Route
+              path="/manage-advertising-type"
               element={
                 <ProtectedProvider>
                   <ManageAdvertisingType />
                 </ProtectedProvider>
-              } 
-            /> 
-            <Route path="/table-advertising-type" 
+              }
+            />
+            <Route
+              path="/table-advertising-type"
               element={
                 <ProtectedProvider>
                   <TableQueryByAdType />
                 </ProtectedProvider>
-              } 
-            /> 
+              }
+            />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/account" element={<Account />} />
-
-            <Route path="/report" element={<ProtectedProvider><ReportDashboard /></ProtectedProvider>} />
-            <Route path="/report/:rpId" element={<ProtectedProvider><ReportDetail /></ProtectedProvider>} />
-            <Route path="/report-types" element={<ProtectedProvider><ReportTypesManagement /></ProtectedProvider>} />
+            <Route
+              path="/report"
+              element={
+                <ProtectedProvider>
+                  <ReportDashboard />
+                </ProtectedProvider>
+              }
+            />
+            <Route
+              path="/report/:rpId"
+              element={
+                <ProtectedProvider>
+                  <ReportDetail />
+                </ProtectedProvider>
+              }
+            />
+            <Route
+              path="/report-types"
+              element={
+                <ProtectedProvider>
+                  <ReportTypesManagement />
+                </ProtectedProvider>
+              }
+            />
             <Route path="/" element={<Navigate replace to="/map" />} />
             <Route path="/ad-locations" element={<AdLocationPage />} />
             <Route path="/premium" element={<Premium />} />
@@ -120,12 +164,22 @@ function App() {
             />
             <Route
               path="/advertisinglicense"
-              element={<ProtectedProvider><AdvertisingLicenseRequestList /></ProtectedProvider>}
+              element={
+                <ProtectedProvider>
+                  <AdvertisingLicenseRequestList />
+                </ProtectedProvider>
+              }
             />
             <Route path="/" element={<Navigate replace to="/map" />} />
-
-            <Route path="/view-requests" element={<ReviewRequestsPage />} />{" "}
+            <Route
+              path="/view-requests"
+              element={<ReviewRequestsPage />}
+            />{" "}
             {/* Add the new route */}
+            <Route
+              path="/review-board-request"
+              element={<ReviewBoardRequestsPage />}
+            />{" "}
           </Routes>
         </Router>
       </div>

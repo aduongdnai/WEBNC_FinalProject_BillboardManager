@@ -14,7 +14,7 @@ router.post('/', async (req, res) => {
         //console.log(req.body);
         const result = await newAdvertisingLicense.save()
         res.status(200).json({
-            result
+            data: result
         })
     }
     catch (err) {
@@ -38,6 +38,20 @@ router.get('/', async (req, res) => {
         })
     }
 
+});
+router.get('/adboard/:id', async (req, res) => {
+    try {
+        const result = await AdvertisingLicenseRequest.find({ adBoard: req.params.id });
+        res.status(200).json({
+            data: result
+        })
+    }
+    catch {
+        console.log(err);
+        res.status(500).json({
+            error: "Internal Error"
+        })
+    }
 });
 router.get('/:user_id', async (req, res) => {
     try {
@@ -72,7 +86,7 @@ router.delete('/:id', async (req, res) => {
     try {
         const updatedRequest = await AdvertisingLicenseRequest.findOneAndDelete({ _id: req.params.id });
         res.status(200).json({
-            msg: "Delete license request success"
+            msg: "success"
         })
     } catch (error) {
         console.log(error);
