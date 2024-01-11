@@ -9,7 +9,7 @@ import ReCAPTCHA from "react-google-recaptcha";
 import ImageUploaderWithWidget from '../ImageUploaderWithWidget';
 import CustomInput from '../CustomInput';
 import store from '../../store';
-import { addReport } from '../actions/reportAction';
+import { addReport, addReportLocation } from '../actions/reportAction';
 const ReportForm = (props) => {
     const { info } = props;
     console.log(info);
@@ -47,9 +47,13 @@ const ReportForm = (props) => {
                 values.reportContent = text;
                 values.reference_id = info._id;
                 values.time = new Date().toISOString();
+                if (info.type === 'plannedLocation') {
+                    values = { ...values, longitude: info.longitude, latitude: info.latitude };
+
+                }
 
                 const apiResponse = await axios.post('http://127.0.0.1:5000/api/v1/report', values);
-                console.log(apiResponse.data);
+                //console.log(apiResponse.data);
 
                 // Reset the form on successful submission
                 resetForm();
@@ -60,6 +64,13 @@ const ReportForm = (props) => {
                 rp.push(apiResponse.data);
                 localStorage.setItem('report', JSON.stringify(rp));
                 store.dispatch(addReport(apiResponse.data));
+                if (info.type === 'plannedLocation') {
+                    var rpl = localStorage.getItem('reportLocation');
+                    rpl = rpl ? JSON.parse(rpl) : [];
+                    rpl.push(apiResponse.data);
+                    localStorage.setItem('reportLocation', JSON.stringify(rpl));
+                    store.dispatch(addReportLocation(apiResponse.data));
+                }
                 //localStorage.setItem(`report_${values.reference_id}`, JSON.stringify({ ...apiResponse.data, isReported: true }));
             } catch (error) {
                 // Handle any errors from the server

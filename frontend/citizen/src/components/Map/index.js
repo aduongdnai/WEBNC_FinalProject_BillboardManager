@@ -16,17 +16,23 @@ import mapAPI from '../../apis/mapApi';
 import adLocationAPI from '../../apis/adLocationApi';
 import Pin from '../Pin';
 import { clusterLayer, clusterCountLayer, unclusteredPointLayer, unclusteredPointTextLayer } from './layer';
+import { reportclusterLayer, reportclusterCountLayer, reportunclusteredPointLayer, reportunclusteredPointTextLayer } from './reportLayer';
 import FilterOverlay from '../FilterOverlay';
+import reportApi from '../../apis/reportApi';
+import ReportLocationInfo from './reportLocationInfo';
+import adBoardApi from '../../apis/adBoardApi';
 
 
 function Map(props) {
     const [popupInfo, setPopupInfo] = useState(null);
     const [plannedPopupInfo, setPlannedPopupInfo] = useState(null);
     const [adLocation, setAdLocation] = useState(null);
+    const [reportLocationInfo, setReportLocationInfo] = useState(null);
     const [geoJsonAdLocation, setGeoJsonAdLocation] = useState(null);
-    const [filters, setFilters] = useState({ planned: false, reported: false });
+    const [filters, setFilters] = useState({ planned: true, reported: true });
     const viewport = useSelector(state => state.viewport)
     const report = useSelector(state => state.report.reports)
+    const reportLocations = useSelector(state => state.report.reportLocations)
     const dispatch = useDispatch()
     const mapRef = useRef(null);
     const geolocateStyle = {
@@ -53,34 +59,33 @@ function Map(props) {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                console.log(filters);
-                const result = await adLocationAPI.getAdLocationByFilters(filters);
+
+                const result = await adLocationAPI.getAllAdLocation();
+
                 setAdLocation(result.data);
+                const features = await Promise.all(result.data.map(async (adLocation) => {
+                    const hasAdBoard = await adLocationAPI.doesAdLocationHaveAdBoard(adLocation._id);
+
+                    return {
+                        type: 'Feature',
+                        geometry: adLocation.coordinates,
+                        properties: {
+                            ...adLocation,
+                            hasAdBoard: hasAdBoard
+                        }
+                    };
+                }));
+
                 const geojson = {
                     type: 'FeatureCollection',
-                    features: result.data.map((adLocation) => {
-                        const rp = report.find((report) => report.reference_id === adLocation._id && report.type === "plannedLocation") || { isReported: false };
-                        console.log("rp", rp);
-                        const adjust_rp = { ...rp, rp_id: rp._id }
-                        delete adjust_rp._id;
-                        return {
-                            type: 'Feature',
-                            geometry: adLocation.coordinates,
-                            properties: {
-                                ...adLocation,
-                                ...adjust_rp,
+                    features: features
+                };
+                if (!filters.planned) {
+                    geojson.features = []
+                }
 
-                            }
-                        };
-                    })
-                };
-                const filteredFeaturesGeojson = filters.reported ? geojson.features.filter((adLocation) => adLocation.properties.isReported === false) : geojson.features;
-                //console.log("geojson", filteredFeaturesGeojson);
-                const filteredGeojson = {
-                    type: 'FeatureCollection',
-                    features: filteredFeaturesGeojson
-                };
-                setGeoJsonAdLocation(filteredGeojson);
+                setGeoJsonAdLocation(geojson);
+
             } catch (error) {
                 console.error('Error fetching data:', error);
             }
@@ -88,7 +93,7 @@ function Map(props) {
 
         // Call the fetchData function when the component mounts or when viewport changes
         fetchData();
-    }, [filters]);
+    }, [filters, reportLocations]);
     const handleGeocoderViewportChange = (newViewport) => {
         const viewportData = {
             latitude: newViewport.latitude,
@@ -104,7 +109,6 @@ function Map(props) {
 
     const onClickMap = async event => {
         event.preventDefault();
-        //console.log(event);
         const address = await mapAPI.geoCodeToAddress(event.lngLat[1], event.lngLat[0])
         const area = `${address.results[0].compound.commune}, ${address.results[0].compound.district}, ${address.results[0].compound.province}`
 
@@ -118,17 +122,21 @@ function Map(props) {
         })
     }
 
-    const handleOnClickPin = (location) => {
-        setPlannedPopupInfo({
-            ...location,
-            longitude: location.coordinates.coordinates[0],
-            latitude: location.coordinates.coordinates[1],
-            address: location.address,
-            area: location.area,
+    const handleOnClickPin = (report) => {
+        console.log(report);
+        setReportLocationInfo({
+            ...report,
+            longitude: report.longitude,
+            latitude: report.latitude,
+            address: report.address,
+            area: report.area,
 
         })
     }
     const handleClick = (event) => {
+        if (event.srcEvent.button === 2) {
+            return;
+        }
         const clickedFeature = event.features.find(
             (feature) => feature.layer.id === unclusteredPointLayer.id
         );
@@ -152,7 +160,7 @@ function Map(props) {
 
     const handleFilterChange = (newFilters) => {
         setFilters(newFilters);
-        console.log("change", filters);
+
     };
     return (
         <div>
@@ -180,7 +188,10 @@ function Map(props) {
                     <Layer {...unclusteredPointLayer} />
                     <Layer {...unclusteredPointTextLayer} />
                 </Source>
-                {/* <Pin data={adLocation} onClick={handleOnClickPin}> </Pin> */}
+                {filters.reported && (
+                    <Pin data={reportLocations} onClick={handleOnClickPin} filter={filters.reported}> </Pin>
+
+                )}
                 <SearchBox />
 
 
@@ -206,6 +217,19 @@ function Map(props) {
                         onClose={setPlannedPopupInfo}
                     >
                         <PlannedLocationInfo info={plannedPopupInfo} />
+                    </Popup>
+                )}
+                {reportLocationInfo && (
+
+                    <Popup
+                        tipSize={5}
+                        anchor="top"
+                        longitude={reportLocationInfo.longitude}
+                        latitude={reportLocationInfo.latitude}
+                        closeOnClick={false}
+                        onClose={setReportLocationInfo}
+                    >
+                        <ReportLocationInfo info={reportLocationInfo} />
                     </Popup>
                 )}
                 <FilterOverlay onFilterChange={handleFilterChange} />

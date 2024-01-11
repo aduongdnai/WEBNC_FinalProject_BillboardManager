@@ -1,8 +1,9 @@
 import express from 'express';
 import AdvertisingLicenseRequest from '../models/advertisingLicenseRequest.model.js';
+import { routeLogger } from '../middlewares/logger.mdw.js'
 // backend/routes/advertisingLicense.route.js
 const router = express.Router();
-
+router.use(routeLogger);
 
 router.post('/', async (req, res) => {
     try {

@@ -19,6 +19,7 @@ import districtRoute from "./routes/district.route.js";
 import wardRoute from "./routes/ward.route.js";
 import advertisingTypeRoute from "./routes/advertisingType.route.js"
 
+import logRoute from "./routes/log.route.js";
 
 const server = express();
 
@@ -44,6 +45,8 @@ server.get("/", (req, res) => {
   });
 });
 
+server.use("/public", express.static("public"));
+
 // Routes
 server.use('/api/v1/auth', authRoute);
 server.use("/api/v1/adlocations", adLocationRoute);
@@ -57,6 +60,7 @@ server.use("/api/v1/district", districtRoute);
 server.use("/api/v1/ward", wardRoute);
 server.use("/api/v1/advertisingType", advertisingTypeRoute);
 
+server.use("/api/v1/logs", logRoute);
 
 const httpServer = createServer(server);
 const io = new SocketIO(httpServer, {

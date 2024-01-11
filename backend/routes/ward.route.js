@@ -1,9 +1,10 @@
 import express from 'express';
 import WardModel from '../models/ward.model.js';
 import mongoose from 'mongoose';
+import { routeLogger } from '../middlewares/logger.mdw.js'
 const router = express.Router();
 
-
+router.use(routeLogger);
 
 router.post('/findByDistrict', async (req, res) => {
     try {

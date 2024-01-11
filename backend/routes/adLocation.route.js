@@ -1,8 +1,9 @@
 import express from "express";
 import AdLocationModel from "../models/adLocation.model.js";
 import mongoose from "mongoose";
+import { routeLogger } from "../middlewares/logger.mdw.js";
 const router = express.Router();
-
+router.use(routeLogger);
 import {
   sendEditRequest,
   editAdLocation,
@@ -18,7 +19,7 @@ router.get("/filter", async (req, res) => {
     let planned = req.query.planned === "true";
     //let reported = Boolean(req.query.reported);
     let data;
-    if (planned) {
+    if (!planned) {
       data = await AdLocationModel.find({ planned: planned });
     } else {
       data = await AdLocationModel.find();
@@ -55,6 +56,7 @@ router.get("/", async (req, res) => {
 });
 router.post("/findByArea", async (req, res) => {
   try {
+    console.log(req.body.area);
     const data = await AdLocationModel.find({
       area: { $regex: req.body.area, $options: 'i' },
     });

@@ -33,9 +33,9 @@ export const unclusteredPointLayer = {
             ['to-string', ['get', 'planned']],
             'true', [
                 'match',
-                ['to-string', ['get', 'status']],
-                'Pending', '#fae546',
-                'Processed', '#45ff24',
+                ['to-string', ['get', 'hasAdBoard']],
+                'true', '#45ff3c',
+                'false', '#0022FF',
                 '#0022FF'
             ],
             'false', '#5b5b5b',

@@ -1,15 +1,16 @@
 import express from 'express';
 import UserReportModel from '../models/userReport.model.js';
 import mongoose from 'mongoose';
+import { routeLogger } from '../middlewares/logger.mdw.js'
 const router = express.Router();
-
+router.use(routeLogger);
 router.post('/', async (req, res) => {
     const reportData = req.body;
     //console.log(req.body);
     const newReport = new UserReportModel(reportData);
 
     try {
-        await newReport.save();    
+        await newReport.save();
         res.status(201).json(newReport);
         for (const clientId of global.connectedClients) {
             console.log(clientId);
@@ -41,6 +42,17 @@ router.get('/', async (req, res) => {
     try {
         const reports = await UserReportModel.find();
         res.status(200).json(reports);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+router.post('/type/:type', async (req, res) => {
+    try {
+        const area = req.body.area || "";
+        const reports = await UserReportModel.find({ type: req.params.type, area: { $regex: area, $options: 'i' } });
+        res.status(200).json({
+            data: reports,
+        });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }

@@ -1,7 +1,10 @@
 import express from 'express'
 import AdBoardModel from '../models/adBoard.model.js';
 import mongoose from 'mongoose';
+import { routeLogger } from '../middlewares/logger.mdw.js'
 const router = express.Router();
+
+router.use(routeLogger);
 
 router.get('/:id', async (req, res) => {
     try {
