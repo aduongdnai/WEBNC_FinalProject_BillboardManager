@@ -43,8 +43,6 @@ export const editAdLocation = async (req, res) => {
   }
 };
 
-// Giả sử bạn đặt nó trong file adLocationController.js hoặc một file controller khác.
-
 export const sendEditRequest = async (req, res) => {
   try {
     // Lấy dữ liệu từ yêu cầu
