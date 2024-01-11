@@ -7,11 +7,10 @@ import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import ReCAPTCHA from "react-google-recaptcha";
 import { useToast, Input } from '@chakra-ui/react';
-import { useEffect } from 'react';
 
 const ReportForm = (props) => {
     const { name,id, isDelete, onClose, setUpdate } = props;
-    // const [isExist, setIsExist] = useState(null);
+
     const toast = useToast();
     if(!isDelete){
         const initialValues = {
@@ -21,13 +20,7 @@ const ReportForm = (props) => {
         const validationSchema = Yup.object({
             name: Yup.string().required('Cần nhập tên'),
         });
-
-        
         const recaptchaRef = React.createRef();
-        // useEffect(() => {
-        //     // This will log the updated state after it has been set
-        //     if(isExist)
-        // }, [isExist]);
         const handleSubmit = async (values, { setSubmitting, resetForm }) => {
             const recaptchaValue = recaptchaRef.current.getValue();
             if (recaptchaValue) {
@@ -35,53 +28,58 @@ const ReportForm = (props) => {
                     console.log(values);
                     var apiResponse;
                     var isExist = null;
-                    var isContain = null;
+                    console.log(name);
                     if(name === ''){
-                        const apiCheck = await axios.post(`http://127.0.0.1:5000/api/v1/district/findDistrict`, {area: values.name});
-                        console.log(apiCheck.data.data);
+                        const apiCheck = await axios.post(`http://127.0.0.1:5000/api/v1/advertisingType/findType`, {area: values.name});
                         if(apiCheck.data.data.length === 0){
-                            apiResponse = await axios.post(`http://127.0.0.1:5000/api/v1/district`, values);
+                            apiResponse = await axios.post(`http://127.0.0.1:5000/api/v1/advertisingType`, values);
                             initialValues.name = values.name
                             setUpdate(true);
                             isExist = false
-                            isContain = false
                         }
                         if(apiCheck.data.data.length > 0) {
                             isExist = true
                         }
-                        // console.log(isExist.state);
                     }
                     else{
-                        const apiCheck = await axios.post(`http://127.0.0.1:5000/api/v1/district/findDistrict`, {area: values.name});
-                        const apiContain = await axios.post(`http://127.0.0.1:5000/api/v1/adlocations/findByArea`, {area: name});
+                        const apiCheck = await axios.post(`http://127.0.0.1:5000/api/v1/advertisingType/findType`, {area: values.name});
+                        // const apiContain = await axios.post(`http://127.0.0.1:5000/api/v1/adlocations/findByAdType`, {area: `${name}`});
                         if(apiCheck.data.data.length === 0){
-                            if(apiContain.data.data.length === 0){
-                                apiResponse = await axios.put(`http://127.0.0.1:5000/api/v1/district/${id}`,values);
+                            // if(apiContain.data.data.length === 0){
+                                apiResponse = await axios.put(`http://127.0.0.1:5000/api/v1/advertisingType/${id}`,values)
+                                const apiUpdate = await axios.put(`http://127.0.0.1:5000/api/v1/adlocations/updateAdType`,{oldAdType: name, newAdType: values.name})
                                 initialValues.name = values.name
                                 setUpdate(true);
-                                isContain = false;
-                            }
-                            else isContain = true;
+                            // }
+                            // else isContain = true;
                             isExist = false
                         }
                         else isExist = true
                     } 
-                    
-                
-                    if(isExist === false && isContain === false) {
+                    if(isExist === false) {
                         resetForm();  
                         setTimeout(() => {
                             onClose()
                         }, 1000);
-                    }               
-                    
+                    }        
+
+
                     toast({
-                        title: isContain? ('Error') : (isExist ? ('Error') : ('Successful.')),
-                        description:isContain ? ("Quận đã có điểm quảng cáo") : (isExist? ("Quận đã tồn tại") : (id?("Quận đã được cập nhật."):("Quận đã được thêm mới."))),
-                        status:isContain ? ('error') : (isExist ? ('error') : ('success')),
+                        title:(isExist ? ('Error') : ('Successful.')),
+                        description:(isExist? ("Loại quảng cáo đã tồn tại") : (id?("Loại quảng cáo đã được cập nhật."):("Loại quảng cáo đã được thêm mới."))),
+                        status:(isExist ? ('error') : ('success')),
                         duration: 2000,
                         isClosable: true,
                     });
+
+
+                    // toast({
+                    //     title: 'Successful.',
+                    //     description: id?("Phường đã được cập nhật."):("Phường đã được thêm mới."),
+                    //     status: 'success',
+                    //     duration: 2000,
+                    //     isClosable: true,
+                    // });
                     
                     
                     
@@ -124,10 +122,12 @@ const ReportForm = (props) => {
         const handleSubmit = async(values, { setSubmitting, resetForm }) =>{
             try{
                 var isContain = null;
-                const apiContain = await axios.post(`http://127.0.0.1:5000/api/v1/adlocations/findByArea`, {area: name});
+                console.log(values);
+                const apiContain = await axios.post(`http://127.0.0.1:5000/api/v1/adlocations/findByAdType`, {area: `${name}`});
+                console.log(apiContain);
                 if(apiContain.data.data.length === 0){
                     console.log("get here");
-                    const apiResponse = await axios.delete(`http://127.0.0.1:5000/api/v1/district/${id}`);
+                    const apiResponse = await axios.delete(`http://127.0.0.1:5000/api/v1/advertisingType/${id}`);
                     setUpdate(true);
                     isContain = false;
                 }
@@ -140,7 +140,7 @@ const ReportForm = (props) => {
                 }
                 toast({
                     title: isContain? ('Error') : ('Successful.'),
-                    description:isContain ? ("Quận đã có điểm quảng cáo") : ("Quận đã được xóa."),
+                    description:isContain ? ("Loại quảng cáo đã tồn tại điểm quảng cáo") : ("Loại quảng cáo đã được xóa."),
                     status:isContain ? ('error') : ('success'),
                     duration: 2000,
                     isClosable: true,

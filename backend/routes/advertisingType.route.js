@@ -1,18 +1,16 @@
 import express from 'express'
-import DistrictModel from '../models/district.model.js';
+import AdvertisingTypeModel from '../models/advertisingType.model.js';
 import mongoose from 'mongoose';
-import { routeLogger } from '../middlewares/logger.mdw.js'
 const router = express.Router();
 
-router.use(routeLogger);
 
 router.get('/', async (req, res) => {
     try {
-        const data = await DistrictModel.find()
+        const data = await AdvertisingTypeModel.find()
         
         if (data) {
             res.status(200).json({
-                message: "Get All District Successfully",
+                message: "Get All Advertising Type Successfully",
                 data
             })
         }
@@ -28,13 +26,13 @@ router.get('/', async (req, res) => {
 
 
 router.post('/', async (req, res) => {
-    const district = req.body;
+    const advertisingType = req.body;
     //console.log(req.body);
-    const newDistrict = new DistrictModel(district);
+    const newType = new AdvertisingTypeModel(advertisingType);
 
     try {
-        await newDistrict.save();    
-        res.status(201).json(newDistrict);
+        await newType.save();    
+        res.status(201).json(newType);
     } catch (error) {
         res.status(409).json({ message: error.message });
     }
@@ -47,22 +45,22 @@ router.put('/:id', async (req, res) => {
     const { name } = req.body;
 
     try {
-        const updatedDistrict = await DistrictModel.findByIdAndUpdate(id, { name }, { new: true });
-        res.status(200).json(updatedDistrict);
+        const updatedType = await AdvertisingTypeModel.findByIdAndUpdate(id, { name }, { new: true });
+        res.status(200).json(updatedType);
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
 });
 
-router.post("/findDistrict", async (req, res) => {
+router.post("/findType", async (req, res) => {
     try {
-      const data = await DistrictModel.find({
+      const data = await AdvertisingTypeModel.find({
         name: { $regex: req.body.area, $options: 'i' },
       });
       console.log(req.body.area);
       if (data) {
         res.status(200).json({
-          message: "findDistrict",
+          message: "findType",
           data,
         });
       }
@@ -80,8 +78,8 @@ router.delete("/:id", async (req, res) => {
   const { id } = req.params;
 
   try {
-      const deleteDistrict = await DistrictModel.findByIdAndDelete(id);
-      res.status(200).json(deleteDistrict);
+      const deleteType = await AdvertisingTypeModel.findByIdAndDelete(id);
+      res.status(200).json(deleteType);
   } catch (error) {
       res.status(500).json({ message: error.message });
   }

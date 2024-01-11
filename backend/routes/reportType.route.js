@@ -1,9 +1,10 @@
 import express from 'express'
 import ReportTypeModel from '../models/reportType.model.js';
 import mongoose from 'mongoose';
+import { routeLogger } from '../middlewares/logger.mdw.js'
 const router = express.Router();
 
-
+router.use(routeLogger);
 
 router.get('/', async (req, res) => {
     try {
@@ -53,7 +54,7 @@ router.put('/:id', async (req, res) => {
     }
 });
 
-router.post("/findDistrict", async (req, res) => {
+router.post("/findRpType", async (req, res) => {
     try {
       const data = await ReportTypeModel.find({
         name: { $regex: req.body.area, $options: 'i' },

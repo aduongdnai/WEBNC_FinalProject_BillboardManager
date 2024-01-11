@@ -4,9 +4,9 @@ import {
   approveRequest,
   rejectRequest,
 } from "../controller/reviewController.js";
-
+import { routeLogger } from "../middlewares/logger.mdw.js";
 const router = express.Router();
-
+router.use(routeLogger);
 // Đường dẫn để lấy danh sách yêu cầu chỉnh sửa
 router.get("/", getReviewRequests);
 

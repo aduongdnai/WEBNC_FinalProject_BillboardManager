@@ -1,8 +1,9 @@
 import express from "express";
 import AdLocationModel from "../models/adLocation.model.js";
 import mongoose from "mongoose";
+import { routeLogger } from "../middlewares/logger.mdw.js";
 const router = express.Router();
-
+router.use(routeLogger);
 import {
   sendEditRequest,
   editAdLocation,
@@ -73,6 +74,40 @@ router.post("/findByArea", async (req, res) => {
     });
   }
 });
+
+router.post("/findByAdType", async (req, res) => {
+  try {
+    const data = await AdLocationModel.find({
+      advertisingType: { $regex: req.body.area, $options: 'i' },
+    });
+    console.log(req.body.area);
+    if (data) {
+      res.status(200).json({
+        message: "findByAdType",
+        data,
+      });
+    }
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({
+      error: "Internal Error",
+    });
+  }
+}); 
+
+
+router.put("/updateAdType", async (req, res) => {
+  const { oldAdType, newAdType } = req.body;
+  console.log(oldAdType, newAdType);
+  try {
+    const updatedType = await AdLocationModel.updateMany({ advertisingType: oldAdType }, { $set:{advertisingType: newAdType} });
+    res.status(200).json(updatedType);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+
 router.post("/", async (req, res) => {
   try {
     const newAdLocation = new AdLocationModel(req.body);
