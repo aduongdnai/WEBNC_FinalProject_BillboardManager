@@ -22,6 +22,7 @@ import { useSelector } from 'react-redux';
 
 function AdBoardList(props) {
     const { info } = props;
+
     //const { isOpen, onOpen, onClose } = useDisclosure()
     const { isOpen: isInfoModalOpen, onOpen: onInfoModalOpen, onClose: onInfoModalClose } = useDisclosure();
     const { isOpen: isAdvertisingLicenseOpen, onOpen: onAdvertisingLicenseOpen, onClose: onAdvertisingLicenseClose } = useDisclosure();
@@ -41,7 +42,7 @@ function AdBoardList(props) {
                     duration: 2000,
                     isClosable: true,
                 });
-                const resultUpdate = await adBoardApi.updateAdboard(info._id, { advertisingLicense_id: result.data._id });
+                const resultUpdate = await adBoardApi.updateAdboardDuong(info._id, { advertisingLicense_id: result.data._id });
                 if (resultUpdate) {
                     info.advertisingLicense_id = result.data._id;
                 }
@@ -75,7 +76,7 @@ function AdBoardList(props) {
     const handleRejectRequest = async () => {
         try {
             console.log(adAdvertisingLicenseRequest.adBoardId);
-            const adboarResult = await adBoardApi.updateAdboard(adAdvertisingLicenseRequest.adBoard, { advertisingLicense_id: null })
+            const adboarResult = await adBoardApi.updateAdboardDuong(adAdvertisingLicenseRequest.adBoard, { advertisingLicense_id: null })
             if (adboarResult) {
                 info.advertisingLicense_id = null;
             }
