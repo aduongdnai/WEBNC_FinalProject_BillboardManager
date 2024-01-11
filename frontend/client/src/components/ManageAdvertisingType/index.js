@@ -61,10 +61,6 @@ function ManageAdvertisingType(){
     fetchData();
   }, [update]);
 
-  useEffect(() =>{
-    
-  })
-
 
   const columns = [
     {
