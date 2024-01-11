@@ -11,6 +11,7 @@ import CustomInput from '../CustomInput';
 import ImageUploaderWithWidget from '../ImageUploaderWithWidget';
 import CustomDateInput from '../CustomDateInput';
 import { useUser } from '../LoginSignup/userContext';
+import { useSelector } from 'react-redux';
 const validationSchema = Yup.object({
     companyName: Yup.string().required('Required'),
     email: Yup.string().email('Invalid email address').required('Required'),
@@ -25,7 +26,7 @@ const validationSchema = Yup.object({
 const AdvertisingLicenseRequestForm = ({ onSubmit, adboardInfo }) => {
     const [error, setError] = useState(null);
     const [publicId, setPublicId] = useState([]);
-    const { userData } = useUser();
+    const user = useSelector(state => state.auth.userData);
     console.log("ll", adboardInfo);
     const handleChangeImageUrl = (e) => {
         setPublicId(e.target.value);
@@ -47,14 +48,13 @@ const AdvertisingLicenseRequestForm = ({ onSubmit, adboardInfo }) => {
                     phone: values.phone,
                     address: values.address,
                 }
-
             },
             adContent: values.adContent,
             adImage: values.adImage,
             startDate: values.startDate,
             endDate: values.endDate,
-            user_id: userData._id,
-            adboard: adboardInfo._id,
+            user_id: user._id,
+            adBoard: adboardInfo._id,
             status: "Pending",
         };
 

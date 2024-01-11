@@ -1,20 +1,23 @@
 import * as React from 'react';
 import { useState } from 'react';
-import { Icon, useDisclosure } from '@chakra-ui/react'
+import { Icon, useDisclosure, useToast, Tooltip, IconButton } from '@chakra-ui/react'
 import { ButtonGroup, VStack, Heading, Box, Text, Button, Drawer, DrawerOverlay, DrawerBody, DrawerHeader, DrawerContent } from '@chakra-ui/react';
-import { AddIcon } from '@chakra-ui/icons';
+import { AddIcon, EditIcon } from '@chakra-ui/icons';
 import { Formik, Form } from 'formik'
 import CustomInput from '../CustomInput'
 import * as Yup from 'yup'
 import CustomSelect from '../CustomSelect';
 import adLocationAPI from '../../apis/adLocationApi';
 import ImageUploaderWithWidget from '../ImageUploaderWithWidget';
+import { useSelector } from 'react-redux';
 function LocationInfo(props) {
-    const { info } = props;
+    const { info, setUpdate } = props;
     const { isOpen, onOpen, onClose } = useDisclosure();
     const [error, setError] = useState(null);
     const [publicId, setPublicId] = useState('');
+    const toast = useToast();
     const displayAddress = `${info.address}`;
+    const user = useSelector(state => state.auth.userData);
     const AddNewLocateSchema = Yup.object().shape({
         address: Yup.string()
             .max(200, 'Tối đa 200 kí tự')
@@ -54,7 +57,7 @@ function LocationInfo(props) {
             const data = {
                 ...values,
                 image: publicId,
-                planned: true,
+                planned: false,
                 coordinates: {
                     type: "Point",
                     coordinates: [
@@ -73,10 +76,29 @@ function LocationInfo(props) {
             // Reset the form
             actions.resetForm();
             setPublicId('');
+            if (result) {
+                toast({
+                    title: "Thêm điểm quảng cáo thành công",
+                    status: "success",
+                    duration: 3000,
+                    isClosable: true,
+                })
+                setTimeout(() => {
+                    onClose();
+                }, 3000);
+                setUpdate(true);
+            }
         } catch (error) {
             // Handle errors, and set the error state
             console.error('Error submitting form:', error);
             setError('An error occurred while submitting the form.');
+            toast({
+                title: "Thêm điểm quảng cáo thất bại",
+                description: "Vui lòng thử lại",
+                status: "error",
+                duration: 3000,
+                isClosable: true,
+            })
         } finally {
             // Ensure to setSubmitting(false) whether the submission was successful or not
             actions.setSubmitting(false);
@@ -98,11 +120,16 @@ function LocationInfo(props) {
             <Box width={350} >
                 {displayAddress}
                 <Text fontWeight={'bold'}>{info.planned ? "Đã Quy Hoạch" : "Chưa Quy Hoạch"}</Text>
-                <Button colorScheme='blue' onClick={onOpen}>
-                    <AddIcon boxSize={5} pr={2} >
-                    </AddIcon>
-                    Thêm Điểm Quảng Cáo
-                </Button>
+                {user.role === "CB_So" &&
+                    <Button colorScheme='blue' onClick={onOpen}>
+                        <AddIcon boxSize={5} pr={2} >
+                        </AddIcon>
+                        Thêm Điểm Quảng Cáo
+                    </Button>
+
+
+                }
+
                 <Drawer placement={'right'} onClose={onClose} isOpen={isOpen} size='md'>
                     <DrawerOverlay />
                     <DrawerContent>

@@ -10,6 +10,11 @@ const adBoardApi = {
 
         const url = `/adboards`
         return serverClient.post(url, data)
+    },
+    updateAdboard(id, data) {
+
+        const url = `/adboards/${id}`
+        return serverClient.patch(url, data)
     }
 }
 export default adBoardApi

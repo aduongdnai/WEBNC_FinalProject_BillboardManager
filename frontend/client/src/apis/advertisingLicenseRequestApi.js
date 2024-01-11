@@ -21,5 +21,15 @@ const advertisingLicenseRequestApi = {
         const url = `/advertisingLicenseRequest/${id}`
         return serverClient.patch(url, data)
     },
+    getAdvertisingLicenseRequestByAdBoardId(id) {
+
+        const url = `/advertisingLicenseRequest/adboard/${id}`
+        return serverClient.get(url)
+    },
+    deleteAdvertisingLicenseRequest(id) {
+
+        const url = `/advertisingLicenseRequest/${id}`
+        return serverClient.delete(url)
+    }
 }
 export default advertisingLicenseRequestApi

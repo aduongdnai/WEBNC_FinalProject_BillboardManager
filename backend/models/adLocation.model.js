@@ -12,7 +12,10 @@ const adLocationSchema = new mongoose.Schema({
         type: { type: String, default: 'Point' },
         coordinates: [Number],
     },
-    numberAdBoard: Number,
+    numberAdBoard: {
+        type: Number,
+        default: 0
+    },
 });
 
 adLocationSchema.index({ coordinates: '2dsphere' });
