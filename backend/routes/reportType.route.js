@@ -54,7 +54,7 @@ router.put('/:id', async (req, res) => {
     }
 });
 
-router.post("/findDistrict", async (req, res) => {
+router.post("/findRpType", async (req, res) => {
     try {
       const data = await ReportTypeModel.find({
         name: { $regex: req.body.area, $options: 'i' },

@@ -58,6 +58,38 @@ router.post('/type/:type', async (req, res) => {
     }
 });
 
+
+router.post('/findByRpType', async (req, res) => {
+    try {
+        const data = await UserReportModel.find({
+            reportType: { $regex: req.body.area, $options: 'i' },
+        });
+        console.log(req.body.area);
+        if (data) {
+          res.status(200).json({
+            message: "findByRpType",
+            data,
+          });
+        }
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({
+          error: "Internal Error",
+        });
+    }
+});
+
+router.post("/updateRpType", async (req, res) => {
+    const { oldRpType, newRpType } = req.body;
+    console.log(oldRpType, newRpType);
+    try {
+      const updatedType = await UserReportModel.updateMany({ reportType: oldRpType }, { $set:{reportType: newRpType} });
+      res.status(200).json(updatedType);
+    } catch (err) {
+      res.status(500).json({ message: err.message });
+    }
+});
+
 router.get('/:id', async (req, res) => {
     try {
         const objectId = new mongoose.Types.ObjectId(req.params.id)

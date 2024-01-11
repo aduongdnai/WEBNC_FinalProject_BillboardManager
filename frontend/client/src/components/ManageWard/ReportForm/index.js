@@ -164,8 +164,10 @@ const ReportForm = (props) => {
                             <Form>
                                 <FormLabel htmlFor="name">Want to delete?</FormLabel>
                                 <br />
-                                <Button colorScheme='teal' variant='outline' type="submit" disabled={isSubmitting}>Yes</Button>
-                                <Button colorScheme='teal' variant='outline' onClick={onClose}>No</Button>
+                                <div style={{display:"flex", justifyContent:"space-between"}}>
+                                    <Button colorScheme='red' variant='outline' type="submit" disabled={isSubmitting}>Yes</Button>
+                                    <Button colorScheme='teal' variant='outline' onClick={onClose}>No</Button>
+                                </div>
                             </Form>
                         )}
                     </Formik>
