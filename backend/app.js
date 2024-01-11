@@ -20,6 +20,9 @@ import wardRoute from "./routes/ward.route.js";
 import advertisingTypeRoute from "./routes/advertisingType.route.js"
 
 import logRoute from "./routes/log.route.js";
+import swaggerJSDoc from "swagger-jsdoc";
+import swaggerUI from "swagger-ui-express";
+import swaggerOption from "./docs/swagger-output.json" assert {type: "json"};
 
 const server = express();
 
@@ -44,8 +47,8 @@ server.get("/", (req, res) => {
     msg: "Connected Successfully",
   });
 });
-
 server.use("/public", express.static("public"));
+
 
 // Routes
 server.use('/api/v1/auth', authRoute);
