@@ -156,7 +156,7 @@ function App() {
               }
             />
             <Route path="/" element={<Navigate replace to="/map" />} />
-            <Route path="/ad-locations" element={<AdLocationPage />} />
+            <Route path="/manage-location" element={<AdLocationPage />} />
             <Route path="/premium" element={<Premium />} />
             <Route
               path="/ad-boards/:locationId"

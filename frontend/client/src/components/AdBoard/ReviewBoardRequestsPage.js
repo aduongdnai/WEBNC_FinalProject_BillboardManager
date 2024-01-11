@@ -39,7 +39,7 @@ const ReviewBoardRequestsPage = () => {
   };
 
   return (
-    <div>
+    <div className="review-board-request">
       <h1>Review Board Edit Requests</h1>
       <table>
         <thead>

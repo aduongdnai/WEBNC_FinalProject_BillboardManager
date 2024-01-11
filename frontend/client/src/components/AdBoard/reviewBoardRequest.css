@@ -1,40 +1,40 @@
-table {
+.review-board-request table {
   width: 100%;
   border-collapse: collapse;
 }
 
-th,
-td {
+.review-board-request th,
+.review-board-request td {
   border: 1px solid #ddd;
   padding: 8px;
   text-align: left;
 }
 
-th {
+.review-board-request th {
   background-color: #f2f2f2;
 }
 
-tr:nth-child(even) {
+.review-board-request tr:nth-child(even) {
   background-color: #f2f2f2;
 }
 
-button {
+.review-board-request button {
   padding: 5px 10px;
   margin: 5px;
   border: none;
   cursor: pointer;
 }
 
-.approve-btn {
+.review-board-request .approve-btn {
   background-color: #4caf50;
   color: white;
 }
 
-.reject-btn {
+.review-board-request .reject-btn {
   background-color: #f44336;
   color: white;
 }
 
-button:hover {
+.review-board-request button:hover {
   opacity: 0.8;
 }

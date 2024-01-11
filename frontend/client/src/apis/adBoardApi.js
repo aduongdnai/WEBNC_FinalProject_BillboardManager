@@ -13,5 +13,9 @@ const adBoardApi = {
     const url = `/adboards/update/${id}`;
     return serverClient.post(url, data);
   },
+  updateAdboardDuong(id, data) {
+    const url = `/adboards/${id}`;
+    return serverClient.patch(url, data);
+  },
 };
 export default adBoardApi;
