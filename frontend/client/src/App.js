@@ -23,7 +23,8 @@ import { useEffect, useState } from "react";
 import { useToast } from "@chakra-ui/react";
 import Premium from "./components/Account/Premium";
 import NotifyProvider from "./Providers/NotifyProvider";
-
+import ManageAdvertisingType from "./components/ManageAdvertisingType";
+import TableQueryByAdType from "./components/TableQueryByAdType";
 
 import ProtectedProvider from "./Providers/ProtectedProvider";
 import ReportDetail from "./components/ReportDetail";
@@ -86,6 +87,20 @@ function App() {
               element={
                 <ProtectedProvider>
                   <ManageWard />
+                </ProtectedProvider>
+              } 
+            /> 
+            <Route path="/manage-advertising-type" 
+              element={
+                <ProtectedProvider>
+                  <ManageAdvertisingType />
+                </ProtectedProvider>
+              } 
+            /> 
+            <Route path="/table-advertising-type" 
+              element={
+                <ProtectedProvider>
+                  <TableQueryByAdType />
                 </ProtectedProvider>
               } 
             /> 

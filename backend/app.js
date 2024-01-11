@@ -17,6 +17,7 @@ import authRoute from "./routes/authen.route.js"
 import reportTypeRoute from "./routes/reportType.route.js";
 import districtRoute from "./routes/district.route.js";
 import wardRoute from "./routes/ward.route.js";
+import advertisingTypeRoute from "./routes/advertisingType.route.js"
 
 
 const server = express();
@@ -54,6 +55,7 @@ server.use("/api/v1/users", userRoute);
 server.use("/api/v1/reportTypes", reportTypeRoute);
 server.use("/api/v1/district", districtRoute);
 server.use("/api/v1/ward", wardRoute);
+server.use("/api/v1/advertisingType", advertisingTypeRoute);
 
 
 const httpServer = createServer(server);
