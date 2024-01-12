@@ -30,6 +30,7 @@ import { useSelector } from "react-redux";
 import ProtectedProvider from "./Providers/ProtectedProvider";
 import ReportDetail from "./components/ReportDetail";
 import ReportTypesManagement from "./components/ReportTypesManagement";
+import TableQueryAdBoardByArea from "./components/TableQueryAdBoardByArea";
 const socket = io("http://127.0.0.1:5000");
 
 
@@ -38,9 +39,9 @@ const socket = io("http://127.0.0.1:5000");
 function App() {
   const userData = useSelector(state => state.auth.userData);
   var userArea;
-  if(userData.role === "CB-So") userArea = "Hồ Chí Minh";
-  else if(userData.role === "CB-Quan") userArea = `Quận ${userData.district}, Hồ Chí Minh`
-  else userArea = `Phường ${userData.ward}, Quận ${userData.district}, Hồ Chí Minh`
+  if(userData?.role === "CB-So") userArea = "Hồ Chí Minh";
+  else if(userData?.role === "CB-Quan") userArea = `Quận ${userData.district}, Hồ Chí Minh`
+  else userArea = `Phường ${userData?.ward}, Quận ${userData?.district}, Hồ Chí Minh`
   const toast = useToast();
   const [report, setReport] = useState();
   const [isClick, setIsClick] = useState();
@@ -102,6 +103,14 @@ function App() {
                 <ProtectedProvider>
                   
                   <TableQueryByArea area={userArea}/>
+                </ProtectedProvider>
+              }
+            />
+            <Route
+              path="/table-adboard"
+              element={
+                <ProtectedProvider>
+                  <TableQueryAdBoardByArea />
                 </ProtectedProvider>
               }
             />

@@ -14,6 +14,7 @@ import { FaEye, FaPen } from "react-icons/fa";
 import { IoSearchOutline } from "react-icons/io5";
 import { useNavigate, useLocation } from 'react-router-dom';
 import adLocationAPI from '../../apis/adLocationApi';
+import adBoardApi from '../../apis/adBoardApi';
 import { useEffect, useState } from 'react';
 import { Image as CloudinaryImage, CloudinaryContext } from 'cloudinary-react';
 import { useUser } from '../LoginSignup/userContext';
@@ -41,27 +42,32 @@ function imageFormatter(cell, row, rowIndex) {
 
 
 
-function TableQueryByArea(props) {
+function TableQueryAdBoardByArea(props) {
   const location = useLocation();
   const dispatch = useDispatch();
-  var area;
+  var id;
   const { isOpen: isNormalOpen, onOpen: onNormalOpen, onClose: onNormalClose } = useDisclosure();
-  if (!props.area) area = location.state.area || "Quận 5";
-  else area = props.area;
+  if (!props.area) id = location.state.location._id || "";
+  else id = props.area;
   const navigate = useNavigate();
   // const { area } = useUser();
-  const [adLocation, setAdLocation] = useState(null);
-  const [selectedLocation, setSelectedLocation] = useState(null);
+  const [adBoard, setAdBoard] = useState(null);
+  const [selectedAdBoard, setSelectedAdBoard] = useState(null);
 
   // const { SearchBar } = Search;
   useEffect(() => {
     const fetchData = async () => {
       try {
 
-        const result = await adLocationAPI.getAdLocationByArea({ "area": area });
-        console.log(result.data);
-        setAdLocation(result.data);
-        console.log(adLocation);
+        const result = await adBoardApi.getAdBoardByLocationID(id);
+        const ans = result.data.map((element) => {
+          return {
+            ...element, expiryDate: new Date(element.expiryDate).toLocaleDateString()
+          }
+        })
+        console.log(ans);
+        setAdBoard(ans);
+        console.log(adBoard);
 
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -74,11 +80,11 @@ function TableQueryByArea(props) {
   }, []);
 
 
-  const handleChangeViewPort = (adLocation) => {
+  const handleChangeViewPort = () => {
     navigate("/");
     const newViewport = {
-      latitude: adLocation.coordinates.coordinates[1],
-      longitude: adLocation.coordinates.coordinates[0],
+      latitude: location.state.location.coordinates.coordinates[1],
+      longitude: location.state.location.coordinates.coordinates[0],
       zoom: 20,
       transitionDuration: 5000, // Adjust the zoom level as needed
 
@@ -87,7 +93,7 @@ function TableQueryByArea(props) {
   }
 
   const handleEditClick = (location) => {
-    setSelectedLocation(location);
+    setSelectedAdBoard(location);
     onNormalOpen();
   };
 
@@ -97,31 +103,26 @@ function TableQueryByArea(props) {
   };
 
   useEffect(() => {
-    console.log(area);
+    console.log(id);
   });
 
 
   const columns = [
     {
-      dataField: 'image',
-      text: 'Image',
-      formatter: imageFormatter
+      dataField: 'boardType',
+      text: 'Board Type'
     },
     {
-      dataField: 'address',
-      text: 'Address'
+      dataField: 'width',
+      text: 'Width'
     },
     {
-      dataField: 'locationType',
-      text: 'locationType'
+      dataField: 'height',
+      text: 'Height'
     },
     {
-      dataField: 'advertisingType',
-      text: 'advertisingType'
-    },
-    {
-      dataField: 'planned',
-      text: 'Planned'
+      dataField: 'expiryDate',
+      text: 'Expired Date'
     },
     {
       dataField: 'action',
@@ -130,16 +131,6 @@ function TableQueryByArea(props) {
       formatter: (cellContent, row) => {
         return (
           <div style={{ display: "flex" }}>
-            <Icon
-              variant="unstyled"
-              as={FaEye}
-              w={5}
-              h={5}
-              marginRight={5}
-              // marginLeft={2} 
-              onClick={() => navigate('/table-adboard', {state: { location: row }})}
-              _hover={{ color: 'blue' }}
-            />
             <Icon
               variant="unstyled"
               as={FaMap}
@@ -221,7 +212,7 @@ function TableQueryByArea(props) {
     );
   };
 
-  const CaptionElement = () => <h3 style={{ borderRadius: '0.25em', textAlign: 'center', color: 'purple', border: '1px solid purple', padding: '0.5em', marginTop: "15px" }}>{area}</h3>;
+  const CaptionElement = () => <h3 style={{ borderRadius: '0.25em', textAlign: 'center', color: 'purple', border: '1px solid purple', padding: '0.5em', marginTop: "15px" }}>{location.state.location.address}</h3>;
   return (
     <div style={{ width: "95%" }}>
       <Modal isOpen={isNormalOpen} onClose={onNormalClose}>
@@ -230,9 +221,9 @@ function TableQueryByArea(props) {
           <ModalHeader>Chỉnh Sửa Điểm Đặt Quảng Cáo</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            {selectedLocation && (
+            {selectedAdBoard && (
               <EditAdLocationForm
-                adLocation={selectedLocation}
+                adLocation={selectedAdBoard}
                 onClose={onNormalClose}
                 onSubmit={handleSubmit}
               />
@@ -245,17 +236,17 @@ function TableQueryByArea(props) {
           </ModalFooter>
         </ModalContent>
       </Modal>
-      {adLocation ? (
+      {adBoard ? (
         <ToolkitProvider
           keyField="id"
-          data={adLocation}
+          data={adBoard}
           columns={columns}
           search
         >
           {
             props => (
               <div>
-                {area ? (<CaptionElement />) : <div />}
+                {id ? (<CaptionElement />) : <div />}
                 <MySearch
                   {...props.searchProps}
                 />
@@ -279,7 +270,7 @@ function TableQueryByArea(props) {
 }
 
 
-export default TableQueryByArea;
+export default TableQueryAdBoardByArea;
 
 
 
