@@ -22,13 +22,13 @@ import advertisingTypeRoute from "./routes/advertisingType.route.js";
 
 import logRoute from "./routes/log.route.js";
 import swaggerJSDoc from "swagger-jsdoc";
-import swaggerUI from "swagger-ui-express";
-import swaggerOption from "./docs/swagger-output.json" assert {type: "json"};
+import SwaggerUi from "swagger-ui-express";
+import swaggerOption from './docs/swaggerOption.js'
 import adLocationEditRequestRoute from "./routes/adLocationEditRequest.route.js";
 import adBoardEditRequestRoute from "./routes/adBoardEditRequest.route.js";
 
 const server = express();
-
+const swaggerDocs = swaggerJSDoc(swaggerOption);
 server.use(cors());
 server.use(express.json());
 server.disable("x-powered-by");
@@ -51,7 +51,7 @@ server.get("/", (req, res) => {
   });
 });
 server.use("/public", express.static("public"));
-
+server.use('/api-docs', SwaggerUi.serve, SwaggerUi.setup(swaggerDocs));
 
 // Routes
 server.use("/api/v1/auth", authRoute);
