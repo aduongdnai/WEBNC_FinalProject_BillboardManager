@@ -13,17 +13,13 @@ import {
 } from '@chakra-ui/react';
 import { FaEye,FaPen } from "react-icons/fa";
 import { useEffect, useState} from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
-import { FaTrashAlt } from "react-icons/fa";
+import { useNavigate } from 'react-router-dom';
 import { IoSearchOutline } from "react-icons/io5";
 import { CiCirclePlus } from "react-icons/ci";
 import BootstrapTable from 'react-bootstrap-table-next';
 import paginationFactory from 'react-bootstrap-table2-paginator';
-import ToolkitProvider, { Search } from 'react-bootstrap-table2-toolkit/dist/react-bootstrap-table2-toolkit';
-import AdLocationsTable from "./AdLocationsTable";
+import ToolkitProvider from 'react-bootstrap-table2-toolkit/dist/react-bootstrap-table2-toolkit';
 import adLocationAPI from "../../apis/adLocationApi";
-import AdBoardDetails from "./AdBoardDetails"; // Thêm import này
-import EditAdLocationForm from "./EditAdLocationForm1";
 import { useSelector } from "react-redux";
 import EditLocationCBSo from "./EditLocationCBSo";
 
@@ -31,41 +27,16 @@ import EditLocationCBSo from "./EditLocationCBSo";
 const AdLocationPage = () => {
   const userData = useSelector(state => state.auth.userData);
   const [adLocations, setAdLocations] = useState([]);
-  const [type, setType] = useState('');
   const navigate = useNavigate();
-  const [id, setId] = useState('');
-  const [isDelete, setIsDelete] = useState(false);
-
-
-  const [name, setName] = useState('');
-
-  const { isOpen: isNormalOpen, onOpen: onNormalOpen, onClose: onNormalClose } = useDisclosure();
   const { isOpen: isCBSoOpen, onOpen: onCBSoOpen, onClose: onCBSoClose } = useDisclosure();
   const [update, setUpdate] = useState(true);
-
-  const [showTable, setShowTable] = useState(false);
-  const [selectedLocationId, setSelectedLocationId] = useState(null);
   const [selectedLocation, setSelectedLocation] = useState(null);
-
-  // const handleViewAdLocations = () => {
-  //   adLocationAPI
-  //     .getAllAdLocation()
-  //     .then((response) => {
-  //       setAdLocations(response.data);
-  //       setShowTable(true);
-  //     })
-  //     .catch((error) => console.error("Error fetching ad locations:", error));
-  // };
-
   useEffect(() => {
     const fetchData = async () => {
         try {
             const result = await adLocationAPI.getAllAdLocation();
             setAdLocations(result.data);
             setUpdate(false);
-
-            console.log(type);
-
         } catch (error) {
             console.error('Error fetching data:', error);
 
@@ -85,14 +56,6 @@ const AdLocationPage = () => {
     if(userData.role === "CB-So"){
       onCBSoOpen();
     }
-    else{
-      onNormalOpen();
-    }
-  };
-
-  const handleSubmit = (data) => {
-    // Xử lý logic khi submit form
-    console.log(data);
   };
 
   const columns = [
@@ -124,17 +87,7 @@ const AdLocationPage = () => {
             // marginLeft={2} 
             onClick={() => handleDetailsClick(row._id)}
             _hover={{color:'blue'}}
-          />
-          {/* <Icon 
-            as={RiAdvertisementFill} 
-            w={5}
-            h={5}
-            marginRight={5}
-            onClick={
-              () => navigate('/table-advertising-type',{state: { adType: row?.name }})
-            }
-            _hover={{color:'blue'}}
-          /> */}
+          />      
           <Icon 
             as={FaPen} 
             w={4} 
@@ -142,22 +95,7 @@ const AdLocationPage = () => {
             marginRight={5}
             onClick={() => handleEditClick(row)}
             _hover={{color:'blue'}}
-          />
-          {/* <Icon 
-            as={FaTrashAlt} 
-            w={4} 
-            h={4}
-            marginRight={5}
-            onClick={
-              () => {
-                setName(row?.name)
-                setId(row?._id)
-                setIsDelete(true)
-                onNormalOpen()
-              }
-            }
-            _hover={{color:'red'}}
-          /> */}
+          />         
           </div>
         )
       }
@@ -233,33 +171,7 @@ const AdLocationPage = () => {
   };
   const CaptionElement = () => <h3 style={{ borderRadius: '0.25em', textAlign: 'center', color: 'purple', border: '1px solid purple', padding: '0.5em', marginTop:"15px" }}>Location Management</h3>;
   return (
-    // <div>
-    //   <Button onClick={handleViewAdLocations}>Xem Điểm Quảng Cáo</Button>
-    //   {showTable && <AdLocationsTable adLocations={adLocations} />}
-    //   {selectedLocationId && <AdBoardDetails locationId={selectedLocationId} />}
-    // </div>
     <div style={{width:"95%"}}>
-      <Modal isOpen={isNormalOpen} onClose={onNormalClose}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Chỉnh Sửa Điểm Đặt Quảng Cáo</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            {selectedLocation && (
-              <EditAdLocationForm
-                adLocation={selectedLocation}
-                onClose={onNormalClose}
-                onSubmit={handleSubmit}
-              />
-            )}
-          </ModalBody>
-          <ModalFooter>
-            <Button colorScheme="blue" mr={3} onClick={onNormalClose}>
-              Đóng
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
       <Modal isOpen={isCBSoOpen} onClose={onCBSoClose}>
         <ModalOverlay />
         <ModalContent>

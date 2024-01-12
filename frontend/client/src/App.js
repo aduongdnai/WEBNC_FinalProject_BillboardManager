@@ -31,8 +31,6 @@ import ProtectedProvider from "./Providers/ProtectedProvider";
 import ReportDetail from "./components/ReportDetail";
 import ReportTypesManagement from "./components/ReportTypesManagement";
 import TableQueryAdBoardByArea from "./components/TableQueryAdBoardByArea";
-
-import { useSelector } from "react-redux";
 const socket = io("http://127.0.0.1:5000");
 
 
@@ -179,7 +177,7 @@ function App() {
               }
             />
             <Route path="/" element={<Navigate replace to="/map" />} />
-            <Route path="/ad-locations" element={<AdLocationPage />} />
+            <Route path="/manage-locations" element={<AdLocationPage />} />
             <Route path="/premium" element={<Premium />} />
             <Route
               path="/ad-boards/:locationId"

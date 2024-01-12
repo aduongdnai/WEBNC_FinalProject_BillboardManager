@@ -1,127 +1,211 @@
-import React, { useState } from "react";
-import {
-  Button,
-  FormControl,
-  FormLabel,
-  Input,
-  Textarea,
-  Select,
-} from "@chakra-ui/react";
-import axios from "axios";
+import React, { useState } from 'react';
+import { Formik, Form, Field, ErrorMessage } from 'formik';
+import * as Yup from 'yup';
+import { useEffect } from 'react';
+import axios from 'axios';
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
+import ReCAPTCHA from "react-google-recaptcha";
+import { useToast, Input } from '@chakra-ui/react';
+import advertisingTypeAPI from '../../apis/advertisingTypeApi';
+import { ChakraProvider, ButtonGroup, VStack, Heading, Box, Text, Button, Drawer, DrawerOverlay, DrawerBody, DrawerHeader, DrawerContent, FormControl, FormLabel, Select } from '@chakra-ui/react';
+import adLocationAPI from '../../apis/adLocationApi';
+import CustomInput from '../CustomInput';
+import CustomSelect from '../CustomSelect';
+import ImageUploaderWithWidget from '../ImageUploaderWithWidget';
+import { useSelector } from 'react-redux';
 
-const EditRequestForm = ({ adLocation, onClose, onSubmit }) => {
-  const [locationType, setLocationType] = useState("");
-  const [advertisingType, setAdvertisingType] = useState("");
-  const [editTime, setEditTime] = useState("");
-  const [editReason, setEditReason] = useState("");
+const EditAdLocationForm = (props) => {
+  const userData = useSelector(state => state.auth.userData);
+  const { info, setUpdate, onClose } = props;
+  const [type, setType] = useState('');
+  const [publicId, setPublicId] = useState('');
+  const [error, setError] = useState(null);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const toast = useToast();
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const result = await advertisingTypeAPI.getAllType();
+        console.log(result);
+        const ans = result.data.map((element) => {
+          return { ...element, key: element._id, value: element.name }
+        })
+        console.log(ans);
+        setType(ans);
+        setPublicId(info.image);
+        setUpdate(false);
 
-    // Gửi dữ liệu đến hàm onSubmit
-    onSubmit({
-      locationType,
-      advertisingType,
-      editTime,
-      editReason,
-    });
-  };
+        console.log(type);
 
-  const handleSendRequest = async () => {
+      } catch (error) {
+        console.error('Error fetching data:', error);
+
+      }
+    };
+    fetchData();
+  }, []);
+
+
+  const AddNewLocateSchema = Yup.object().shape({
+    locationType: Yup.string()
+      .oneOf(["Đất công/Công viên/Hành lang an toàn giao thông", "Đất tư nhân/Nhà ở riêng lẻ", "Trung tâm thương mại", "Chợ", "Cây xăng", "Nhà chờ xe buýt"], "Invalid Location Type")
+      .required("Loại địa điểm không được để trống"),
+    advertisingType: Yup.string()
+      .required("Loại điểm quảng cáo không được để trống"),
+    planned: Yup.string()
+      .required("Loại quy hoạch không được để trống"),
+    numberAdBoard: Yup.number().max(3, "Tối đa 3 bảng quảng cáo").required("Số lượng bảng quảng cáo không được để trống"),
+    image: Yup.string()
+      .max(200, 'Tối đa 200 kí tự'),
+    reason: Yup.string()
+      .required("Lý do không được để trống"),
+  });
+  const locateTypeOption = [
+    { key: 1, value: "Đất công/Công viên/Hành lang an toàn giao thông" },
+    { key: 2, value: "Đất tư nhân/Nhà ở riêng lẻ" },
+    { key: 3, value: "Trung tâm thương mại" },
+    { key: 4, value: "Chợ" },
+    { key: 5, value: "Cây xăng" },
+    { key: 6, value: "Nhà chờ xe buýt" }]
+
+  const plannedOption = [
+    { key: 1, value: true },
+    { key: 2, value: false }
+  ]
+  const hanleUploadImage = (info) => {
+    console.log('Upload success:', info);
+    setPublicId(info.public_id);
+
+  }
+  const handleChangeImageUrl = (e) => {
+    setPublicId(e.target.value);
+  }
+  const onSubmit = async (values, actions) => {
     try {
-      console.log(locationType,advertisingType,editTime);
-      const response = await axios.post(
-        "http://localhost:5000/api/v1/adlocations/send-edit-request",
-        {
-          id: adLocation._id,
-          updatedLocation: {
-            // Thêm các trường tương ứng với thông tin muốn lưu
-            locationType,
-            advertisingType,
-            editTime,
-          },
-
-          // updatedDetails: {
-          //   locationType,
-          //   advertisingType,
-          //   editTime,
-          //   // Thêm bất kỳ trường dữ liệu nào khác được gửi từ form chỉnh sửa
-          // },
-          editReason,
-        }
-      );
-      console.log(response.data);
-      onClose(); // Đóng form
+      const data = {
+        ...values,
+        userRequest: userData.email,
+        locationId: info.locationId,
+        image: publicId,
+        planned: false,
+        status: "Pending"
+      }
+      console.log(data);
+      const result = await axios.post(`http://localhost:5000/api/v1/adLocationEditRequest/`, data);
+      setError(null);
+      setPublicId('');
+      if (result) {
+        toast({
+          title: "Gửi yêu cầu thành công",
+          status: "success",
+          duration: 3000,
+          isClosable: true,
+        })
+        setTimeout(() => {
+          onClose();
+        }, 2000);
+        setUpdate(true);
+      }
     } catch (error) {
-      console.error("Error sending edit request:", error);
+      // Handle errors, and set the error state
+      console.error('Error submitting form:', error);
+      setError('An error occurred while submitting the form.');
+      toast({
+        title: "Thêm điểm quảng cáo thất bại",
+        description: "Vui lòng thử lại",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      })
+    } finally {
+      // Ensure to setSubmitting(false) whether the submission was successful or not
+      actions.setSubmitting(false);
     }
-  };
+
+  }
+
 
   return (
-    <form onSubmit={handleSubmit}>
-      <FormControl id="locationType" isRequired>
-        <FormLabel>Loại Điểm Đặt Quảng Cáo</FormLabel>
-        <Select
-          value={locationType}
-          onChange={(e) => setLocationType(e.target.value)}
-        >
-          {/* Options cho loại điểm đặt quảng cáo */}
+    <ChakraProvider>
+      <Box p={4}>
+        <VStack>
+          <Formik
+            initialValues={{
+              locationType: info.locationType,
+              advertisingType: info.advertisingType,
+              planned: info.planned,
+              numberAdBoard: info.numberAdBoard,
+              image: publicId,
+              reason: ''
+            }}
+            validationSchema={AddNewLocateSchema}
+            onSubmit={onSubmit}
+            debug
+          >
+            {({ props }) => (
+              <VStack
+                as={Form}
+              >
+                <Text as="p" color="red.500">{error}</Text>
+                <CustomSelect
+                  name="locationType"
+                  label="Loại địa điểm"
+                  placeholder="Vui lòng chọn loại địa điểm"
+                  options={locateTypeOption}
+                />
+                <CustomSelect
+                  name="advertisingType"
+                  label="Loại quảng cáo"
+                  placeholder="Vui lòng chọn loại địa điểm"
+                  options={type}
+                />
+                <FormControl>
+                  <FormLabel htmlFor="planned">Quy hoạch</FormLabel>
+                  <Field as={Select} id="planned" name="planned">
+                    <option value="">Vui lòng chọn quy hoạch</option>
+                    {plannedOption.map((type) => (
+                      <option key={type.key} value={type.value}>{type.value ? "Đã quy hoạch" : "Chưa quy hoạch"}</option>
+                    ))}
 
-          <option value="Đất công/Công viên/Hành lang an toàn giao thông">
-            Đất công/Công viên/Hành lang an toàn giao thông
-          </option>
+                  </Field>
+                  <ErrorMessage name="planned" component="div" className="error-message" style={{ color: 'red' }} />
+                </FormControl>
+                <CustomInput
+                  name="numberAdBoard"
+                  label="Số lượng bảng quảng cáo"
+                  placeholder="Nhập số lượng"
+                  type="number"
+                />
+                <CustomInput
+                  name="image"
+                  label="Hình ảnh"
+                  placeholder="Bấm nút browse để chọn ảnh"
+                  readOnly
+                  value={publicId}
+                  onChange={handleChangeImageUrl}
+                >
 
-          <option value="Đất tư nhân/Nhà ở riêng lẻ">
-            Đất tư nhân/Nhà ở riêng lẻ
-          </option>
+                </CustomInput>
+                <ImageUploaderWithWidget onUpLoadSuccess={hanleUploadImage}></ImageUploaderWithWidget>
+                <CustomInput
+                  name="reason"
+                  label="Lý do chỉnh sửa"
+                  placeholder="Nhập lý do"
+                  type="text"
+                />
 
-          <option value="Trung tâm thương mại">Trung tâm thương mại</option>
+                <ButtonGroup pt="1rem">
+                  <Button colorScheme="teal" type="submit">Yêu Cầu</Button>
+                </ButtonGroup>
+              </VStack>
+            )}
+          </Formik>
+        </VStack>
+      </Box>
+    </ChakraProvider>
 
-          <option value="Chợ">Chợ</option>
-          <option value="Cây xăng">Cây xăng</option>
-          <option value="Nhà chờ xe buýt">Nhà chờ xe buýt</option>
-        </Select>
-      </FormControl>
-
-      <FormControl id="advertisingType" isRequired mt={4}>
-        <FormLabel>Hình thức quảng cáo</FormLabel>
-        <Select
-          value={advertisingType}
-          onChange={(e) => setAdvertisingType(e.target.value)}
-        >
-          {/* Options cho loại quảng cáo */}
-          <option value="Cổ động chính trị">Cổ động chính trị</option>
-
-          <option value="Quảng cáo thương mại">Quảng cáo thương mại</option>
-
-          <option value="Xã hội hoá">Xã hội hoá</option>
-
-          {/* ...Thêm options khác nếu cần*/}
-        </Select>
-      </FormControl>
-
-      <FormControl id="editTime" mt={4}>
-        <FormLabel>Thời Điểm Chỉnh Sửa</FormLabel>
-        <Input
-          type="date" // Thay đổi ở đây
-          value={editTime}
-          onChange={(e) => setEditTime(e.target.value)}
-        />
-      </FormControl>
-
-      <FormControl id="editReason" isRequired mt={4}>
-        <FormLabel>Lý Do Chỉnh Sửa</FormLabel>
-        <Textarea
-          value={editReason}
-          onChange={(e) => setEditReason(e.target.value)}
-        />
-      </FormControl>
-
-      <Button mt={4} colorScheme="green" onClick={handleSendRequest}>
-        Gửi Yêu Cầu
-      </Button>
-    </form>
-  );
+  )
 };
 
-export default EditRequestForm;
+export default EditAdLocationForm;
