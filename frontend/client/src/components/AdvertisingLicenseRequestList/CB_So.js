@@ -88,7 +88,7 @@ function AdvertisingLicenseRequestListCBSO({ requests }) {
     }
     return (
         <Box width="full" overflowX="auto">
-            <Table variant="unstyled">
+            <Table variant="striped">
                 <Thead>
                     <Tr>
                         <Th>Company Name</Th>
