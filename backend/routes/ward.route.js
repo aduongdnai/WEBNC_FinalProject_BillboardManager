@@ -2,6 +2,11 @@ import express from 'express';
 import WardModel from '../models/ward.model.js';
 import mongoose from 'mongoose';
 import { routeLogger } from '../middlewares/logger.mdw.js'
+import validate from "../middlewares/validate.mdw.js"
+import wardSchemas from "../schemas/ward.schemas.js"
+
+
+
 const router = express.Router();
 
 router.use(routeLogger);
@@ -28,7 +33,7 @@ router.post('/findByDistrict', async (req, res) => {
 })
 
 
-router.post('/', async (req, res) => {
+router.post('/',validate(wardSchemas.ward_schema), async (req, res) => {
     const ward = req.body;
     //console.log(req.body);
     const newWard = new WardModel(ward);
@@ -64,7 +69,7 @@ router.post("/findWard", async (req, res) => {
 });
 
 
-router.put('/:id', async (req, res) => {
+router.put('/:id',validate(wardSchemas.ward_update_schema), async (req, res) => {
     const { id } = req.params;
     const { name } = req.body;
 
