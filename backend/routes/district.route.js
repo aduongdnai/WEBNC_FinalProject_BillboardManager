@@ -2,6 +2,11 @@ import express from 'express'
 import DistrictModel from '../models/district.model.js';
 import mongoose from 'mongoose';
 import { routeLogger } from '../middlewares/logger.mdw.js'
+import validate from "../middlewares/validate.mdw.js"
+import districtSchemas from "../schemas/district.schemas.js"
+
+
+
 const router = express.Router();
 
 router.use(routeLogger);
@@ -27,7 +32,7 @@ router.get('/', async (req, res) => {
 })
 
 
-router.post('/', async (req, res) => {
+router.post('/', validate(districtSchemas.district_schema), async (req, res) => {
     const district = req.body;
     //console.log(req.body);
     const newDistrict = new DistrictModel(district);
@@ -42,7 +47,7 @@ router.post('/', async (req, res) => {
 })
 
 
-router.put('/:id', async (req, res) => {
+router.put('/:id',validate(districtSchemas.district_schema), async (req, res) => {
     const { id } = req.params;
     const { name } = req.body;
 
