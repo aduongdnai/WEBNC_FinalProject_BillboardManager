@@ -74,11 +74,17 @@ router.patch('/:id', async (req, res) => {
         const result = await AdBoardModel.findOneAndUpdate({ _id: req.params.id },
             req.body, { new: true })
 
+        if (result) {
+            res.status(200).json({
+                data: result,
+                msg: "success"
+            })
+        } else {
+            res.status(400).json({
+                msg: "Adboard not found"
+            })
+        }
 
-        res.status(200).json({
-            data: result,
-            msg: "success"
-        })
 
     }
     catch (err) {
