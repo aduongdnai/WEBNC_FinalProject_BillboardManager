@@ -37,7 +37,10 @@ export default {
         "name": "Advertising Type"
       },
       {
-        "name": "Edit Request"
+        "name": "Ad Board Edit Request"
+      },
+      {
+        "name": "Ad Location Edit Request"
       },
       {
         "name": "Report Type"
@@ -1488,9 +1491,329 @@ export default {
             }
           }
         }
+      },
+      "/adBoardEditRequest": {
+        "get": {
+          "summary": "Get all ad board edit requests",
+          "tags": [
+            "Ad Board Edit Request"
+          ],
+          "responses": {
+            "200": {
+              "description": "Successful response"
+            }
+          }
+        },
+        "post": {
+          "summary": "Create a new ad board edit request",
+          "tags": [
+            "Ad Board Edit Request"
+          ],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdBoardEditRequest"
+                },
+                "examples": {
+                  "adBoardEditRequestExample": {
+                    "summary": "Example of ad board request object",
+                    "value": {
+                      "userRequest": "lequan2002ql@gmail.com",
+                      "adBoardId": "6582a64745b7528c3f429b7b",
+                      "boardType": "Trụ hộp đèn",
+                      "width": 12,
+                      "height": 10,
+                      "reason": "test",
+                      "status": "Pending"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "responses": {
+            "201": {
+              "description": "Ad board edit request created successfully"
+            }
+          }
+        }
+      },
+      "/adBoardEditRequest/findByUserRequest": {
+        "post": {
+          "summary": "Find ad board edit requests by user",
+          "tags": [
+            "Ad Board Edit Request"
+          ],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "userRequest": {
+                      "type": "string",
+                      "example": "lequan2002ql@gmail.com"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Successful response"
+            }
+          }
+        }
+      },
+      "/adBoardEditRequest/{id}": {
+        "get": {
+          "summary": "Get ad board edit request by ID",
+          "tags": [
+            "Ad Board Edit Request"
+          ],
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "description": "ID of the ad board edit request",
+              "schema": {
+                "type": "string",
+                "example": "65a1550c5e557b6220b3984a"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Successful response",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/AdBoardEditRequest"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "put": {
+          "summary": "Update ad board edit request by ID",
+          "tags": [
+            "Ad Board Edit Request"
+          ],
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "description": "ID of the ad board edit request",
+              "schema": {
+                "type": "string",
+                "example": "65a1550c5e557b6220b3984a"
+              }
+            }
+          ],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdBoardEditRequest"
+                },
+                "examples": {
+                  "adBoardEditRequestExample": {
+                    "summary": "Example of ad board request object",
+                    "value": {
+                      "userRequest": "lequan2002ql@gmail.com",
+                      "adBoardId": "6582a64745b7528c3f429b7b",
+                      "boardType": "Trụ hộp đèn",
+                      "width": 12,
+                      "height": 10,
+                      "reason": "test",
+                      "status": "Approved"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Ad board edit request updated successfully",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/AdBoardEditRequest"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/adLocationEditRequest": {
+        "get": {
+          "summary": "Get all ad location edit requests",
+          "responses": {
+            "200": {
+              "description": "Successful response",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/AdLocationEditRequest"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "post": {
+          "summary": "Create a new ad location edit request",
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdLocationEditRequest"
+                },
+                "examples": {
+                  "adBoardEditRequestExample": {
+                    "summary": "Example of ad board request object",
+                    "value": {
+                      "userRequest": "lequan2002ql@gmail.com",
+                      "locationId": "6586a94b7a773d9510e75944",
+                      "locationType": "Nhà chờ xe buýt",
+                      "advertisingType": "Xã hội hoá",
+                      "image": "official/ew5pqvdhqh6yqjtkckno",
+                      "planned": false,
+                      "numberAdBoard": 3,
+                      "reason": "asdasd",
+                      "status": "Pending"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "responses": {
+            "201": {
+              "description": "Ad location edit request created successfully"
+            }
+          }
+        }
+      },
+      "/adLocationEditRequest/findByUserRequest": {
+        "post": {
+          "summary": "Find ad location edit requests by user",
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "userRequest": {
+                      "type": "string",
+                      "example": "lequan2002ql@gmail.com"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Find ad location edit requests by user Success"
+            }
+          }
+        }
+      },
+      "/adLocationEditRequest/{id}": {
+        "get": {
+          "summary": "Get ad location edit request by ID",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "description": "ID of the ad location edit request",
+              "schema": {
+                "type": "string",
+                "example": "65a15bc95e557b6220b3985c"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Successful response",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/AdLocationEditRequest"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "put": {
+          "summary": "Update ad location edit request by ID",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "description": "ID of the ad location edit request",
+              "schema": {
+                "type": "string",
+                "example": "65a15bc95e557b6220b3985c"
+              }
+            }
+          ],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdLocationEditRequest"
+                },
+                "examples": {
+                  "adBoardEditRequestExample": {
+                    "summary": "Example of ad board request object",
+                    "value": {
+                      "locationType": "Nhà chờ xe buýt",
+                      "advertisingType": "Xã hội hoá",
+                      "image": "official/ew5pqvdhqh6yqjtkckno",
+                      "planned": false,
+                      "numberAdBoard": 3,
+                      "reason": "asdasd",
+                      "status": "Rejected"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Ad location edit request updated successfully"
+            }
+          }
+        }
       }
     },
     "components": {
+      "securitySchemes": {
+        "bearerAuth": {
+          "type": "http",
+          "scheme": "bearer",
+          "bearerFormat": "JWT"
+        }
+      },
       "schemas": {
         "User": {
           "type": "object",
@@ -1746,45 +2069,97 @@ export default {
             }
           }
         },
-        "editRequest": {
+        "AdBoardEditRequest": {
           "type": "object",
           "properties": {
-            "adLocationId": {
+            "userRequest": {
               "type": "string",
-              "format": "uuid"
+              "description": "User requesting the edit"
             },
-            "updatedDetails": {
-              "type": "object",
-              "properties": {
-                "locationType": {
-                  "type": "string"
-                },
-                "advertisingType": {
-                  "type": "string"
-                },
-                "editTime": {
-                  "type": "string",
-                  "format": "date-time"
-                }
-              },
-              "required": [
-                "locationType",
-                "advertisingType",
-                "editTime"
-              ]
+            "adBoardId": {
+              "type": "string",
+              "description": "ID of the ad board being edited"
             },
-            "editReason": {
-              "type": "string"
+            "boardType": {
+              "type": "string",
+              "description": "Type of the ad board"
+            },
+            "width": {
+              "type": "number",
+              "description": "Width of the ad board"
+            },
+            "height": {
+              "type": "number",
+              "description": "Height of the ad board"
+            },
+            "reason": {
+              "type": "string",
+              "description": "Reason for the edit request"
             },
             "status": {
               "type": "string",
-              "default": "pending"
+              "description": "Status of the edit request"
             }
           },
           "required": [
-            "adLocationId",
-            "updatedDetails",
-            "editReason",
+            "userRequest",
+            "adBoardId",
+            "boardType",
+            "width",
+            "height",
+            "reason",
+            "status"
+          ]
+        },
+        "AdLocationEditRequest": {
+          "type": "object",
+          "properties": {
+            "userRequest": {
+              "type": "string",
+              "description": "User requesting the edit"
+            },
+            "locationId": {
+              "type": "string",
+              "description": "ID of the location being edited"
+            },
+            "locationType": {
+              "type": "string",
+              "description": "Type of the location"
+            },
+            "advertisingType": {
+              "type": "string",
+              "description": "Type of advertising at the location"
+            },
+            "image": {
+              "type": "string",
+              "description": "Image associated with the location"
+            },
+            "planned": {
+              "type": "boolean",
+              "description": "Whether the location is planned or not"
+            },
+            "numberAdBoard": {
+              "type": "number",
+              "description": "Number of ad boards at the location"
+            },
+            "reason": {
+              "type": "string",
+              "description": "Reason for the edit request"
+            },
+            "status": {
+              "type": "string",
+              "description": "Status of the edit request"
+            }
+          },
+          "required": [
+            "userRequest",
+            "locationId",
+            "locationType",
+            "advertisingType",
+            "image",
+            "planned",
+            "numberAdBoard",
+            "reason",
             "status"
           ]
         },
@@ -1870,7 +2245,12 @@ export default {
           ]
         }
       }
-    }
+    },
+    "security": [
+      {
+        "bearerAuth": []
+      }
+    ]
   },
   "apis": []
 
