@@ -17,7 +17,12 @@ const authReducer = (state = initialState, action) => {
         }
         case 'LOGOUT': {
             localStorage.clear()
-            return initialState;
+            return {
+                accessToken: null,
+                rfToken: null,
+                userData: null,
+                isAuth: false
+            };
         }
         case 'UPDATE_ACCESS_TOKEN': {
             localStorage.setItem('accessToken', action.payload.accessToken);

@@ -22,7 +22,6 @@ import ReviewBoardRequestsPage from "./components/AdBoard/ReviewBoardRequestsPag
 import io from "socket.io-client";
 import { useEffect, useState } from "react";
 import { useToast } from "@chakra-ui/react";
-import Premium from "./components/Account/Premium";
 import NotifyProvider from "./Providers/NotifyProvider";
 import ManageAdvertisingType from "./components/ManageAdvertisingType";
 import TableQueryByAdType from "./components/TableQueryByAdType";
@@ -47,9 +46,6 @@ function App() {
   const toast = useToast();
   const [report, setReport] = useState();
   const [isClick, setIsClick] = useState();
-  
-  //const userData = useSelector((state) => state.auth.userData);
-  const isAuth = useSelector((state) => state.auth.isAuth);
 
   useEffect(() => {
     // Simulate authentication with a secret token
@@ -84,13 +80,54 @@ function App() {
       });
       setReport(data);
     });
+    socket.on("UPDATE_LOCATION_NOTIFICATION", (data) => {
+      console.log("Received notification:", data);
+      toast.closeAll();
+      if (userData?.email === data._doc.userRequest){
+        toast({
+          title: `Yêu cầu chỉnh sửa điểm đặt quảng cáo của bạn đã được phản hồi`,
+          description: (
+            <>
+              <b>Thời điểm phản hồi:</b> {new Date(data._doc.updatedAt).toLocaleString()} <br />
+              <b>Địa điểm:</b> {data.location.address}<br />
+              <b>Trạng thái:</b> {data._doc.status}
+            </>
+          ),
+          duration: 5000,
+          isClosable: true,
+          variant: "left-accent",
+          position: "bottom-right",
+        });
+      }
+    });
+    socket.on("UPDATE_ADBOARD_NOTIFICATION", (data) => {
+      console.log("Received notification:", data);
+      toast.closeAll();
+      if (userData?.email === data._doc.userRequest){
+        toast({
+          title: `Yêu cầu chỉnh sửa bảng quảng cáo của bạn đã được phản hồi`,
+          description: (
+            <>
+              <b>Thời điểm phản hồi:</b> {new Date(data._doc.updatedAt).toLocaleString()} <br />
+              <b>Địa điểm:</b> {data.adLocation.address}<br />
+              <b>Loại bảng:</b> {data.adBoard.boardType}<br />
+              <b>Trạng thái:</b> {data._doc.status}
+            </>
+          ),
+          duration: 5000,
+          isClosable: true,
+          variant: "left-accent",
+          position: "bottom-right",
+        });
+      }
+    });
   }, []);
 
   return (
     <UserProvider>
       <div style={{ display: "flex" }}>
         <Router>
-          <Sidebar />
+          {userData?<Sidebar />:<></>}
           <Routes>
             <Route
               path="/map"
@@ -123,7 +160,7 @@ function App() {
               path="/manage-district"
               element={
                 <ProtectedProvider>
-                  {userData?.role != "CB-So" ? <Navigate replace to="/map" /> : <ManageDistrict />}
+                  {userData?.role !== "CB-So" ? <Navigate replace to="/map" /> : <ManageDistrict />}
                 </ProtectedProvider>
               }
             />
@@ -131,7 +168,7 @@ function App() {
               path="/manage-ward"
               element={
                 <ProtectedProvider>
-                  {userData?.role != "CB-So" ? <Navigate replace to="/map" /> :  <ManageWard />}
+                  {userData?.role !== "CB-So" ? <Navigate replace to="/map" /> :  <ManageWard />}
                 </ProtectedProvider>
               }
             />
@@ -151,9 +188,14 @@ function App() {
                 </ProtectedProvider>
               }
             />
+
             <Route path="/login" element={<Login />} />
-            <Route path="/signup" element={<Signup />} />
-            <Route path="/account" element={<Account />} />
+
+            <Route path="/signup" element={<ProtectedProvider>
+                {userData?.role !== "CB-So" ? <Navigate replace to="/map" /> : <Signup />}
+              </ProtectedProvider>} />
+
+            <Route path="/account" element={<ProtectedProvider><Account /></ProtectedProvider>} />
             <Route
               path="/report"
               element={
@@ -178,18 +220,21 @@ function App() {
                 </ProtectedProvider>
               }
             />
-            <Route path="/" element={<Navigate replace to="/map" />} />
+           
             <Route path="/manage-location" element={
               <ProtectedProvider>
-                {userData?.role != "CB-So" ? <Navigate replace to="/map" /> : <AdLocationPage />}
+                {userData?.role !== "CB-So" ? <Navigate replace to="/map" /> : <AdLocationPage />}
               </ProtectedProvider>
             }
             />
-            <Route path="/premium" element={<Premium />} />
+
             <Route
               path="/ad-boards/:locationId"
-              element={<AdBoardsDisplay />}
+              element={<ProtectedProvider>
+              {userData?.role !== "CB-So" ? <Navigate replace to="/map" /> : <AdBoardsDisplay />}
+            </ProtectedProvider>}
             />
+
             <Route
               path="/advertisinglicense"
               element={
@@ -215,15 +260,7 @@ function App() {
               }
             />
             <Route path="/" element={<Navigate replace to="/map" />} />
-            <Route
-              path="/view-requests"
-              element={<ReviewRequestsPage />}
-            />{" "}
-            {/* Add the new route */}
-            <Route
-              path="/review-board-request"
-              element={<ReviewBoardRequestsPage />}
-            />{" "}
+           
           </Routes>
         </Router>
       </div>

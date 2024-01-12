@@ -35,6 +35,12 @@ router.put('/:id', async (req, res) => {
             req.body,
             { new: true }
         );
+        const adBoard = await AdBoardModel.findById(adBoardEditRequest.adBoardId);
+        const adLocation = await AdLocationModel.findById(adBoard.location_id);
+        for (const clientId of global.connectedClients) {
+            console.log(clientId);
+            global.io.to(clientId).emit('UPDATE_ADBOARD_NOTIFICATION', {...adBoardEditRequest, adBoard, adLocation});
+        }
         res.json(adBoardEditRequest);
     } catch (err) {
         res.status(400).json({ message: err.message });
