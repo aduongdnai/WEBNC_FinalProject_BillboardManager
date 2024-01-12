@@ -8,7 +8,7 @@ const router = express.Router();
 
 router.use(routeLogger);
 
-router.get('/:id', validate(userSchema.user_schema), async (req, res) => {
+router.get('/:id', async (req, res) => {
     try {
         const user = await userModel.findById(req.params.id);
         res.status(200).json({
