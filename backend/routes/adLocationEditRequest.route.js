@@ -60,6 +60,11 @@ router.put('/:id', async (req, res) => {
             req.body,
             { new: true }
         );
+        const location = await AdLocationModel.findById(adLocationEditRequest.locationId);
+        for (const clientId of global.connectedClients) {
+            console.log(clientId);
+            global.io.to(clientId).emit('UPDATE_LOCATION_NOTIFICATION', {...adLocationEditRequest, location: location});
+        }
         res.json(adLocationEditRequest);
     } catch (err) {
         res.status(400).json({ message: err.message });

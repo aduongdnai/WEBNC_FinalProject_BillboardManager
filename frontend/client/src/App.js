@@ -80,6 +80,47 @@ function App() {
       });
       setReport(data);
     });
+    socket.on("UPDATE_LOCATION_NOTIFICATION", (data) => {
+      console.log("Received notification:", data);
+      toast.closeAll();
+      if (userData?.email === data._doc.userRequest){
+        toast({
+          title: `Yêu cầu chỉnh sửa điểm đặt quảng cáo của bạn đã được phản hồi`,
+          description: (
+            <>
+              <b>Thời điểm phản hồi:</b> {new Date(data._doc.updatedAt).toLocaleString()} <br />
+              <b>Địa điểm:</b> {data.location.address}<br />
+              <b>Trạng thái:</b> {data._doc.status}
+            </>
+          ),
+          duration: 5000,
+          isClosable: true,
+          variant: "left-accent",
+          position: "bottom-right",
+        });
+      }
+    });
+    socket.on("UPDATE_ADBOARD_NOTIFICATION", (data) => {
+      console.log("Received notification:", data);
+      toast.closeAll();
+      if (userData?.email === data._doc.userRequest){
+        toast({
+          title: `Yêu cầu chỉnh sửa bảng quảng cáo của bạn đã được phản hồi`,
+          description: (
+            <>
+              <b>Thời điểm phản hồi:</b> {new Date(data._doc.updatedAt).toLocaleString()} <br />
+              <b>Địa điểm:</b> {data.adLocation.address}<br />
+              <b>Loại bảng:</b> {data.adBoard.boardType}<br />
+              <b>Trạng thái:</b> {data._doc.status}
+            </>
+          ),
+          duration: 5000,
+          isClosable: true,
+          variant: "left-accent",
+          position: "bottom-right",
+        });
+      }
+    });
   }, []);
 
   return (
