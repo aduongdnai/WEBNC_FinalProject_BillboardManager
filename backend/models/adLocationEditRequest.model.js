@@ -16,8 +16,10 @@ const adLocationEditRequestSchema = new mongoose.Schema({
         default: 0
     },
     reason:String,
-    status: String
-});
+    status: String,
+    
+},
+{ timestamps: true });
 
 const AdLocationEditRequestModel = mongoose.model('adlocation_edit_request', adLocationEditRequestSchema);
 

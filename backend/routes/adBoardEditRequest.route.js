@@ -1,5 +1,8 @@
 import express from 'express'
 import AdBoardEditRequestModel from '../models/adBoardEditRequest.model.js';
+import UserModel from '../models/user.model.js';
+import AdBoardModel from '../models/adBoard.model.js';
+import AdLocationModel from '../models/adLocation.model.js';
 import { routeLogger } from '../middlewares/logger.mdw.js'
 const router = express.Router();
 
@@ -35,6 +38,33 @@ router.put('/:id', async (req, res) => {
         res.json(adBoardEditRequest);
     } catch (err) {
         res.status(400).json({ message: err.message });
+    }
+});
+
+router.post('/findByUserRequest/', async (req, res) => {
+    try {
+        var adBoardEditRequests;
+        if (!req.body.userRequest) {
+            adBoardEditRequests = await AdBoardEditRequestModel.find();
+        }else{
+            adBoardEditRequests = await AdBoardEditRequestModel.find({ userRequest: req.body.userRequest });
+        }
+        const adBoardEditRequestsWithUser = await Promise.all(adBoardEditRequests.map(async (adBoardEditRequest) => {
+            
+            const user = await UserModel.findOne({ email: adBoardEditRequest.userRequest });
+            const adBoard = await AdBoardModel.findById(adBoardEditRequest.adBoardId);
+            const adLocation = await AdLocationModel.findById(adBoard.location_id);
+            return {
+                ...adBoardEditRequest.toObject(),
+                user,
+                adBoard,
+                adLocation
+            };
+        }));
+        res.json(adBoardEditRequestsWithUser);
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({ message: err.message });
     }
 });
 

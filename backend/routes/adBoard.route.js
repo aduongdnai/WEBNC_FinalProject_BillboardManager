@@ -95,4 +95,19 @@ router.patch('/:id', async (req, res) => {
     }
 
 })
+
+
+router.delete("/:id", async (req, res) => {
+    const { id } = req.params;
+  
+    try {
+        const deleteAdBoard = await AdBoardModel.findByIdAndDelete(id);
+        res.status(200).json(deleteAdBoard);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+})
+
+
+
 export default router;

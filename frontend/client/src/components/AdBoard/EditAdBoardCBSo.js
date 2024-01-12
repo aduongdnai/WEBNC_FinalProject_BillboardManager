@@ -111,7 +111,7 @@ const EditAdBoardCBSo = (props) => {
             setPublicId([]);
             if (result) {
                 toast({
-                    title: "Thêm điểm quảng cáo thành công",
+                    title: "Chỉnh sửa điểm quảng cáo thành công",
                     status: "success",
                     duration: 3000,
                     isClosable: true,

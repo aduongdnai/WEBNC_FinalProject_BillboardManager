@@ -31,6 +31,8 @@ import ProtectedProvider from "./Providers/ProtectedProvider";
 import ReportDetail from "./components/ReportDetail";
 import ReportTypesManagement from "./components/ReportTypesManagement";
 import TableQueryAdBoardByArea from "./components/TableQueryAdBoardByArea";
+import AdLocationEditRequestList from "./components/AdLocationEditRequestList";
+import AdBoardEditRequestList from "./components/AdBoardEditRequestList";
 const socket = io("http://127.0.0.1:5000");
 
 
@@ -193,6 +195,22 @@ function App() {
               element={
                 <ProtectedProvider>
                   <AdvertisingLicenseRequestList />
+                </ProtectedProvider>
+              }
+            />
+             <Route
+              path="/adlocation-edit-request-list"
+              element={
+                <ProtectedProvider>
+                  <AdLocationEditRequestList />
+                </ProtectedProvider>
+              }
+            />
+             <Route
+              path="/adboard-edit-request-list"
+              element={
+                <ProtectedProvider>
+                  <AdBoardEditRequestList />
                 </ProtectedProvider>
               }
             />

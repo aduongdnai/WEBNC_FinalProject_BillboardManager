@@ -94,7 +94,6 @@ const EditLocationCBSo = (props) => {
             const data = {
                 ...values,
                 image: publicId,
-                planned: false,
                 // coordinates: {
                 //     type: "Point",
                 //     coordinates: [
@@ -116,7 +115,7 @@ const EditLocationCBSo = (props) => {
             setPublicId('');
             if (result) {
                 toast({
-                    title: "Thêm điểm quảng cáo thành công",
+                    title: "Chỉnh chửa điểm đặt quảng cáo thành công",
                     status: "success",
                     duration: 3000,
                     isClosable: true,
@@ -131,7 +130,7 @@ const EditLocationCBSo = (props) => {
             console.error('Error submitting form:', error);
             setError('An error occurred while submitting the form.');
             toast({
-                title: "Thêm điểm quảng cáo thất bại",
+                title: "Chỉnh sửa điểm đặt quảng cáo thất bại",
                 description: "Vui lòng thử lại",
                 status: "error",
                 duration: 3000,
