@@ -1,8 +1,14 @@
 import express from 'express'
 import AdvertisingTypeModel from '../models/advertisingType.model.js';
 import mongoose from 'mongoose';
-const router = express.Router();
 import { routeLogger } from '../middlewares/logger.mdw.js'
+import validate from "../middlewares/validate.mdw.js"
+import advertisingTypeSchemas from '../schemas/advertisingType.schemas.js';
+
+
+
+
+const router = express.Router();
 router.use(routeLogger);
 router.get('/', async (req, res) => {
     try {
@@ -25,7 +31,7 @@ router.get('/', async (req, res) => {
 })
 
 
-router.post('/', async (req, res) => {
+router.post('/',validate(advertisingTypeSchemas.advertising_type_schema), async (req, res) => {
     const advertisingType = req.body;
     //console.log(req.body);
     const newType = new AdvertisingTypeModel(advertisingType);
@@ -40,7 +46,7 @@ router.post('/', async (req, res) => {
 })
 
 
-router.put('/:id', async (req, res) => {
+router.put('/:id',validate(advertisingTypeSchemas.advertising_type_schema), async (req, res) => {
     const { id } = req.params;
     const { name } = req.body;
 

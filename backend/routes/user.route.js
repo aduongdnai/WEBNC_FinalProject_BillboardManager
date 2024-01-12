@@ -2,11 +2,13 @@ import express from 'express';
 import userModel from '../models/user.model.js';
 import bcrypt from "bcrypt";
 import { routeLogger } from '../middlewares/logger.mdw.js'
+import userSchema from '../schema/user.schema.js';
+import validate from "../middlewares/validate.mdw.js"
 const router = express.Router();
 
 router.use(routeLogger);
 
-router.get('/:id', async (req, res) => {
+router.get('/:id', validate(userSchema.user_schema), async (req, res) => {
     try {
         const user = await userModel.findById(req.params.id);
         res.status(200).json({
@@ -20,7 +22,7 @@ router.get('/:id', async (req, res) => {
         });
     }
 })
-router.put('/:id', async (req, res) => {
+router.put('/:id', validate(userSchema.user_update_schema), async (req, res) => {
     const userId = req.params.id;
     const updateData = req.body; // Dữ liệu cần cập nhật từ frontend
 

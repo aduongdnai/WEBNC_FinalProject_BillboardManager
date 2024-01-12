@@ -16,6 +16,7 @@ import {
 import { HamburgerIcon, WarningTwoIcon } from "@chakra-ui/icons";
 import { CiLogin, CiLogout } from "react-icons/ci";
 import { BsTable, BsClipboard2Check, BsPersonFillAdd, BsArrowRightCircle   } from "react-icons/bs";
+import { ImLocation2 } from "react-icons/im";
 import { MdOutlineManageAccounts } from "react-icons/md";
 import { BsFillPinMapFill } from "react-icons/bs";
 import { useNavigate } from "react-router-dom";
@@ -145,7 +146,20 @@ export default function Sidebar() {
             onClick={() => navigate("/report-types")}
           >
             Report Types Management
-          </Button></>):(<></>)}
+          </Button>
+          <Button
+            background="none"
+            fontSize="15px"
+            ref={btnRef}
+            width={"270px"}
+            justifyContent={"start"}
+            _hover={{ backgroundColor: "#AEC8CA" }}
+            leftIcon={<ImLocation2  />}
+            onClick={() => navigate("/manage-district")}
+          >
+            District Management
+          </Button>
+          </>):(<></>)}
           </DrawerBody>
         </DrawerContent>
       </Drawer>

@@ -208,8 +208,6 @@ const AdBoardsDisplay = () => {
   const [location, setLocation] = useState(null);
   const [selectedBoard, setSelectedBoard] = useState(null);
   const [update, setUpdate] = useState(true);
-
-  const { isOpen: isNormalOpen, onOpen: onNormalOpen, onClose: onNormalClose } = useDisclosure();
   const { isOpen: isCBSoOpen, onOpen: onCBSoOpen, onClose: onCBSoClose } = useDisclosure();
   const { locationId } = useParams();
 
@@ -248,13 +246,8 @@ const AdBoardsDisplay = () => {
     if(userData.role === 'CB-So'){
       onCBSoOpen();
     }
-    else onNormalOpen();
   };
 
-  const handleSubmit = (data) => {
-    // Xử lý logic khi submit form
-    console.log(data);
-  };
 
   const columns = [
     {
@@ -276,28 +269,6 @@ const AdBoardsDisplay = () => {
       formatter: (cellContent, row) => {
         return(
           <div style={{display:"flex", alignItems:"center"}}>
-          {/* <Icon 
-            variant="unstyled" 
-            as={FaEye} 
-            w={5} 
-            h={5} 
-            marginRight={5} 
-            // marginLeft={2} 
-            onClick={
-              () => navigate('/manage-ward',{state: { district: row?.name }})
-            }
-            _hover={{color:'blue'}}
-          /> */}
-          {/* <Icon 
-            as={RiAdvertisementFill} 
-            w={5}
-            h={5}
-            marginRight={5}
-            onClick={
-              () => navigate('/table-advertising-type',{state: { adType: row?.name }})
-            }
-            _hover={{color:'blue'}}
-          /> */}
           <Icon 
             as={FaPen} 
             w={4} 
@@ -308,21 +279,6 @@ const AdBoardsDisplay = () => {
             }}
             _hover={{color:'blue'}}
           />
-          {/* <Icon 
-            as={FaTrashAlt} 
-            w={4} 
-            h={4}
-            marginRight={5}
-            onClick={
-              () => {
-                setName(row?.name)
-                setId(row?._id)
-                setIsDelete(true)
-                onOpen()
-              }
-            }
-            _hover={{color:'red'}}
-          /> */}
           </div>
         )
       }
@@ -386,16 +342,6 @@ const AdBoardsDisplay = () => {
           placeholder='Search'
           />
           <div style={{width:"100%",display:"flex",justifyContent:"flex-end"}}>
-          {/* <Button leftIcon={<CiCirclePlus size="20" />} justifyContent="flex-start" width="200px" colorScheme='teal' variant='solid' 
-            onClick={() =>{
-                setName('')
-                setId('')
-                setIsDelete(false)
-                onOpen()
-              }
-            }>
-            Add
-          </Button> */}
           </div>
         </div>
     );
@@ -406,36 +352,7 @@ const AdBoardsDisplay = () => {
 
   return (
     <div style={{width:"95%"}}>
-      {adBoards.length > 0 ? (
-        // <Table>
-        //   <Thead>
-        //     <Tr>
-        //       <Th>STT</Th>
-        //       <Th>ID</Th>
-        //       <Th>Loại Bảng</Th>
-        //       <Th>Kích Thước</Th>
-        //       <Th>Hành động</Th>
-        //     </Tr>
-        //   </Thead>
-        //   <Tbody>
-        //     {adBoards.map((board, index) => (
-        //       <Tr key={board._id}>
-        //         <Td>{index + 1}</Td>
-        //         <Td>{board._id}</Td>
-        //         <Td>{board.boardType}</Td>
-        //         <Td>{`${board.width} x ${board.height}`}</Td>
-        //         <Td>
-        //           <Button
-        //             colorScheme="blue"
-        //             onClick={() => handleEditClick(board)}
-        //           >
-        //             Chỉnh sửa bảng quảng cáo
-        //           </Button>
-        //         </Td>
-        //       </Tr>
-        //     ))}
-        //   </Tbody>
-        // </Table>
+      {adBoards.length > 0 ? (  
         <ToolkitProvider
             keyField="id"
             data={ adBoards }
@@ -463,28 +380,6 @@ const AdBoardsDisplay = () => {
       ) : (
         <p>Không tìm thấy bảng quảng cáo nào cho vị trí này.</p>
       )}
-
-      <Modal isOpen={isNormalOpen} onClose={onNormalClose}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Chỉnh Sửa Bảng Quảng Cáo</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            {selectedBoard && (
-              <EditAdBoardForm
-                adBoard={selectedBoard}
-                onClose={onNormalClose}
-                onSubmit={handleSubmit}
-              />
-            )}
-          </ModalBody>
-          <ModalFooter>
-            <Button colorScheme="blue" mr={3} onClick={onNormalClose}>
-              Đóng
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
       <Modal isOpen={isCBSoOpen} onClose={onCBSoClose}>
         <ModalOverlay />
         <ModalContent>

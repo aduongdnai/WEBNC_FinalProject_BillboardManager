@@ -227,22 +227,17 @@ function TableQueryByArea(props) {
       <Modal isOpen={isNormalOpen} onClose={onNormalClose}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Chỉnh Sửa Điểm Đặt Quảng Cáo</ModalHeader>
+          <ModalHeader>Yêu Cầu Chỉnh Sửa Điểm Đặt Quảng Cáo</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
             {selectedLocation && (
               <EditAdLocationForm
-                adLocation={selectedLocation}
+                info={selectedLocation}
                 onClose={onNormalClose}
                 onSubmit={handleSubmit}
               />
             )}
           </ModalBody>
-          <ModalFooter>
-            <Button colorScheme="blue" mr={3} onClick={onNormalClose}>
-              Đóng
-            </Button>
-          </ModalFooter>
         </ModalContent>
       </Modal>
       {adLocation ? (

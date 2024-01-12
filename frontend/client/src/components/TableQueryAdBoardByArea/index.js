@@ -30,7 +30,7 @@ import { useDispatch } from 'react-redux';
 import { FaMap, FaArrowCircleRight } from "react-icons/fa";
 import { BsClipboard2CheckFill } from "react-icons/bs";
 import { useToast } from "@chakra-ui/react"
-import EditAdLocationForm from './EditAdLocationForm';
+import EditAdBoardForm from './EditAdBoardForm';
 import AdvertisingLicenseRequestForm from '../AdvertisingLicenseRequestForm';
 import AdvertisingLicenseRequestApi from '../../apis/advertisingLicenseRequestApi.js';
 
@@ -291,19 +291,30 @@ function TableQueryAdBoardByArea(props) {
       <Modal isOpen={isNormalOpen} onClose={onNormalClose}>
         <ModalOverlay />
         <ModalContent>
+          <ModalHeader>Yêu Cầu Chỉnh Sửa Bảng Quảng Cáo</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            {selectedAdBoard && (
+              <EditAdBoardForm
+                info={selectedAdBoard}
+                onClose={onNormalClose}
+              />
+            )}
+          </ModalBody>
+        </ModalContent>
+      </Modal>
+      <Modal isOpen={isRequestLicenseOpen} onClose={onRequestLicenseClose}>
+        <ModalOverlay />
+        <ModalContent>
           <ModalHeader>Chỉnh Sửa Điểm Đặt Quảng Cáo</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
             {selectedAdBoard && (
-              <EditAdLocationForm
-                adLocation={selectedAdBoard}
-                onClose={onNormalClose}
-                onSubmit={handleSubmit}
-              />
+              <AdvertisingLicenseRequestForm onSubmit={handleSubmitForm} adboardInfo={selectedAdBoard}></AdvertisingLicenseRequestForm>
             )}
           </ModalBody>
           <ModalFooter>
-            <Button colorScheme="blue" mr={3} onClick={onNormalClose}>
+            <Button colorScheme="blue" mr={3} onClick={onRequestLicenseClose}>
               Đóng
             </Button>
           </ModalFooter>
