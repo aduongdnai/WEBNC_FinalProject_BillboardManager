@@ -102,7 +102,7 @@ function App() {
               element={
                 <ProtectedProvider>
                   
-                  <TableQueryByArea area={userArea}/>
+                  {userData?.role != "CB-So" ? <TableQueryByArea area={userArea}/> : <Navigate replace to="/manage-location" />}
                 </ProtectedProvider>
               }
             />
@@ -118,7 +118,7 @@ function App() {
               path="/manage-district"
               element={
                 <ProtectedProvider>
-                  <ManageDistrict />
+                  {userData?.role != "CB-So" ? <Navigate replace to="/map" /> : <ManageDistrict />}
                 </ProtectedProvider>
               }
             />
@@ -126,7 +126,7 @@ function App() {
               path="/manage-ward"
               element={
                 <ProtectedProvider>
-                  <ManageWard />
+                  {userData?.role != "CB-So" ? <Navigate replace to="/map" /> :  <ManageWard />}
                 </ProtectedProvider>
               }
             />
@@ -174,7 +174,12 @@ function App() {
               }
             />
             <Route path="/" element={<Navigate replace to="/map" />} />
-            <Route path="/manage-location" element={<AdLocationPage />} />
+            <Route path="/manage-location" element={
+              <ProtectedProvider>
+                {userData?.role != "CB-So" ? <Navigate replace to="/map" /> : <AdLocationPage />}
+              </ProtectedProvider>
+            }
+            />
             <Route path="/premium" element={<Premium />} />
             <Route
               path="/ad-boards/:locationId"
