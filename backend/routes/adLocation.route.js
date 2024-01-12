@@ -14,7 +14,7 @@ import { getReviewRequests } from "../controller/reviewController.js";
 // Đường dẫn cho việc cập nhật thông tin điểm đặt quảng cáo
 router.post("/edit", editAdLocation);
 
-router.get("/filter", isAuthenticated, async (req, res) => {
+router.get("/filter", async (req, res) => {
   try {
     let planned = req.query.planned === "true";
     //let reported = Boolean(req.query.reported);
@@ -37,7 +37,7 @@ router.get("/filter", isAuthenticated, async (req, res) => {
     });
   }
 });
-router.get("/", isAuthenticated, async (req, res) => {
+router.get("/", async (req, res) => {
   try {
     const data = await AdLocationModel.find();
 
@@ -54,7 +54,7 @@ router.get("/", isAuthenticated, async (req, res) => {
     });
   }
 });
-router.post("/findByArea", isAuthenticated, async (req, res) => {
+router.post("/findByArea", async (req, res) => {
   try {
     console.log(req.body.area);
     const data = await AdLocationModel.find({
@@ -75,7 +75,7 @@ router.post("/findByArea", isAuthenticated, async (req, res) => {
   }
 });
 
-router.post("/findByAdType", isAuthenticated, async (req, res) => {
+router.post("/findByAdType", async (req, res) => {
   try {
     const data = await AdLocationModel.find({
       advertisingType: { $regex: req.body.area, $options: 'i' },
@@ -96,7 +96,7 @@ router.post("/findByAdType", isAuthenticated, async (req, res) => {
 });
 
 
-router.put("/updateAdType", isAuthenticated, async (req, res) => {
+router.put("/updateAdType", async (req, res) => {
   const { oldAdType, newAdType } = req.body;
   console.log(oldAdType, newAdType);
   try {
@@ -108,7 +108,7 @@ router.put("/updateAdType", isAuthenticated, async (req, res) => {
 });
 
 
-router.post("/", isAuthenticated, async (req, res) => {
+router.post("/", async (req, res) => {
   try {
     const newAdLocation = new AdLocationModel(req.body);
     console.log(req.body);
@@ -126,7 +126,7 @@ router.post("/", isAuthenticated, async (req, res) => {
     });
   }
 });
-router.get("/:id", isAuthenticated, async (req, res) => {
+router.get("/:id", async (req, res) => {
   try {
     const id = req.params.id;
 
@@ -153,7 +153,7 @@ router.get("/:id", isAuthenticated, async (req, res) => {
 });
 
 // Route mới để lấy các địa điểm quảng cáo theo khu vực
-router.get("/area/:area", isAuthenticated, async (req, res) => {
+router.get("/area/:area", async (req, res) => {
   try {
     const { area } = req.params;
     const data = await AdLocationModel.find({ area });
@@ -165,7 +165,7 @@ router.get("/area/:area", isAuthenticated, async (req, res) => {
 });
 
 // Đường dẫn cho việc cập nhật thông tin điểm đặt quảng cáo dựa trên ID
-router.post("/update/:id", isAuthenticated, async (req, res) => {
+router.post("/update/:id", async (req, res) => {
   try {
     const updatedAdLocation = await AdLocationModel.findByIdAndUpdate(
       req.params.id,
