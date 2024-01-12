@@ -190,26 +190,38 @@ import {
   ModalCloseButton,
   ModalBody,
   ModalFooter,
+  useToast
 } from "@chakra-ui/react";
 import EditAdBoardForm from "./EditAdBoardForm"; // Điều chỉnh đường dẫn import
 import { FaEye,FaPen } from "react-icons/fa";
+import { FaTrashAlt } from "react-icons/fa";
+
 import { IoSearchOutline } from "react-icons/io5";
 import BootstrapTable from 'react-bootstrap-table-next';
 import paginationFactory from 'react-bootstrap-table2-paginator';
 import ToolkitProvider, { Search } from 'react-bootstrap-table2-toolkit/dist/react-bootstrap-table2-toolkit';
 import { useSelector } from "react-redux";
 import EditAdBoardCBSo from "./EditAdBoardCBSo";
+import { CiCirclePlus } from "react-icons/ci";
+import { useNavigate } from "react-router-dom";
+import AddAdBoardCBSo from "./AddAdBoardCBSo";
+import DelAdBoardCBSo from "./DelAdBoardCBSo";
 
 
 
 const AdBoardsDisplay = () => {
   const userData = useSelector(state => state.auth.userData);
+  const navigate = useNavigate();
   const [adBoards, setAdBoards] = useState([]);
   const [location, setLocation] = useState(null);
+  const toast = useToast();
+  const [isEdit, setIsEdit] = useState(false);
+  const [isDelete, setIsDelete] = useState(false);
   const [selectedBoard, setSelectedBoard] = useState(null);
   const [update, setUpdate] = useState(true);
   const { isOpen: isCBSoOpen, onOpen: onCBSoOpen, onClose: onCBSoClose } = useDisclosure();
   const { locationId } = useParams();
+
 
   useEffect(() => {
     const fetchData1 = async() => {
@@ -242,6 +254,8 @@ const AdBoardsDisplay = () => {
 
 
   const handleEditClick = (board) => {
+    setIsEdit(true)
+    setIsDelete(false)
     setSelectedBoard(board);
     if(userData.role === 'CB-So'){
       onCBSoOpen();
@@ -278,6 +292,21 @@ const AdBoardsDisplay = () => {
               handleEditClick(row)
             }}
             _hover={{color:'blue'}}
+          />
+          <Icon 
+            as={FaTrashAlt} 
+            w={4} 
+            h={4}
+            marginRight={5}
+            onClick={() => {
+              setIsEdit(false)
+              setIsDelete(true)
+              setSelectedBoard(row);
+              if(userData.role === 'CB-So'){
+                onCBSoOpen();
+              }
+            }}
+            _hover={{color:'red'}}
           />
           </div>
         )
@@ -342,6 +371,28 @@ const AdBoardsDisplay = () => {
           placeholder='Search'
           />
           <div style={{width:"100%",display:"flex",justifyContent:"flex-end"}}>
+          <Button leftIcon={<CiCirclePlus size="20" />} justifyContent="flex-start" width="200px" colorScheme='teal' variant='solid' 
+            onClick={() =>{
+              if(location.numberAdBoard === adBoards.length){
+                toast({
+                  title: 'Error',
+                  description: "Limited Ad Board Amount",
+                  status: 'error',
+                  duration: 2000,
+                  isClosable: true,
+                });
+              }
+              else{
+                setIsEdit(false)
+                setIsDelete(false)
+                if(userData.role === 'CB-So'){
+                  onCBSoOpen();
+                }
+              }
+              }
+            }>
+            Add
+          </Button>
           </div>
         </div>
     );
@@ -352,7 +403,7 @@ const AdBoardsDisplay = () => {
 
   return (
     <div style={{width:"95%"}}>
-      {adBoards.length > 0 ? (  
+      {adBoards? (  
         <ToolkitProvider
             keyField="id"
             data={ adBoards }
@@ -386,13 +437,27 @@ const AdBoardsDisplay = () => {
           <ModalHeader>Chỉnh Sửa Bảng Quảng Cáo</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            {selectedBoard && (
+            {isEdit ? (selectedBoard && (
               <EditAdBoardCBSo
                 info={selectedBoard}
                 onClose={onCBSoClose}
                 setUpdate={setUpdate}
               />
-            )}
+            )) : 
+            (isDelete ? (selectedBoard && (
+              <DelAdBoardCBSo
+                info={selectedBoard}
+                setUpdate={setUpdate}
+                onClose={onCBSoClose}
+              />
+            )) : 
+            <AddAdBoardCBSo
+            info={location}
+            onClose={onCBSoClose}
+            setUpdate={setUpdate}
+            />
+            )
+            }
           </ModalBody>
           <ModalFooter>
             <Button colorScheme="blue" mr={3} onClick={onCBSoClose}>

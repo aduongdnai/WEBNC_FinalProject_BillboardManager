@@ -58,6 +58,18 @@ router.post('/type/:type', async (req, res) => {
     }
 });
 
+router.post('/adBoardtype/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const reports = await UserReportModel.find({ type: 'adboard', reference_id: id });
+        res.status(200).json({
+            data: reports,
+        });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
 
 router.post('/findByRpType', async (req, res) => {
     try {
