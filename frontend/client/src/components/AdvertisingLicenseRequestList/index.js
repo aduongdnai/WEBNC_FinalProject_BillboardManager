@@ -15,7 +15,7 @@ function AdvertisingLicenseRequestList(props) {
     const user = useSelector(state => state.auth.userData);
     const toast = useToast();
     const [requests, setRequests] = React.useState([]);
-
+    const [update, setUpdate] = React.useState(false);
     useEffect(() => {
 
         const fetchData = async () => {
@@ -23,9 +23,11 @@ function AdvertisingLicenseRequestList(props) {
                 let result;
                 if (user.role === "CB-So") {
                     result = await AdvertisingLicenseRequestApi.getAdvertisingLicenseRequest();
+                    setUpdate(false);
                 }
                 else {
                     result = await AdvertisingLicenseRequestApi.getAdvertisingLicenseRequestByUserId(user._id);
+                    setUpdate(false);
                 }
                 setRequests(result.data);
                 console.log(result);
@@ -34,14 +36,14 @@ function AdvertisingLicenseRequestList(props) {
             }
         }
         fetchData();
-    }, [])
+    }, [update])
     return (
         <Box width={"100%"}>
             <Card maxW='8xl'>
                 <CardBody>
                     {user.role === "CB-So" ?
-                        <AdvertisingLicenseRequestListCBSO requests={requests}> </AdvertisingLicenseRequestListCBSO>
-                        : <AdvertisingLicenseRequestListCBQuanPhuong requests={requests}> </AdvertisingLicenseRequestListCBQuanPhuong>}
+                        <AdvertisingLicenseRequestListCBSO requests={requests} setUpdate={setUpdate}> </AdvertisingLicenseRequestListCBSO>
+                        : <AdvertisingLicenseRequestListCBQuanPhuong requests={requests} setUpdate={setUpdate}> </AdvertisingLicenseRequestListCBQuanPhuong>}
 
 
                 </CardBody>

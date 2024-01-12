@@ -25,13 +25,13 @@ import { setViewport, } from '../actions/viewportAction'
 import adLocationApi from '../../apis/adLocationApi.js';
 import { FaMap } from 'react-icons/fa'
 
-function AdvertisingLicenseRequestListCBSO({ requests }) {
+function AdvertisingLicenseRequestListCBSO({ requests, setUpdate }) {
     const [request, setRequest] = React.useState(null);
     const [requestList, setRequestsList] = React.useState(requests);
     const user = useSelector(state => state.auth.userData);
     const { isOpen, onOpen, onClose } = useDisclosure()
     const toast = useToast();
-    const [update, setUpdate] = React.useState(false);
+
     const navigate = useNavigate();
     const dispatch = useDispatch()
 
@@ -41,14 +41,14 @@ function AdvertisingLicenseRequestListCBSO({ requests }) {
             try {
                 const result = await AdvertisingLicenseRequestApi.getAdvertisingLicenseRequest();
                 setRequestsList(result.data);
-                setUpdate(false);
+
             } catch (error) {
                 console.log(error);
             }
         }
         fetchData();
 
-    }, [update]);
+    }, []);
     const handleViewRequest = async (request) => {
 
         try {
@@ -68,6 +68,7 @@ function AdvertisingLicenseRequestListCBSO({ requests }) {
         const result = await AdvertisingLicenseRequestApi.updateAdvertisingLicenseRequest(request._id, { status: "Approved" });
         console.log(result);
         if (result.msg === "success") {
+            setUpdate(true);
             const adboarResult = await adBoardApi.updateAdboardDuong(request.adBoard, { images: request.adImage, expiryDate: request.endDate })
             toast({
                 title: 'Approve thành công.',
@@ -76,7 +77,6 @@ function AdvertisingLicenseRequestListCBSO({ requests }) {
                 duration: 2000,
                 isClosable: true,
             });
-            setUpdate(true);
         }
         onClose();
     }
@@ -84,6 +84,7 @@ function AdvertisingLicenseRequestListCBSO({ requests }) {
 
         const result = await AdvertisingLicenseRequestApi.updateAdvertisingLicenseRequest(request._id, { status: "Rejected" });
         if (result.msg === "success") {
+            setUpdate(true);
             const adboarResult = await adBoardApi.updateAdboardDuong(request.adBoard, { advertisingLicense_id: null })
             toast({
                 title: 'Từ chối thành công.',
@@ -92,7 +93,6 @@ function AdvertisingLicenseRequestListCBSO({ requests }) {
                 duration: 2000,
                 isClosable: true,
             });
-            setUpdate(true);
         }
         onClose();
     }
