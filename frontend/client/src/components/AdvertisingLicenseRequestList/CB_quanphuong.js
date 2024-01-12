@@ -19,6 +19,10 @@ import userApi from '../../apis/userApi';
 import AdvertisingLicenseRequestApi from '../../apis/advertisingLicenseRequestApi.js';
 import adBoardApi from '../../apis/adBoardApi.js';
 import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { setViewport, } from '../actions/viewportAction'
+import { FaMap } from 'react-icons/fa'
 
 function AdvertisingLicenseRequestListCBQuanPhuong({ requests }) {
     const [request, setRequest] = React.useState(null);
@@ -27,6 +31,8 @@ function AdvertisingLicenseRequestListCBQuanPhuong({ requests }) {
     const { isOpen, onOpen, onClose } = useDisclosure()
     const [update, setUpdate] = React.useState(false);
     const toast = useToast();
+    const navigate = useNavigate();
+    const dispatch = useDispatch()
     const handleViewRequest = async (request) => {
         setRequest(request);
         onOpen();
@@ -48,7 +54,7 @@ function AdvertisingLicenseRequestListCBQuanPhuong({ requests }) {
     }, [update]);
     const handleRejectRequest = async () => {
         try {
-            const adboarResult = await adBoardApi.updateAdboardDuong(request.adBoard, { advertisingLicense_id: null })
+            const adboarResult = await adBoardApi.updateAdboardDuong(request.adBoard, { advertisingLicense_id: null, expiryDate: null })
             if (adboarResult.msg !== "success") {
                 return;
             }
@@ -76,6 +82,20 @@ function AdvertisingLicenseRequestListCBQuanPhuong({ requests }) {
         }
 
     }
+    const handleChangeViewPort = async (request) => {
+        const location = await AdvertisingLicenseRequestApi.getAdlocation(request.adBoard);
+        console.log(location);
+
+        const newViewport = {
+            latitude: location.data[0].coordinates.coordinates[1],
+            longitude: location.data[0].coordinates.coordinates[0],
+            zoom: 20,
+            transitionDuration: 5000, // Adjust the zoom level as needed
+
+        };
+        dispatch(setViewport(newViewport));
+        navigate("/");
+    }
     return (
         <Box width="full" overflowX="auto">
             <Table variant="striped">
@@ -100,12 +120,12 @@ function AdvertisingLicenseRequestListCBQuanPhuong({ requests }) {
                             <Td>{new Date(request.endDate).toLocaleDateString()}</Td>
                             <Td>{request.status}</Td>
                             <Td>
-                                <Center>
-                                    <ButtonGroup>
-                                        <Button variant={"outline"} colorScheme="blue" size="sm" leftIcon={<ViewIcon />} onClick={() => handleViewRequest(request)}>View</Button>
 
-                                    </ButtonGroup>
-                                </Center>
+                                <ButtonGroup>
+                                    <Button variant={"outline"} colorScheme="blue" size="sm" leftIcon={<ViewIcon />} onClick={() => handleViewRequest(request)}>View</Button>
+                                    <Button variant={"outline"} colorScheme="blue" size="sm" leftIcon={<FaMap />} onClick={() => handleChangeViewPort(request)}>Map</Button>
+                                </ButtonGroup>
+
                             </Td>
                         </Tr>
                     ))}

@@ -60,7 +60,7 @@ function TableQueryAdBoardByArea(props) {
   // const { area } = useUser();
   const [adBoard, setAdBoard] = useState(null);
   const [selectedAdBoard, setSelectedAdBoard] = useState(null);
-
+  const [update, setUpdate] = useState(false);
   // const { SearchBar } = Search;
   useEffect(() => {
     const fetchData = async () => {
@@ -70,12 +70,12 @@ function TableQueryAdBoardByArea(props) {
         const ans = result.data.map((element) => {
           return {
             ...element,
-            expiryDate: new Date(element.expiryDate).toLocaleDateString(),
+            expiryDate: element.expiryDate ? new Date(element.expiryDate).toLocaleDateString() : "No expiry date",
             hasLicense: element.advertisingLicense_id ? "Yes" : "No"
           }
         })
         setAdBoard(ans);
-
+        setUpdate(false);
 
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -85,7 +85,7 @@ function TableQueryAdBoardByArea(props) {
 
     // Call the fetchData function when the component mounts or when viewport changes
     fetchData();
-  }, []);
+  }, [update]);
 
 
   const handleChangeViewPort = () => {
@@ -112,7 +112,7 @@ function TableQueryAdBoardByArea(props) {
 
   const handleRequestLicenseClick = (row) => {
     setSelectedAdBoard(row)
-    if (row.hasLicense === "Yes") {
+    if (row.hasLicense === "Yes" && row.expiryDate !== "No expiry date") {
       toast({
         title: "Điểm quảng cáo đã được cấp phép",
         status: "error",
@@ -120,8 +120,16 @@ function TableQueryAdBoardByArea(props) {
         isClosable: true,
       })
     }
+    else if (row.hasLicense === "Yes" && row.expiryDate === "No expiry date") {
+      toast({
+        title: "Điểm quảng cáo đã được gửi yêu cầu cấp phép",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      })
+    }
     else {
-      console.log("cc");
+
       onRequestLicenseOpen();
     }
   }
@@ -272,6 +280,7 @@ function TableQueryAdBoardByArea(props) {
         if (resultUpdate) {
           selectedAdBoard.advertisingLicense_id = result.data._id;
         }
+        setUpdate(true);
       }
     } catch (error) {
       console.log(error);
@@ -320,23 +329,7 @@ function TableQueryAdBoardByArea(props) {
           </ModalFooter>
         </ModalContent>
       </Modal>
-      <Modal isOpen={isRequestLicenseOpen} onClose={onRequestLicenseClose}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Chỉnh Sửa Điểm Đặt Quảng Cáo</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            {selectedAdBoard && (
-              <AdvertisingLicenseRequestForm onSubmit={handleSubmitForm} adboardInfo={selectedAdBoard}></AdvertisingLicenseRequestForm>
-            )}
-          </ModalBody>
-          <ModalFooter>
-            <Button colorScheme="blue" mr={3} onClick={onRequestLicenseClose}>
-              Đóng
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
+
       {adBoard ? (
         <ToolkitProvider
           keyField="id"

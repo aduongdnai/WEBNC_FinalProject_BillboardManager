@@ -1,6 +1,8 @@
 import express from 'express';
 import AdvertisingLicenseRequest from '../models/advertisingLicenseRequest.model.js';
 import { routeLogger } from '../middlewares/logger.mdw.js'
+import AdLocationModel from '../models/adLocation.model.js';
+import AdBoardModel from '../models/adBoard.model.js';
 // backend/routes/advertisingLicense.route.js
 const router = express.Router();
 router.use(routeLogger);
@@ -95,5 +97,22 @@ router.delete('/:id', async (req, res) => {
         })
     }
 });
+router.get("/adlocation/:id", async (req, res) => {
+    try {
+        const AdboardResult = await AdBoardModel.findById({ _id: req.params.id });
+        let result;
+        if (AdboardResult) {
+            result = await AdLocationModel.find({ _id: AdboardResult.location_id });
+        }
 
+        res.status(200).json({
+            data: result
+        })
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            msg: "Internal Server error"
+        })
+    }
+});
 export default router;

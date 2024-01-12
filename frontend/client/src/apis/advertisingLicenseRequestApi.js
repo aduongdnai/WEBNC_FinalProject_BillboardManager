@@ -30,6 +30,10 @@ const advertisingLicenseRequestApi = {
 
         const url = `/advertisingLicenseRequest/${id}`
         return serverClient.delete(url)
-    }
+    },
+    getAdlocation(id) {
+        const url = `/advertisingLicenseRequest/adlocation/${id}`
+        return serverClient.get(url)
+    },
 }
 export default advertisingLicenseRequestApi
