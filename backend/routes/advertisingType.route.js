@@ -2,12 +2,12 @@ import express from 'express'
 import AdvertisingTypeModel from '../models/advertisingType.model.js';
 import mongoose from 'mongoose';
 const router = express.Router();
-
-
+import { routeLogger } from '../middlewares/logger.mdw.js'
+router.use(routeLogger);
 router.get('/', async (req, res) => {
     try {
         const data = await AdvertisingTypeModel.find()
-        
+
         if (data) {
             res.status(200).json({
                 message: "Get All Advertising Type Successfully",
@@ -31,7 +31,7 @@ router.post('/', async (req, res) => {
     const newType = new AdvertisingTypeModel(advertisingType);
 
     try {
-        await newType.save();    
+        await newType.save();
         res.status(201).json(newType);
     } catch (error) {
         res.status(409).json({ message: error.message });
@@ -54,35 +54,35 @@ router.put('/:id', async (req, res) => {
 
 router.post("/findType", async (req, res) => {
     try {
-      const data = await AdvertisingTypeModel.find({
-        name: { $regex: req.body.area, $options: 'i' },
-      });
-      console.log(req.body.area);
-      if (data) {
-        res.status(200).json({
-          message: "findType",
-          data,
+        const data = await AdvertisingTypeModel.find({
+            name: { $regex: req.body.area, $options: 'i' },
         });
-      }
+        console.log(req.body.area);
+        if (data) {
+            res.status(200).json({
+                message: "findType",
+                data,
+            });
+        }
     } catch (err) {
-      console.log(err);
-      res.status(500).json({
-        error: "Internal Error",
-      });
+        console.log(err);
+        res.status(500).json({
+            error: "Internal Error",
+        });
     }
 });
 
 
 
 router.delete("/:id", async (req, res) => {
-  const { id } = req.params;
+    const { id } = req.params;
 
-  try {
-      const deleteType = await AdvertisingTypeModel.findByIdAndDelete(id);
-      res.status(200).json(deleteType);
-  } catch (error) {
-      res.status(500).json({ message: error.message });
-  }
+    try {
+        const deleteType = await AdvertisingTypeModel.findByIdAndDelete(id);
+        res.status(200).json(deleteType);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
 })
 
 export default router;
