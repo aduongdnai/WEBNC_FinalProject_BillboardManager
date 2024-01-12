@@ -29,6 +29,8 @@ import TableQueryByAdType from "./components/TableQueryByAdType";
 import ProtectedProvider from "./Providers/ProtectedProvider";
 import ReportDetail from "./components/ReportDetail";
 import ReportTypesManagement from "./components/ReportTypesManagement";
+
+import { useSelector } from "react-redux";
 const socket = io("http://127.0.0.1:5000");
 
 
@@ -36,6 +38,9 @@ function App() {
   const toast = useToast();
   const [report, setReport] = useState();
   const [isClick, setIsClick] = useState();
+  
+  const userData = useSelector((state) => state.auth.userData);
+  const isAuth = useSelector((state) => state.auth.isAuth);
 
   useEffect(() => {
     // Simulate authentication with a secret token
@@ -110,10 +115,10 @@ function App() {
 
             <Route path="/report" element={<ProtectedProvider><ReportDashboard /></ProtectedProvider>} />
             <Route path="/report/:rpId" element={<ProtectedProvider><ReportDetail /></ProtectedProvider>} />
-            <Route path="/report-types" element={<ProtectedProvider><ReportTypesManagement /></ProtectedProvider>} />
+            <Route path="/report-types" element={<ProtectedProvider>{userData.role === "CB-So"?<ReportTypesManagement />:<Navigate replace to="/map" />}  </ProtectedProvider>} />
             <Route path="/" element={<Navigate replace to="/map" />} />
             <Route path="/ad-locations" element={<AdLocationPage />} />
-            <Route path="/premium" element={<Premium />} />
+            {/* <Route path="/premium" element={<Premium />} /> */}
             <Route
               path="/ad-boards/:locationId"
               element={<AdBoardsDisplay />}

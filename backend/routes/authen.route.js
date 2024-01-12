@@ -41,8 +41,8 @@ router.post('/login', async (req, res) => {
             });
             
         } else {
-          // Passwords do not match, authentication failed
           return res.status(401).json({ error: 'Invalid credentials' });
+
         }
     }catch(error){
         console.error('Error Login:', error);
