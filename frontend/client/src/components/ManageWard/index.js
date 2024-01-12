@@ -93,7 +93,7 @@ function ManageWard(){
             }
             _hover={{color:'blue'}}
           /> */}
-          <Icon 
+          {/* <Icon 
             as={RiAdvertisementFill} 
             w={5}
             h={5}
@@ -102,7 +102,7 @@ function ManageWard(){
               () => navigate('/table-area',{state: { area: row?.name }})
             }
             _hover={{color:'blue'}}
-          />
+          /> */}
           <Icon 
             as={FaPen} 
             w={4} 

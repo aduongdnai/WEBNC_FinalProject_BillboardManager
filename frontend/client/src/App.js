@@ -26,13 +26,21 @@ import Premium from "./components/Account/Premium";
 import NotifyProvider from "./Providers/NotifyProvider";
 import ManageAdvertisingType from "./components/ManageAdvertisingType";
 import TableQueryByAdType from "./components/TableQueryByAdType";
-
+import { useSelector } from "react-redux";
 import ProtectedProvider from "./Providers/ProtectedProvider";
 import ReportDetail from "./components/ReportDetail";
 import ReportTypesManagement from "./components/ReportTypesManagement";
 const socket = io("http://127.0.0.1:5000");
 
+
+
+
 function App() {
+  const userData = useSelector(state => state.auth.userData);
+  var userArea;
+  if(userData.role === "CB-So") userArea = "Hồ Chí Minh";
+  else if(userData.role === "CB-Quan") userArea = `Quận ${userData.district}, Hồ Chí Minh`
+  else userArea = `Phường ${userData.ward}, Quận ${userData.district}, Hồ Chí Minh`
   const toast = useToast();
   const [report, setReport] = useState();
   const [isClick, setIsClick] = useState();
@@ -92,7 +100,8 @@ function App() {
               path="/table-area"
               element={
                 <ProtectedProvider>
-                  <TableQueryByArea />
+                  
+                  <TableQueryByArea area={userArea}/>
                 </ProtectedProvider>
               }
             />
