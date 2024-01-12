@@ -27,7 +27,7 @@ import ToolkitProvider, { Search } from 'react-bootstrap-table2-toolkit/dist/rea
 import { setViewport } from '../actions/viewportAction';
 import { useDispatch } from 'react-redux';
 import { FaMap, FaArrowCircleRight } from "react-icons/fa";
-import EditAdLocationForm from './EditAdLocationForm';
+import EditAdBoardForm from './EditAdBoardForm';
 
 
 
@@ -95,11 +95,6 @@ function TableQueryAdBoardByArea(props) {
   const handleEditClick = (location) => {
     setSelectedAdBoard(location);
     onNormalOpen();
-  };
-
-  const handleSubmit = (data) => {
-    // Xử lý logic khi submit form
-    console.log(data);
   };
 
   useEffect(() => {
@@ -218,22 +213,16 @@ function TableQueryAdBoardByArea(props) {
       <Modal isOpen={isNormalOpen} onClose={onNormalClose}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Chỉnh Sửa Điểm Đặt Quảng Cáo</ModalHeader>
+          <ModalHeader>Yêu Cầu Chỉnh Sửa Bảng Quảng Cáo</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
             {selectedAdBoard && (
-              <EditAdLocationForm
-                adLocation={selectedAdBoard}
+              <EditAdBoardForm
+                info={selectedAdBoard}
                 onClose={onNormalClose}
-                onSubmit={handleSubmit}
               />
             )}
-          </ModalBody>
-          <ModalFooter>
-            <Button colorScheme="blue" mr={3} onClick={onNormalClose}>
-              Đóng
-            </Button>
-          </ModalFooter>
+          </ModalBody>         
         </ModalContent>
       </Modal>
       {adBoard ? (

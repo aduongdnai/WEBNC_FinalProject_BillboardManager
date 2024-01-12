@@ -24,6 +24,8 @@ import logRoute from "./routes/log.route.js";
 import swaggerJSDoc from "swagger-jsdoc";
 import swaggerUI from "swagger-ui-express";
 import swaggerOption from "./docs/swagger-output.json" assert {type: "json"};
+import adLocationEditRequestRoute from "./routes/adLocationEditRequest.route.js";
+import adBoardEditRequestRoute from "./routes/adBoardEditRequest.route.js";
 
 const server = express();
 
@@ -57,8 +59,12 @@ server.use("/api/v1/adlocations", adLocationRoute);
 server.use("/api/v1/adboards", adBoardRoute);
 server.use("/api/v1/report", reportRoute);
 server.use("/api/v1/advertisingLicenseRequest", advertisingLicenseRequestRoute);
+
 server.use("/api/v1/editrequests", editRequestRoutes);
 server.use("/api/v1/editboards", editBoardRequests);
+server.use("/api/v1/adLocationEditRequest", adLocationEditRequestRoute);
+server.use("/api/v1/adBoardEditRequest", adBoardEditRequestRoute);
+
 server.use("/api/v1/users", userRoute);
 server.use("/api/v1/reportTypes", reportTypeRoute);
 server.use("/api/v1/district", districtRoute);

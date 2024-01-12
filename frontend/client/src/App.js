@@ -45,6 +45,9 @@ function App() {
   const toast = useToast();
   const [report, setReport] = useState();
   const [isClick, setIsClick] = useState();
+  
+  //const userData = useSelector((state) => state.auth.userData);
+  const isAuth = useSelector((state) => state.auth.isAuth);
 
   useEffect(() => {
     // Simulate authentication with a secret token
