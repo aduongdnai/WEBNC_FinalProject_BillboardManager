@@ -93,14 +93,14 @@ router.post("/findByAdType", async (req, res) => {
       error: "Internal Error",
     });
   }
-}); 
+});
 
 
 router.put("/updateAdType", async (req, res) => {
   const { oldAdType, newAdType } = req.body;
   console.log(oldAdType, newAdType);
   try {
-    const updatedType = await AdLocationModel.updateMany({ advertisingType: oldAdType }, { $set:{advertisingType: newAdType} });
+    const updatedType = await AdLocationModel.updateMany({ advertisingType: oldAdType }, { $set: { advertisingType: newAdType } });
     res.status(200).json(updatedType);
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -122,6 +122,7 @@ router.post("/", async (req, res) => {
     console.log(err);
     res.status(500).json({
       error: "Internal Error",
+      msg: err.message,
     });
   }
 });

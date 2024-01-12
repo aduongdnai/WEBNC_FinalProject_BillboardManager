@@ -59,7 +59,7 @@ function AdvertisingLicenseRequestListCBSO({ requests }) {
         const result = await AdvertisingLicenseRequestApi.updateAdvertisingLicenseRequest(request._id, { status: "Approved" });
         console.log(result);
         if (result.msg === "success") {
-            const adboarResult = await adBoardApi.updateAdboard(request.adBoard, { images: request.adImage, expiryDate: request.endDate })
+            const adboarResult = await adBoardApi.updateAdboardDuong(request.adBoard, { images: request.adImage, expiryDate: request.endDate })
             toast({
                 title: 'Approve thành công.',
                 description: "Đơn dăng ký đã được approve thành công.",

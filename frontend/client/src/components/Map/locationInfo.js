@@ -120,7 +120,7 @@ function LocationInfo(props) {
             <Box width={350} >
                 {displayAddress}
                 <Text fontWeight={'bold'}>{info.planned ? "Đã Quy Hoạch" : "Chưa Quy Hoạch"}</Text>
-                {user.role === "CB_So" &&
+                {user.role === "CB-So" &&
                     <Button colorScheme='blue' onClick={onOpen}>
                         <AddIcon boxSize={5} pr={2} >
                         </AddIcon>

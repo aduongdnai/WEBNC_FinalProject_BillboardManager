@@ -48,7 +48,7 @@ function AdvertisingLicenseRequestListCBQuanPhuong({ requests }) {
     }, [update]);
     const handleRejectRequest = async () => {
         try {
-            const adboarResult = await adBoardApi.updateAdboard(request.adBoard, { advertisingLicense_id: null })
+            const adboarResult = await adBoardApi.updateAdboardDuong(request.adBoard, { advertisingLicense_id: null })
             if (adboarResult.msg !== "success") {
                 return;
             }

@@ -2,7 +2,10 @@ import mongoose from 'mongoose';
 
 // Model for Ad Locations
 const adLocationSchema = new mongoose.Schema({
-    address: String,
+    address: {
+        type: String,
+        unique: true,
+    },
     area: String,
     locationType: String,
     advertisingType: String,
