@@ -14,13 +14,13 @@ function Pins(props) {
         return <></>
     }
     return data.map((city, index) => (
-        <Marker key={`marker-${index}`} longitude={city.coordinates.coordinates[0]} latitude={city.coordinates.coordinates[1]}>
+        <Marker key={`marker-${index}`} longitude={city.longitude} latitude={city.latitude}>
             <svg
                 height={SIZE}
                 viewBox="0 0 24 24"
                 style={{
                     cursor: 'pointer',
-                    fill: '#d00',
+                    fill: city.status === "Pending" ? '#d00' : '#1fe096',
                     stroke: 'none',
                     transform: `translate(${-SIZE / 2}px,${-SIZE}px)`
                 }}

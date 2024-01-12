@@ -80,15 +80,7 @@ function AdBoardForm({ onClose, info, onSubmitForm }) {
         }
 
     }
-    const hanleUploadImage = (info) => {
-        console.log('Upload success:', info);
-        setPublicId((prevpublicIds) => [...prevpublicIds, info.public_id]);
 
-    }
-    const handleChangeImageUrl = (e) => {
-        setPublicId(e.target.value);
-
-    }
     return (
         <VStack>
             <Formik
@@ -97,7 +89,7 @@ function AdBoardForm({ onClose, info, onSubmitForm }) {
                     locationType: '',
                     width: "",
                     height: "",
-                    image: publicId
+
                 }}
                 validationSchema={AddNewBoardSchema}
                 onSubmit={onSubmit}
@@ -127,16 +119,6 @@ function AdBoardForm({ onClose, info, onSubmitForm }) {
                             placeholder="Nhập khu vực (VD: 10m)"
                             type="number"
                         />
-                        <CustomInput
-                            name="image"
-                            label="Hình ảnh"
-                            placeholder="Bấm nút browse để chọn ảnh"
-                            readOnly
-                            value={publicId.join(', ')}
-                            onChange={handleChangeImageUrl}
-                        >
-                        </CustomInput>
-                        <ImageUploaderWithWidget onUpLoadSuccess={hanleUploadImage}></ImageUploaderWithWidget>
                         <ButtonGroup pt="1rem">
                             <Button colorScheme="teal" type="submit">Add</Button>
                         </ButtonGroup>

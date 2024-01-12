@@ -85,7 +85,7 @@ function PlannedLocationInfo(props) {
                     <DrawerContent>
                         <DrawerHeader borderBottomWidth='1px'>Thông tin địa điểm quảng cáo
                             <br></br>
-                            <Button
+                            {/* <Button
                                 colorScheme={report.isReported ? "yellow" : "red"}
                                 leftIcon={<WarningTwoIcon />}
                                 onClick={report.isReported ? onReportDetailOpen : onReportModalOpen}
@@ -94,7 +94,7 @@ function PlannedLocationInfo(props) {
                                 size='sm'
                             >
                                 {report.isReported ? "Reported" : "Report"}
-                            </Button>
+                            </Button> */}
                             <Button
                                 colorScheme="teal"
                                 leftIcon={<RepeatClockIcon />}

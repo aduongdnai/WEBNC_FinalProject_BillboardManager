@@ -275,11 +275,11 @@ function Account() {
             </ModalFooter>
           </ModalContent>
         </Modal>
-        <Link to="/premium">
+        {/* <Link to="/premium">
           <Button ml={5} colorScheme="blue">
             Nâng cấp lên gói CB_Quận/CB_Sở
           </Button>
-        </Link>
+        </Link> */}
       </Box>
     </>
   );

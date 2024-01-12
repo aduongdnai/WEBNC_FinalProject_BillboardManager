@@ -1,7 +1,10 @@
 import express from 'express'
 import AdBoardModel from '../models/adBoard.model.js';
 import mongoose from 'mongoose';
+import { routeLogger } from '../middlewares/logger.mdw.js'
 const router = express.Router();
+
+router.use(routeLogger);
 
 router.get('/:id', async (req, res) => {
     try {
@@ -67,15 +70,21 @@ router.post('/', async (req, res) => {
 })
 router.patch('/:id', async (req, res) => {
     try {
-
+        console.log(req.body);
         const result = await AdBoardModel.findOneAndUpdate({ _id: req.params.id },
             req.body, { new: true })
 
+        if (result) {
+            res.status(200).json({
+                data: result,
+                msg: "success"
+            })
+        } else {
+            res.status(400).json({
+                msg: "Adboard not found"
+            })
+        }
 
-        res.status(200).json({
-            data: result,
-            msg: "success"
-        })
 
     }
     catch (err) {

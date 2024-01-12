@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Box, Table, Thead, Tbody, Tr, Th, Td, Text, ButtonGroup, Button, Center, useToast } from '@chakra-ui/react';
 import { ViewIcon, SmallCloseIcon, InfoOutlineIcon } from '@chakra-ui/icons';
 import {
@@ -17,10 +17,15 @@ import { Image as CloudinaryImage, CloudinaryContext } from 'cloudinary-react';
 import { Carousel } from 'react-responsive-carousel';
 import userApi from '../../apis/userApi';
 import AdvertisingLicenseRequestApi from '../../apis/advertisingLicenseRequestApi.js';
+import adBoardApi from '../../apis/adBoardApi.js';
+import { useSelector } from 'react-redux';
 
 function AdvertisingLicenseRequestListCBQuanPhuong({ requests }) {
     const [request, setRequest] = React.useState(null);
+    const [requestList, setRequestsList] = React.useState(requests);
+    const user = useSelector(state => state.auth.userData);
     const { isOpen, onOpen, onClose } = useDisclosure()
+    const [update, setUpdate] = React.useState(false);
     const toast = useToast();
     const handleViewRequest = async (request) => {
         setRequest(request);
@@ -28,21 +33,48 @@ function AdvertisingLicenseRequestListCBQuanPhuong({ requests }) {
 
 
     }
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const result = await AdvertisingLicenseRequestApi.getAdvertisingLicenseRequestByUserId(user._id);
+                setRequestsList(result.data);
+                setUpdate(false);
+            } catch (error) {
+                console.log(error);
+            }
+        }
+        fetchData();
 
+    }, [update]);
     const handleRejectRequest = async () => {
+        try {
+            const adboarResult = await adBoardApi.updateAdboardDuong(request.adBoard, { advertisingLicense_id: null })
+            if (adboarResult.msg !== "success") {
+                return;
+            }
+            const result = await AdvertisingLicenseRequestApi.deleteAdvertisingLicenseRequest(request._id);
+            if (result.msg === "success") {
+                toast({
+                    title: 'Xóa thành công.',
+                    description: "Đơn dăng ký đã bị xóa.",
+                    status: 'success',
+                    duration: 2000,
+                    isClosable: true,
+                });
+                setUpdate(true);
+            }
+            onClose();
+        } catch (error) {
+            console.log(error);
+            toast({
+                title: 'Xóa thất bại.',
+                description: "Vui lòng thử lại",
+                status: 'error',
+                duration: 2000,
+                isClosable: true,
+            });
+        }
 
-        // const result = await AdvertisingLicenseRequestApi.updateAdvertisingLicenseRequest(request._id, { status: "Rejected" });
-        // if (result.msg === "success") {
-        //     toast({
-        //         title: 'Từ chối thành công.',
-        //         description: "Đơn dăng ký đã bị từ chối.",
-        //         status: 'success',
-        //         duration: 2000,
-        //         isClosable: true,
-        //     });
-
-        // }
-        onClose();
     }
     return (
         <Box width="full" overflowX="auto">
@@ -59,7 +91,7 @@ function AdvertisingLicenseRequestListCBQuanPhuong({ requests }) {
                     </Tr>
                 </Thead>
                 <Tbody>
-                    {requests && requests.map((request, index) => (
+                    {requestList && requestList.map((request, index) => (
                         <Tr key={index}>
                             <Td><Text isTruncated maxWidth="200px">{request.companyInfo.name}</Text></Td>
                             <Td>{request.companyInfo.contact.email}</Td>

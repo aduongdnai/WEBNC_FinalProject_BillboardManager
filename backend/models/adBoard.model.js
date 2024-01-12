@@ -8,7 +8,15 @@ const adBoardSchema = new mongoose.Schema({
     width: Number,
     height: Number,
     images: [String],
-    expiryDate: Date,
+    expiryDate: {
+        type: Date,
+        default: null,
+    },
+    advertisingLicense_id: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'AdvertisingLicenseRequest',
+        default: null,
+    },
 });
 
 const AdBoardModel = mongoose.model('AdBoard', adBoardSchema);

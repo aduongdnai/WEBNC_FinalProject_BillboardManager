@@ -4,7 +4,7 @@ export const clusterLayer = {
     source: 'adlocations',
     filter: ['has', 'point_count'],
     paint: {
-        'circle-color': ['step', ['get', 'point_count'], '#51bbd6', 20, '#f1f075', 50, '#f28cb1'],
+        'circle-color': ['step', ['get', 'point_count'], '#51bbd6', 10, '#f1f075', 50, '#f28cb1'],
         'circle-radius': ['step', ['get', 'point_count'], 20, 20, 30, 50, 40]
     }
 };
@@ -33,9 +33,9 @@ export const unclusteredPointLayer = {
             ['to-string', ['get', 'planned']],
             'true', [
                 'match',
-                ['to-string', ['get', 'status']],
-                'Pending', '#fae546',
-                'Processed', '#45ff24',
+                ['to-string', ['get', 'hasAdBoard']],
+                'true', '#45ff3c',
+                'false', '#0022FF',
                 '#0022FF'
             ],
             'false', '#5b5b5b',

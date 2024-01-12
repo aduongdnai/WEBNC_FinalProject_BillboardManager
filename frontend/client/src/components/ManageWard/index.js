@@ -12,6 +12,8 @@ import {
 } from '@chakra-ui/react';
 import { FaEye,FaPen } from "react-icons/fa";
 import { CiCirclePlus } from "react-icons/ci";
+import { RiAdvertisementFill } from "react-icons/ri";
+import { FaTrashAlt } from "react-icons/fa";
 import { IoSearchOutline } from "react-icons/io5";
 import { useNavigate, useLocation } from 'react-router-dom';
 import wardAPI from '../../apis/wardApi';
@@ -38,13 +40,18 @@ function ManageWard(){
   const navigate = useNavigate();
   const { area } = useUser();
   const [name, setName] = useState('');
+  const [update, setUpdate] = useState(true);
   const [id, setId] = useState('');
   const [ward, setWard] = useState(null);
+  const [isDelete, setIsDelete] = useState(false);
+
   useEffect(() => {
     const fetchData = async () => {
         try {
             const result = await wardAPI.getAllWardByDistrict({"district": district});
             setWard(result.data);
+            setUpdate(false);
+
             console.log(district);
 
         } catch (error) {
@@ -55,7 +62,7 @@ function ManageWard(){
 
     // Call the fetchData function when the component mounts or when viewport changes
     fetchData();
-  }, []);
+  }, [update]);
 
   useEffect(() =>{
     
@@ -73,8 +80,8 @@ function ManageWard(){
       text: 'Action',
       formatter: (cellContent, row) => {
         return(
-          <div style={{display:"flex"}}>
-          <Icon 
+          <div style={{display:"flex", alignItems:"center"}}>
+          {/* <Icon 
             variant="unstyled" 
             as={FaEye} 
             w={5} 
@@ -82,22 +89,49 @@ function ManageWard(){
             marginRight={5} 
             // marginLeft={2} 
             onClick={
-              () => navigate('/')
+              () => navigate('/manage-ward',{state: { district: row?.name }})
             }
             _hover={{color:'blue'}}
-          />
+          /> */}
+          {/* <Icon 
+            as={RiAdvertisementFill} 
+            w={5}
+            h={5}
+            marginRight={5}
+            onClick={
+              () => navigate('/table-area',{state: { area: row?.name }})
+            }
+            _hover={{color:'blue'}}
+          /> */}
           <Icon 
             as={FaPen} 
             w={4} 
             h={4}
+            marginRight={5}
             onClick={
               () => {
                 setName(row?.name)
                 setId(row?._id)
+                setIsDelete(false)
                 onOpen()
               }
             }
             _hover={{color:'blue'}}
+          />
+          <Icon 
+            as={FaTrashAlt} 
+            w={4} 
+            h={4}
+            marginRight={5}
+            onClick={
+              () => {
+                setName(row?.name)
+                setId(row?._id)
+                setIsDelete(true)
+                onOpen()
+              }
+            }
+            _hover={{color:'red'}}
           />
           </div>
         )
@@ -136,11 +170,11 @@ function ManageWard(){
     alwaysShowAllBtns: true,
     hidePageListOnlyOnePage: true,
     sizePerPageList: [{
-      text: '2', value: 2
+      text: '10', value: 10
     }, {
-      text: '4', value: 4
+      text: '15', value: 15
     }, {
-      text: '6', value: 6
+      text: '20', value: 20
     }],
   }
 
@@ -160,7 +194,14 @@ function ManageWard(){
           placeholder='Search'
           />
           <div style={{width:"100%",display:"flex",justifyContent:"flex-end"}}>
-          <Button leftIcon={<CiCirclePlus size="20" />} justifyContent="flex-start" width="200px" colorScheme='teal' variant='solid' onClick={onOpen}>
+          <Button leftIcon={<CiCirclePlus size="20" />} justifyContent="flex-start" width="200px" colorScheme='teal' variant='solid' 
+            onClick={() =>{
+                setName('')
+                setId('')
+                setIsDelete(false)
+                onOpen()
+              }
+            }>
             Add
           </Button>
           </div>
@@ -177,7 +218,7 @@ function ManageWard(){
             <ModalHeader>{name===''?("Add District"):("Update District")}</ModalHeader>
             <ModalCloseButton />
             <ModalBody>
-              <ReportForm name={name} id={id} district={district}/> 
+              <ReportForm name={name} id={id} isDelete={isDelete} onClose={onClose} setUpdate={setUpdate} district={district}/> 
             </ModalBody>
           </ModalContent>
         </Modal>
@@ -198,6 +239,8 @@ function ManageWard(){
                   <BootstrapTable
                     { ...props.baseProps }
                     pagination={paginationFactory(options)} 
+                    striped
+                    rowStyle={{verticalAlign:"middle"}}
                     bordered= {false}
                   />
                 </div>

@@ -15,7 +15,7 @@ const CustomSelect = ({ label, options, ...props }) => {
                 {...field}
                 {...props}
             >
-                {options.map((option) => (
+                {options && options.map((option) => (
                     <option key={option.key} value={option.value}>
                         {option.value}
                     </option>

@@ -1,9 +1,10 @@
 import express from 'express'
 import DistrictModel from '../models/district.model.js';
 import mongoose from 'mongoose';
+import { routeLogger } from '../middlewares/logger.mdw.js'
 const router = express.Router();
 
-
+router.use(routeLogger);
 
 router.get('/', async (req, res) => {
     try {

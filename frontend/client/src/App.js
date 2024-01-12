@@ -16,24 +16,38 @@ import ManageDistrict from "./components/ManageDistrict";
 import ManageWard from "./components/ManageWard";
 import ReportDashboard from "./components/ReportDashboard";
 import AdvertisingLicenseRequestList from "./components/AdvertisingLicenseRequestList";
-import Account from "./components/Account/Account"
+import Account from "./components/Account/Account";
 import ReviewRequestsPage from "./components/adLocation/ReviewRequestsPage";
+import ReviewBoardRequestsPage from "./components/AdBoard/ReviewBoardRequestsPage";
 import io from "socket.io-client";
 import { useEffect, useState } from "react";
 import { useToast } from "@chakra-ui/react";
 import Premium from "./components/Account/Premium";
 import NotifyProvider from "./Providers/NotifyProvider";
-
-
+import ManageAdvertisingType from "./components/ManageAdvertisingType";
+import TableQueryByAdType from "./components/TableQueryByAdType";
+import { useSelector } from "react-redux";
 import ProtectedProvider from "./Providers/ProtectedProvider";
 import ReportDetail from "./components/ReportDetail";
+import ReportTypesManagement from "./components/ReportTypesManagement";
+import TableQueryAdBoardByArea from "./components/TableQueryAdBoardByArea";
 const socket = io("http://127.0.0.1:5000");
 
 
+
+
 function App() {
+  const userData = useSelector(state => state.auth.userData);
+  var userArea;
+  if(userData?.role === "CB-So") userArea = "Hồ Chí Minh";
+  else if(userData?.role === "CB-Quan") userArea = `Quận ${userData.district}, Hồ Chí Minh`
+  else userArea = `Phường ${userData?.ward}, Quận ${userData?.district}, Hồ Chí Minh`
   const toast = useToast();
   const [report, setReport] = useState();
   const [isClick, setIsClick] = useState();
+  
+  //const userData = useSelector((state) => state.auth.userData);
+  const isAuth = useSelector((state) => state.auth.isAuth);
 
   useEffect(() => {
     // Simulate authentication with a secret token
@@ -42,17 +56,25 @@ function App() {
     socket.on("notification", (data) => {
       console.log("Received notification:", data);
       toast.closeAll();
-      setIsClick(false)
+      setIsClick(false);
 
       toast({
         title: `Báo cáo mới`,
         description: (
           <>
             Bạn có báo cáo mới từ {data.senderName}, <br />
-            Kiểu loại: {data.reportType}<br />
+            Kiểu loại: {data.reportType}
+            <br />
             Khu vực: {data.area} <br />
-            <button onClick={()=>{setIsClick(true)}}><b>Xem chi tiết</b></button>
-          </>),
+            <button
+              onClick={() => {
+                setIsClick(true);
+              }}
+            >
+              <b>Xem chi tiết</b>
+            </button>
+          </>
+        ),
         duration: 5000,
         isClosable: true,
         variant: "left-accent",
@@ -60,7 +82,6 @@ function App() {
       });
       setReport(data);
     });
-
   }, []);
 
   return (
@@ -69,33 +90,99 @@ function App() {
         <Router>
           <Sidebar />
           <Routes>
-            <Route path="/map" element={<ProtectedProvider><NotifyProvider isClick={isClick} report={report}><Map /></NotifyProvider></ProtectedProvider>} />
-            <Route path="/table-area" element={
-              <ProtectedProvider>
-                <TableQueryByArea />
-              </ProtectedProvider>} />
-            <Route path="/manage-district" 
+            <Route
+              path="/map"
               element={
                 <ProtectedProvider>
-                  <ManageDistrict />
+                  <NotifyProvider isClick={isClick} report={report}>
+                    <Map />
+                  </NotifyProvider>
                 </ProtectedProvider>
-              } 
-            /> 
-            <Route path="/manage-ward" 
+              }
+            />
+            <Route
+              path="/table-area"
               element={
                 <ProtectedProvider>
-                  <ManageWard />
+                  
+                  {userData?.role != "CB-So" ? <TableQueryByArea area={userArea}/> : <Navigate replace to="/manage-location" />}
                 </ProtectedProvider>
-              } 
-            /> 
+              }
+            />
+            <Route
+              path="/table-adboard"
+              element={
+                <ProtectedProvider>
+                  <TableQueryAdBoardByArea />
+                </ProtectedProvider>
+              }
+            />
+            <Route
+              path="/manage-district"
+              element={
+                <ProtectedProvider>
+                  {userData?.role != "CB-So" ? <Navigate replace to="/map" /> : <ManageDistrict />}
+                </ProtectedProvider>
+              }
+            />
+            <Route
+              path="/manage-ward"
+              element={
+                <ProtectedProvider>
+                  {userData?.role != "CB-So" ? <Navigate replace to="/map" /> :  <ManageWard />}
+                </ProtectedProvider>
+              }
+            />
+            <Route
+              path="/manage-advertising-type"
+              element={
+                <ProtectedProvider>
+                  <ManageAdvertisingType />
+                </ProtectedProvider>
+              }
+            />
+            <Route
+              path="/table-advertising-type"
+              element={
+                <ProtectedProvider>
+                  <TableQueryByAdType />
+                </ProtectedProvider>
+              }
+            />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/account" element={<Account />} />
-
-            <Route path="/report" element={<ProtectedProvider><ReportDashboard /></ProtectedProvider>} />
-            <Route path="/report/:rpId" element={<ProtectedProvider><ReportDetail /></ProtectedProvider>} />
+            <Route
+              path="/report"
+              element={
+                <ProtectedProvider>
+                  <ReportDashboard />
+                </ProtectedProvider>
+              }
+            />
+            <Route
+              path="/report/:rpId"
+              element={
+                <ProtectedProvider>
+                  <ReportDetail />
+                </ProtectedProvider>
+              }
+            />
+            <Route
+              path="/report-types"
+              element={
+                <ProtectedProvider>
+                  <ReportTypesManagement />
+                </ProtectedProvider>
+              }
+            />
             <Route path="/" element={<Navigate replace to="/map" />} />
-            <Route path="/ad-locations" element={<AdLocationPage />} />
+            <Route path="/manage-location" element={
+              <ProtectedProvider>
+                {userData?.role != "CB-So" ? <Navigate replace to="/map" /> : <AdLocationPage />}
+              </ProtectedProvider>
+            }
+            />
             <Route path="/premium" element={<Premium />} />
             <Route
               path="/ad-boards/:locationId"
@@ -103,12 +190,22 @@ function App() {
             />
             <Route
               path="/advertisinglicense"
-              element={<ProtectedProvider><AdvertisingLicenseRequestList /></ProtectedProvider>}
+              element={
+                <ProtectedProvider>
+                  <AdvertisingLicenseRequestList />
+                </ProtectedProvider>
+              }
             />
             <Route path="/" element={<Navigate replace to="/map" />} />
-
-            <Route path="/view-requests" element={<ReviewRequestsPage />} />{" "}
+            <Route
+              path="/view-requests"
+              element={<ReviewRequestsPage />}
+            />{" "}
             {/* Add the new route */}
+            <Route
+              path="/review-board-request"
+              element={<ReviewBoardRequestsPage />}
+            />{" "}
           </Routes>
         </Router>
       </div>

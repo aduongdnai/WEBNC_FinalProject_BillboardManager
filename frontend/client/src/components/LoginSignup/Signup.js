@@ -39,17 +39,17 @@ function Signup() {
     }
     try {
       const response = await axios.post(
-        "http://127.0.0.1:5000/v1/auth/register",
+        "http://127.0.0.1:5000/api/v1/auth/signup",
         formData
       );
       console.log("Registration successful:", response.data);
       // Handle successful registration (e.g., redirect to login page)
       setTimeout(() => {
-        navigate("/login");
+        navigate("/map");
       }, 2000);
       toast({
-        title: "Register successful.",
-        description: "You've successfully registered in.",
+        title: "Assign successful.",
+        description: "",
         status: "success",
         duration: 2000,
         isClosable: true,
@@ -66,7 +66,7 @@ function Signup() {
       [name]: value,
     });
   };
-  const roles = ["CB-Phuong"];
+  const roles = ["CB-Phuong","CB-Quan"];
   const districts = Array.from({ length: 12 }, (_, i) => `${i + 1}`); // Tạo mảng ['1', '2', ..., '12']
   const wards = Array.from({ length: 12 }, (_, i) => `${i + 1}`); // Tạo mảng ['1', '2', ..., '12']
   const roleOptions = {
@@ -81,13 +81,13 @@ function Signup() {
         })),
       })),
     },
-    // "CB-Quan": {
-    //   label: "Quận",
-    //   districtOptions: districts.map((district) => ({
-    //     value: district,
-    //     label: `Quận ${district}`,
-    //   })),
-    // },
+    "CB-Quan": {
+      label: "Quận",
+      districtOptions: districts.map((district) => ({
+        value: district,
+        label: `Quận ${district}`,
+      })),
+    },
     // "CB-So": { label: "Không có lựa chọn" }, // Có thể thêm xử lý cho trường hợp khác nếu cần
   };
   const handleRoleChange = (e) => {
@@ -117,10 +117,8 @@ function Signup() {
     >
       <VStack spacing={4} align="flex-start" w="full">
         <VStack spacing={1} align={["flex-start", "center"]} w="full">
-          <Heading>Signup</Heading>
-          <Text>
-            <Link to="/login">Already have an account? Login</Link>
-          </Text>
+          <Heading>ASSIGN ACCOUNT</Heading>
+          
         </VStack>
 
         <FormControl>
@@ -192,6 +190,7 @@ function Signup() {
           roleOptions[formData.role] &&
           formData.role !== "CB-So" && (
             <>
+              
               <FormControl mt={4}>
                 <FormLabel>Quận</FormLabel>
                 <Select
@@ -241,7 +240,7 @@ function Signup() {
           type="submit"
           onClick={handleSubmit}
         >
-          Signup
+          Assign
         </Button>
       </VStack>
     </Box>

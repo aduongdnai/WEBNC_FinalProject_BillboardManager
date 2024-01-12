@@ -33,9 +33,9 @@ export const unclusteredPointLayer = {
             ['to-string', ['get', 'planned']],
             'true', [
                 'match',
-                ['to-string', ['get', 'status']],
-                'Pending', '#fae546',
-                'Processed', '#45ff24',
+                ['to-string', ['get', 'hasAdBoard']],
+                'true', '#45ff3c',
+                'false', '#0022FF',
                 '#0022FF'
             ],
             'false', '#5b5b5b',
@@ -61,13 +61,7 @@ export const unclusteredPointTextLayer = {
         'text-color': [
             'match',
             ['to-string', ['get', 'planned']],
-            'true', [
-                'match',
-                ['to-string', ['get', 'status']],
-                'Pending', '#000000',
-                'Processed', '#000000',
-                '#000000'
-            ],
+            'true', '#000000',
             // color for planned
             'false', '#ffffff', // color for not planned
             '#000000' // default color
