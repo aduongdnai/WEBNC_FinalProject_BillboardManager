@@ -1,6 +1,6 @@
 import {
   Icon,
-  Button,  
+  Button,
   Modal,
   ModalOverlay,
   ModalContent,
@@ -9,6 +9,7 @@ import {
   ModalBody,
   ModalCloseButton,
   useDisclosure,
+  Tooltip
 } from '@chakra-ui/react';
 import { FaEye, FaPen } from "react-icons/fa";
 import { IoSearchOutline } from "react-icons/io5";
@@ -27,7 +28,11 @@ import ToolkitProvider, { Search } from 'react-bootstrap-table2-toolkit/dist/rea
 import { setViewport } from '../actions/viewportAction';
 import { useDispatch } from 'react-redux';
 import { FaMap, FaArrowCircleRight } from "react-icons/fa";
+import { BsClipboard2CheckFill } from "react-icons/bs";
+import { useToast } from "@chakra-ui/react"
 import EditAdBoardForm from './EditAdBoardForm';
+import AdvertisingLicenseRequestForm from '../AdvertisingLicenseRequestForm';
+import AdvertisingLicenseRequestApi from '../../apis/advertisingLicenseRequestApi.js';
 
 
 
@@ -45,15 +50,17 @@ function imageFormatter(cell, row, rowIndex) {
 function TableQueryAdBoardByArea(props) {
   const location = useLocation();
   const dispatch = useDispatch();
+  const toast = useToast();
   var id;
   const { isOpen: isNormalOpen, onOpen: onNormalOpen, onClose: onNormalClose } = useDisclosure();
+  const { isOpen: isRequestLicenseOpen, onOpen: onRequestLicenseOpen, onClose: onRequestLicenseClose } = useDisclosure();
   if (!props.area) id = location.state.location._id || "";
   else id = props.area;
   const navigate = useNavigate();
   // const { area } = useUser();
   const [adBoard, setAdBoard] = useState(null);
   const [selectedAdBoard, setSelectedAdBoard] = useState(null);
-
+  const [update, setUpdate] = useState(false);
   // const { SearchBar } = Search;
   useEffect(() => {
     const fetchData = async () => {
@@ -62,12 +69,13 @@ function TableQueryAdBoardByArea(props) {
         const result = await adBoardApi.getAdBoardByLocationID(id);
         const ans = result.data.map((element) => {
           return {
-            ...element, expiryDate: new Date(element.expiryDate).toLocaleDateString()
+            ...element,
+            expiryDate: element.expiryDate ? new Date(element.expiryDate).toLocaleDateString() : "No expiry date",
+            hasLicense: element.advertisingLicense_id ? "Yes" : "No"
           }
         })
-        console.log(ans);
         setAdBoard(ans);
-        console.log(adBoard);
+        setUpdate(false);
 
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -77,7 +85,7 @@ function TableQueryAdBoardByArea(props) {
 
     // Call the fetchData function when the component mounts or when viewport changes
     fetchData();
-  }, []);
+  }, [update]);
 
 
   const handleChangeViewPort = () => {
@@ -97,11 +105,34 @@ function TableQueryAdBoardByArea(props) {
     onNormalOpen();
   };
 
-  useEffect(() => {
-    console.log(id);
-  });
+  const handleSubmit = (data) => {
+    // Xử lý logic khi submit form
+    console.log(data);
+  };
 
+  const handleRequestLicenseClick = (row) => {
+    setSelectedAdBoard(row)
+    if (row.hasLicense === "Yes" && row.expiryDate !== "No expiry date") {
+      toast({
+        title: "Điểm quảng cáo đã được cấp phép",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      })
+    }
+    else if (row.hasLicense === "Yes" && row.expiryDate === "No expiry date") {
+      toast({
+        title: "Điểm quảng cáo đã được gửi yêu cầu cấp phép",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      })
+    }
+    else {
 
+      onRequestLicenseOpen();
+    }
+  }
   const columns = [
     {
       dataField: 'boardType',
@@ -120,29 +151,56 @@ function TableQueryAdBoardByArea(props) {
       text: 'Expired Date'
     },
     {
+      dataField: 'hasLicense',
+      text: 'Has License'
+    },
+    {
       dataField: 'action',
       isDummyField: true,
       text: 'Action',
       formatter: (cellContent, row) => {
         return (
           <div style={{ display: "flex" }}>
-            <Icon
-              variant="unstyled"
-              as={FaMap}
-              w={5}
-              h={5}
-              marginRight={5}
-              // marginLeft={2} 
-              onClick={() => handleChangeViewPort(row)}
-              _hover={{ color: 'blue' }}
-            />
-            <Icon
-              as={FaPen}
-              w={4}
-              h={4}
-              onClick={() => handleEditClick(row)}
-              _hover={{ color: 'blue' }}
-            />
+            <Tooltip label="Xem trên bản đồ" fontSize="md" placement='top'>
+              <span>
+                <Icon
+                  variant="unstyled"
+                  as={FaMap}
+                  w={5}
+                  h={5}
+                  marginRight={5}
+                  // marginLeft={2} 
+                  onClick={() => handleChangeViewPort(row)}
+                  _hover={{ color: 'blue' }}
+                />
+              </span>
+            </Tooltip>
+
+            <Tooltip label="Gửi yều cầu chỉnh sửa" fontSize="md" placement='top'>
+              <span>
+                <Icon
+                  as={FaPen}
+                  w={4}
+                  h={4}
+                  marginRight={5}
+                  onClick={() => handleEditClick(row)}
+                  _hover={{ color: 'blue' }}
+                />
+              </span>
+            </Tooltip>
+            <Tooltip label="Gửi yêu cầu cấp phép quảng cáo" fontSize="md" placement='top'>
+              <span>
+                <Icon
+                  as={BsClipboard2CheckFill}
+                  w={4}
+                  h={4}
+                  onClick={() => handleRequestLicenseClick(row)}
+                  _hover={{ color: 'blue' }}
+                />
+              </span>
+            </Tooltip>
+
+
           </div>
         )
       }
@@ -206,7 +264,36 @@ function TableQueryAdBoardByArea(props) {
       </div>
     );
   };
-
+  const handleSubmitForm = async (values, actions) => {
+    try {
+      const result = await AdvertisingLicenseRequestApi.addAdvertisingLicenseRequest(values);
+      console.log(result);
+      if (result) {
+        toast({
+          title: 'Gửi thành công.',
+          description: "Đơn yêu cầu cấp phép bảng quảng cáo của bạn đã được gửi thành công.",
+          status: 'success',
+          duration: 2000,
+          isClosable: true,
+        });
+        const resultUpdate = await adBoardApi.updateAdboardDuong(selectedAdBoard._id, { advertisingLicense_id: result.data._id });
+        if (resultUpdate) {
+          selectedAdBoard.advertisingLicense_id = result.data._id;
+        }
+        setUpdate(true);
+      }
+    } catch (error) {
+      console.log(error);
+      toast({
+        title: 'Gửi thất bại.',
+        description: "Hãy xem lại thông tin đơn yêu cầu.",
+        status: 'error',
+        duration: 2000,
+        isClosable: true,
+      });
+    }
+    onRequestLicenseClose();
+  }
   const CaptionElement = () => <h3 style={{ borderRadius: '0.25em', textAlign: 'center', color: 'purple', border: '1px solid purple', padding: '0.5em', marginTop: "15px" }}>{location.state.location.address}</h3>;
   return (
     <div style={{ width: "95%" }}>
@@ -222,9 +309,27 @@ function TableQueryAdBoardByArea(props) {
                 onClose={onNormalClose}
               />
             )}
-          </ModalBody>         
+          </ModalBody>
         </ModalContent>
       </Modal>
+      <Modal isOpen={isRequestLicenseOpen} onClose={onRequestLicenseClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Chỉnh Sửa Điểm Đặt Quảng Cáo</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            {selectedAdBoard && (
+              <AdvertisingLicenseRequestForm onSubmit={handleSubmitForm} adboardInfo={selectedAdBoard}></AdvertisingLicenseRequestForm>
+            )}
+          </ModalBody>
+          <ModalFooter>
+            <Button colorScheme="blue" mr={3} onClick={onRequestLicenseClose}>
+              Đóng
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+
       {adBoard ? (
         <ToolkitProvider
           keyField="id"

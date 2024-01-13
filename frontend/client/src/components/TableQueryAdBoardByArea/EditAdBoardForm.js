@@ -87,7 +87,7 @@ const EditRequestForm = (props) => {
 
             if (result) {
                 toast({
-                    title: "Thêm điểm quảng cáo thành công",
+                    title: "Chỉnh sửa bảng quảng cáo thành công",
                     status: "success",
                     duration: 3000,
                     isClosable: true,
@@ -101,7 +101,7 @@ const EditRequestForm = (props) => {
             console.error('Error submitting form:', error);
             setError('An error occurred while submitting the form.');
             toast({
-                title: "Thêm điểm quảng cáo thất bại",
+                title: "Chỉnh sửa bảng quảng cáo thất bại",
                 description: "Vui lòng thử lại",
                 status: "error",
                 duration: 3000,

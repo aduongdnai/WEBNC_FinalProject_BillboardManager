@@ -17,7 +17,7 @@ import { useSelector } from 'react-redux';
 
 const EditAdLocationForm = (props) => {
   const userData = useSelector(state => state.auth.userData);
-  const { info, setUpdate, onClose } = props;
+  const { info, onClose } = props;
   const [type, setType] = useState('');
   const [publicId, setPublicId] = useState('');
   const [error, setError] = useState(null);
@@ -34,7 +34,6 @@ const EditAdLocationForm = (props) => {
         console.log(ans);
         setType(ans);
         setPublicId(info.image);
-        setUpdate(false);
 
         console.log(type);
 
@@ -86,9 +85,8 @@ const EditAdLocationForm = (props) => {
       const data = {
         ...values,
         userRequest: userData.email,
-        locationId: info.locationId,
+        locationId: info._id,
         image: publicId,
-        planned: false,
         status: "Pending"
       }
       console.log(data);
@@ -105,7 +103,6 @@ const EditAdLocationForm = (props) => {
         setTimeout(() => {
           onClose();
         }, 2000);
-        setUpdate(true);
       }
     } catch (error) {
       // Handle errors, and set the error state
@@ -118,11 +115,7 @@ const EditAdLocationForm = (props) => {
         duration: 3000,
         isClosable: true,
       })
-    } finally {
-      // Ensure to setSubmitting(false) whether the submission was successful or not
-      actions.setSubmitting(false);
-    }
-
+    } 
   }
 
 

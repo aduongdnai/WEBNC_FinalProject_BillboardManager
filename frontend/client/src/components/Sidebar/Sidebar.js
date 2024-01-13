@@ -154,6 +154,30 @@ export default function Sidebar() {
             width={"270px"}
             justifyContent={"start"}
             _hover={{ backgroundColor: "#AEC8CA" }}
+            leftIcon={<BsArrowRightCircle  />}
+            onClick={() => navigate("/adboard-edit-request-list")}
+          >
+            Request Inspector Ads Board
+          </Button>
+          <Button
+            background="none"
+            fontSize="15px"
+            ref={btnRef}
+            width={"270px"}
+            justifyContent={"start"}
+            _hover={{ backgroundColor: "#AEC8CA" }}
+            leftIcon={<BsArrowRightCircle  />}
+            onClick={() => navigate("/adlocation-edit-request-list")}
+          >
+            Request Inspector Ads Location
+          </Button>
+          <Button
+            background="none"
+            fontSize="15px"
+            ref={btnRef}
+            width={"270px"}
+            justifyContent={"start"}
+            _hover={{ backgroundColor: "#AEC8CA" }}
             leftIcon={<ImLocation2  />}
             onClick={() => navigate("/manage-district")}
           >

@@ -19,27 +19,36 @@ import userApi from '../../apis/userApi';
 import AdvertisingLicenseRequestApi from '../../apis/advertisingLicenseRequestApi.js';
 import adBoardApi from '../../apis/adBoardApi.js';
 import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { setViewport, } from '../actions/viewportAction'
+import adLocationApi from '../../apis/adLocationApi.js';
+import { FaMap } from 'react-icons/fa'
 
-function AdvertisingLicenseRequestListCBSO({ requests }) {
+function AdvertisingLicenseRequestListCBSO({ requests, setUpdate }) {
     const [request, setRequest] = React.useState(null);
     const [requestList, setRequestsList] = React.useState(requests);
     const user = useSelector(state => state.auth.userData);
     const { isOpen, onOpen, onClose } = useDisclosure()
     const toast = useToast();
-    const [update, setUpdate] = React.useState(false);
+
+    const navigate = useNavigate();
+    const dispatch = useDispatch()
+
+
     useEffect(() => {
         const fetchData = async () => {
             try {
                 const result = await AdvertisingLicenseRequestApi.getAdvertisingLicenseRequest();
                 setRequestsList(result.data);
-                setUpdate(false);
+
             } catch (error) {
                 console.log(error);
             }
         }
         fetchData();
 
-    }, [update]);
+    }, []);
     const handleViewRequest = async (request) => {
 
         try {
@@ -59,6 +68,7 @@ function AdvertisingLicenseRequestListCBSO({ requests }) {
         const result = await AdvertisingLicenseRequestApi.updateAdvertisingLicenseRequest(request._id, { status: "Approved" });
         console.log(result);
         if (result.msg === "success") {
+            setUpdate(true);
             const adboarResult = await adBoardApi.updateAdboardDuong(request.adBoard, { images: request.adImage, expiryDate: request.endDate })
             toast({
                 title: 'Approve thành công.',
@@ -67,7 +77,6 @@ function AdvertisingLicenseRequestListCBSO({ requests }) {
                 duration: 2000,
                 isClosable: true,
             });
-            setUpdate(true);
         }
         onClose();
     }
@@ -75,6 +84,8 @@ function AdvertisingLicenseRequestListCBSO({ requests }) {
 
         const result = await AdvertisingLicenseRequestApi.updateAdvertisingLicenseRequest(request._id, { status: "Rejected" });
         if (result.msg === "success") {
+            setUpdate(true);
+            const adboarResult = await adBoardApi.updateAdboardDuong(request.adBoard, { advertisingLicense_id: null })
             toast({
                 title: 'Từ chối thành công.',
                 description: "Đơn dăng ký đã bị từ chối.",
@@ -82,13 +93,26 @@ function AdvertisingLicenseRequestListCBSO({ requests }) {
                 duration: 2000,
                 isClosable: true,
             });
-            setUpdate(true);
         }
         onClose();
     }
+    const handleChangeViewPort = async (request) => {
+        const location = await AdvertisingLicenseRequestApi.getAdlocation(request.adBoard);
+        console.log(location);
+
+        const newViewport = {
+            latitude: location.data[0].coordinates.coordinates[1],
+            longitude: location.data[0].coordinates.coordinates[0],
+            zoom: 20,
+            transitionDuration: 5000, // Adjust the zoom level as needed
+
+        };
+        dispatch(setViewport(newViewport));
+        navigate("/");
+    }
     return (
         <Box width="full" overflowX="auto">
-            <Table variant="unstyled">
+            <Table variant="striped">
                 <Thead>
                     <Tr>
                         <Th>Company Name</Th>
@@ -110,12 +134,13 @@ function AdvertisingLicenseRequestListCBSO({ requests }) {
                             <Td>{new Date(request.endDate).toLocaleDateString()}</Td>
                             <Td>{request.status}</Td>
                             <Td>
-                                <Center>
-                                    <ButtonGroup>
-                                        <Button variant={"outline"} colorScheme="blue" size="sm" leftIcon={<ViewIcon />} onClick={() => handleViewRequest(request)}>View</Button>
 
-                                    </ButtonGroup>
-                                </Center>
+                                <ButtonGroup>
+                                    <Button variant={"outline"} colorScheme="blue" size="sm" leftIcon={<ViewIcon />} onClick={() => handleViewRequest(request)}>View</Button>
+                                    <Button variant={"outline"} colorScheme="blue" size="sm" leftIcon={<FaMap />} onClick={() => handleChangeViewPort(request)}>Map</Button>
+
+                                </ButtonGroup>
+
                             </Td>
                         </Tr>
                     ))}

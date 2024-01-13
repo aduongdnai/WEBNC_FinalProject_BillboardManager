@@ -24,6 +24,7 @@ import {
 } from "@chakra-ui/react";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 
 function Account() {
@@ -48,13 +49,13 @@ function Account() {
     }
     try {
       const response = await axios.put(
-        `http://127.0.0.1:5000/api/v1/users/change-password/${userData._id}`, 
+        `http://127.0.0.1:5000/api/v1/users/change-password/${userData._id}`,
         {
           oldPassword: currentPassword,
           newPassword: newPassword
         }
       );
-  
+
       console.log("Password changed successfully", response.data);
       toast({
         title: "Password changed successfully",
@@ -63,7 +64,7 @@ function Account() {
         duration: 2000,
         isClosable: true,
       });
-  
+
       setCurrentPassword("");
       setNewPassword("");
       onClose(); // Close the modal after password change
@@ -79,72 +80,10 @@ function Account() {
       });
     }
   };
-  
 
   const toast = useToast();
-  const [userData, setUserData] = useState({
-    email: "",
-    username: "",
-    password: "",
-    role: "",
-    ward: "",
-    district: "",
-  });
-  const [isEditing, setIsEditing] = useState(false);
-  const handleEditClick = () => {
-    setIsEditing(!isEditing);
-  };
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setUserData({ ...userData, [name]: value });
-  };
-
-  const handleSaveClick = async () => {
-    try {
-      const response = await axios.put(
-        `http://127.0.0.1:5000/api/v1/users/${userData._id}`, 
-        userData 
-      );
-
-
-      setIsEditing(false);
-      console.log("User updated successfully", response.data);
-      toast({
-        title: "Update successful.",
-        description: "You've successfully updated.",
-        status: "success",
-        duration: 2000,
-        isClosable: true,
-      });
-    } catch (error) {
-      console.error("Error updating user:", error);
-      // Xử lý lỗi khi cập nhật thông tin người dùng
-    }
-  };
-
-
-  useEffect(() => {
-    const storedUserInfo = localStorage.getItem("userData");
-    if (storedUserInfo) {
-      const userInfo = JSON.parse(storedUserInfo);
-      const { _id } = userInfo;
-
-      const fetchUserData = async () => {
-        try {
-          const response = await axios.get(
-            `http://127.0.0.1:5000/api/v1/users/${_id}`
-          );
-          const user = response.data.data;
-          setUserData(user);
-        } catch (error) {
-          console.error("Error fetching user data:", error);
-        }
-      };
-
-      fetchUserData();
-    }
-  }, []);
+  const userData = useSelector(state => state.auth.userData);
 
   return (
     <>
@@ -180,23 +119,18 @@ function Account() {
                   <Input
                     variant="filled"
                     value={userData.username}
-                    isReadOnly={!isEditing}
-                    onChange={handleInputChange}
+                    isReadOnly
                     name="username"
                   />
-
-
-
                   <FormLabel>role:</FormLabel>
-                  <Input variant="filled" value={userData.role} isReadOnly />
+                  <Input variant="filled" value={userData.role === "CB-So"?"Cán bộ Sở":userData.role === "CB-Quan"?"Cán bộ Quận":"Cán bộ Phường"} isReadOnly />
                   {userData.ward !== null && ( // Kiểm tra nếu giá trị của ward không phải null thì hiển thị input
                     <>
                       <FormLabel>ward:</FormLabel>
                       <Input
                         variant="filled"
                         value={userData.ward}
-                        isReadOnly={!isEditing}
-                        onChange={handleInputChange}
+                        isReadOnly
                         name="ward"
                       />
                     </>
@@ -205,8 +139,7 @@ function Account() {
                   <Input
                     variant="filled"
                     value={userData.district}
-                    isReadOnly={!isEditing}
-                    onChange={handleInputChange}
+                    isReadOnly
                     name="district"
                   />
                 </Stack>
@@ -214,15 +147,6 @@ function Account() {
             </Box>
           </Stack>
         </Flex>
-        {isEditing ? (
-          <Button colorScheme="blue" onClick={handleSaveClick}>
-            Lưu
-          </Button>
-        ) : (
-          <Button colorScheme="blue" onClick={handleEditClick}>
-            Chỉnh sửa
-          </Button>
-        )}
         <Button ml={5} colorScheme="blue" onClick={onOpen}>
           Đổi mật khẩu
         </Button>
@@ -257,7 +181,7 @@ function Account() {
                   type="password"
                   variant="filled"
                   placeholder="Xác nhận mật khẩu mới"
-                  value={confirmNewPassword}  
+                  value={confirmNewPassword}
                   onChange={(e) => setConfirmNewPassword(e.target.value)}
 
                   mb={3}
@@ -275,11 +199,7 @@ function Account() {
             </ModalFooter>
           </ModalContent>
         </Modal>
-        {/* <Link to="/premium">
-          <Button ml={5} colorScheme="blue">
-            Nâng cấp lên gói CB_Quận/CB_Sở
-          </Button>
-        </Link> */}
+
       </Box>
     </>
   );

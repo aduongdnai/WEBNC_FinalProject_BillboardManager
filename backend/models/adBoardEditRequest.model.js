@@ -7,7 +7,7 @@ const adBoardEditRequestSchema = new mongoose.Schema({
     height: Number,
     reason: String,
     status: String,
-});
+},{ timestamps: true });
 
 const AdBoardEditRequestModel = mongoose.model('adboard_edit_request', adBoardEditRequestSchema);
 export default AdBoardEditRequestModel;

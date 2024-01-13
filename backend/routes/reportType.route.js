@@ -2,6 +2,9 @@ import express from 'express'
 import ReportTypeModel from '../models/reportType.model.js';
 import mongoose from 'mongoose';
 import { routeLogger } from '../middlewares/logger.mdw.js'
+import { isAuthenticated } from '../middlewares/authentication.mdw.js'
+import validate from '../middlewares/validate.mdw.js';
+import reportTypeSchemas from '../schemas/reportType.schemas.js';
 const router = express.Router();
 
 router.use(routeLogger);
@@ -27,7 +30,7 @@ router.get('/', async (req, res) => {
 })
 
 
-router.post('/', async (req, res) => {
+router.post('/', isAuthenticated,validate(reportTypeSchemas.report_type_schema), async (req, res) => {
     const rpType = req.body;
     //console.log(req.body);
     const newRpType = new ReportTypeModel(rpType);
@@ -42,7 +45,7 @@ router.post('/', async (req, res) => {
 })
 
 
-router.put('/:id', async (req, res) => {
+router.put('/:id', isAuthenticated,validate(reportTypeSchemas.report_type_schema), async (req, res) => {
     const { id } = req.params;
     const { name } = req.body;
 
@@ -76,7 +79,7 @@ router.post("/findRpType", async (req, res) => {
 
 
 
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", isAuthenticated, async (req, res) => {
   const { id } = req.params;
 
   try {
