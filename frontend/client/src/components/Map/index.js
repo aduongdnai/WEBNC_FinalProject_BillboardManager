@@ -26,7 +26,7 @@ function Map(props) {
     const viewport = useSelector(state => state.viewport)
     const dispatch = useDispatch()
     const mapRef = useRef(null);
-    const [filters, setFilters] = useState({ planned: true, reported: true });
+    const [filters, setFilters] = useState({ planned: true, reported: false });
     const user = useSelector(state => state.auth.userData);
     const userArea = localStorage.getItem("userArea") || "";
     const [update, setUpdate] = useState(false);

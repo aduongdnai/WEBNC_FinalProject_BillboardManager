@@ -177,13 +177,22 @@ function AdBoardList(props) {
                             <Text fontWeight={'bold'}></Text>
                             <Text >Loại địa điểm: <b>{info.locationType}</b></Text>
 
-                            {user.role !== "CB-So" &&
+                            {user.role !== "CB-So" ?
                                 <ButtonGroup>
 
                                     {info.advertisingLicense_id !== null ?
                                         <Button colorScheme='blue' variant={"outline"} onClick={onAdvertisingLicenseDetailOpen}>Xem yêu cầu cấp phép</Button>
                                         :
                                         <Button colorScheme='blue' variant={"outline"} onClick={onAdvertisingLicenseOpen}>Gửi yêu cầu cấp phép</Button>
+                                    }
+                                </ButtonGroup>
+                                :
+                                <ButtonGroup>
+
+                                    {info.advertisingLicense_id !== null ?
+                                        <Button colorScheme='blue' variant={"outline"} onClick={onAdvertisingLicenseDetailOpen}>Xem yêu cầu cấp phép</Button>
+                                        :
+                                        <></>
                                     }
                                 </ButtonGroup>
                             }
@@ -237,7 +246,7 @@ function AdBoardList(props) {
                                 <Button colorScheme='blue' mr={3} onClick={onAdvertisingLicenseDetailClose}>
                                     Close
                                 </Button>
-                                {adAdvertisingLicenseRequest && adAdvertisingLicenseRequest.status !== "Approved" && <Button colorScheme="red" onClick={handleRejectRequest}>Delete</Button>}
+                                {adAdvertisingLicenseRequest && adAdvertisingLicenseRequest.status !== "Approved" && user.role !== "CB-So" && <Button colorScheme="red" onClick={handleRejectRequest}>Delete</Button>}
 
 
 

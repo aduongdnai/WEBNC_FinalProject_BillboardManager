@@ -4,11 +4,12 @@ import bcrypt from "bcrypt";
 import { routeLogger } from '../middlewares/logger.mdw.js'
 import userSchema from '../schemas/user.schema.js';
 import validate from "../middlewares/validate.mdw.js"
+import { isAuthenticated } from '../middlewares/authentication.mdw.js';
 const router = express.Router();
 
 router.use(routeLogger);
 
-router.get('/:id', validate(userSchema.user_schema), async (req, res) => {
+router.get('/:id', isAuthenticated, async (req, res) => {
     try {
         const user = await userModel.findById(req.params.id);
         res.status(200).json({
@@ -22,7 +23,7 @@ router.get('/:id', validate(userSchema.user_schema), async (req, res) => {
         });
     }
 })
-router.put('/:id', validate(userSchema.user_update_schema), async (req, res) => {
+router.put('/:id', isAuthenticated, validate(userSchema.user_update_schema), async (req, res) => {
     const userId = req.params.id;
     const updateData = req.body; // Dữ liệu cần cập nhật từ frontend
 
@@ -53,7 +54,7 @@ router.put('/:id', validate(userSchema.user_update_schema), async (req, res) => 
 });
 
 
-router.put('/change-password/:id', async (req, res) => {
+router.put('/change-password/:id', isAuthenticated, async (req, res) => {
     const userId = req.params.id;
     const { oldPassword, newPassword } = req.body;
 
@@ -92,7 +93,7 @@ router.put('/change-password/:id', async (req, res) => {
         });
     }
 });
-router.post('/resetpassword', async (req, res) => {
+router.post('/resetpassword', isAuthenticated, async (req, res) => {
     const { email, resetToken } = req.body;
     try {
         const user = await userModel.findOne({ email: email });

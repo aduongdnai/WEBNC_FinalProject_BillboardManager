@@ -14,13 +14,16 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import { Link, useNavigate } from "react-router-dom";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 
 function Signup() {
   let navigate = useNavigate();
   const toast = useToast();
   const [passwordError, setPasswordError] = useState("");
+  const [passwordErr, setPasswordErr] = useState("");
+  const [mailErr, setMailErr] = useState("");
+  const [nameErr, setNameErr] = useState("");
 
   const [formData, setFormData] = useState({
     email: "",
@@ -33,10 +36,28 @@ function Signup() {
   });
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setPasswordError("");
+    setPasswordErr("");
+    setMailErr("");
+    setNameErr("");
+    var isInvalid = false;
     if (formData.password !== formData.confirmPassword) {
       setPasswordError("Passwords do not match");
-      return;
+      isInvalid = true;
     }
+    if (formData.password === '') {
+      setPasswordErr("Passwords empty");
+      isInvalid = true;
+    }
+    if (formData.username === '') {
+      setNameErr("Username empty");
+      isInvalid = true;
+    }
+    if (formData.email === '') {
+      setMailErr("Email empty");
+      isInvalid = true;
+    }
+    if (isInvalid) return;
     try {
       const response = await axios.post(
         "http://127.0.0.1:5000/api/v1/auth/signup",
@@ -56,6 +77,13 @@ function Signup() {
       });
     } catch (error) {
       console.error("Registration failed:", error.response.data);
+      toast({
+        title: "Assign Failed",
+        description: "Please provide valid information",
+        status: "error",
+        duration: 2000,
+        isClosable: true,
+      });
       // Handle registration failure (e.g., display error to user)
     }
   };
@@ -66,38 +94,24 @@ function Signup() {
       [name]: value,
     });
   };
-  const roles = ["CB-Phuong","CB-Quan"];
-  const districts = Array.from({ length: 12 }, (_, i) => `${i + 1}`); // Tạo mảng ['1', '2', ..., '12']
-  const wards = Array.from({ length: 12 }, (_, i) => `${i + 1}`); // Tạo mảng ['1', '2', ..., '12']
-  const roleOptions = {
-    "CB-Phuong": {
-      label: "Phường",
-      districtOptions: districts.map((district) => ({
-        value: district,
-        label: `Quận ${district}`,
-        wards: wards.map((ward) => ({
-          value: ward,
-          label: `Phường ${ward}`,
-        })),
-      })),
-    },
-    "CB-Quan": {
-      label: "Quận",
-      districtOptions: districts.map((district) => ({
-        value: district,
-        label: `Quận ${district}`,
-      })),
-    },
-    // "CB-So": { label: "Không có lựa chọn" }, // Có thể thêm xử lý cho trường hợp khác nếu cần
-  };
-  const handleRoleChange = (e) => {
+  const roles = ["CB-Phuong", "CB-Quan"];
+  const [districts, setDistricts] = useState([])
+  const [wards, setWards] = useState([])
+
+
+  const handleRoleChange = async (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value, district: "", ward: "" }); // Reset giá trị quận và phường khi thay đổi vai trò
+    const resDistricts = await axios.get("http://localhost:5000/api/v1/district");
+    setDistricts(resDistricts.data.data)
+  
   };
 
-  const handleDistrictChange = (e) => {
+  const handleDistrictChange = async (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
+    const resWards = await axios.post("http://localhost:5000/api/v1/ward/findByDistrict", { district: value });
+    setWards(resWards.data.data)
   };
 
   const handleWardChange = (e) => {
@@ -118,7 +132,7 @@ function Signup() {
       <VStack spacing={4} align="flex-start" w="full">
         <VStack spacing={1} align={["flex-start", "center"]} w="full">
           <Heading>ASSIGN ACCOUNT</Heading>
-          
+
         </VStack>
 
         <FormControl>
@@ -129,7 +143,13 @@ function Signup() {
             name="email"
             value={formData.email}
             onChange={handleChange}
-          ></Input>
+            isInvalid={mailErr} // Đánh dấu lỗi nếu có
+            ></Input>
+            {mailErr && (
+              <Text color="red.500" fontSize="sm">
+                {mailErr}
+              </Text>
+            )}
         </FormControl>
         <FormControl>
           <FormLabel>Username</FormLabel>
@@ -139,7 +159,13 @@ function Signup() {
             name="username"
             value={formData.username}
             onChange={handleChange}
-          ></Input>
+            isInvalid={nameErr} // Đánh dấu lỗi nếu có
+            ></Input>
+            {nameErr && (
+              <Text color="red.500" fontSize="sm">
+                {nameErr}
+              </Text>
+            )}
         </FormControl>
         <FormControl>
           <FormLabel>Password</FormLabel>
@@ -150,7 +176,13 @@ function Signup() {
             name="password"
             value={formData.password}
             onChange={handleChange}
-          ></Input>
+            isInvalid={passwordErr} // Đánh dấu lỗi nếu có
+            ></Input>
+            {passwordErr && (
+              <Text color="red.500" fontSize="sm">
+                {passwordErr}
+              </Text>
+            )}
         </FormControl>
         <FormControl>
           <FormLabel>Confirm Password</FormLabel>
@@ -187,10 +219,9 @@ function Signup() {
         </FormControl>
 
         {formData.role &&
-          roleOptions[formData.role] &&
+          districts &&
           formData.role !== "CB-So" && (
             <>
-              
               <FormControl mt={4}>
                 <FormLabel>Quận</FormLabel>
                 <Select
@@ -201,9 +232,9 @@ function Signup() {
                   onChange={handleDistrictChange}
                 >
                   <option value="">Select a district</option>
-                  {roleOptions[formData.role].districtOptions.map((option) => (
-                    <option key={option.value} value={option.value}>
-                      {option.label}
+                  {districts.map((district) => (
+                    <option key={district._id} value={district.name}>
+                      {district.name}
                     </option>
                   ))}
                 </Select>
@@ -220,13 +251,11 @@ function Signup() {
                     onChange={handleWardChange}
                   >
                     <option value="">Select a ward</option>
-                    {roleOptions[formData.role].districtOptions
-                      .find((option) => option.value === formData.district)
-                      ?.wards.map((ward) => (
-                        <option key={ward.value} value={ward.value}>
-                          {ward.label}
-                        </option>
-                      ))}
+                    {wards.map((ward) => (
+                      <option key={ward._id} value={ward.name}>
+                        {ward.name}
+                      </option>
+                    ))}
                   </Select>
                 </FormControl>
               )}

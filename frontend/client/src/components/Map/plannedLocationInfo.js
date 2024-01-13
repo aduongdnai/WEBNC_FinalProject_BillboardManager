@@ -79,19 +79,7 @@ function PlannedLocationInfo(props) {
                         <DrawerHeader borderBottomWidth='1px'>
                             <Flex justifyContent='space-between' alignItems='center'>
                                 <Heading size={"md"}>Thông tin địa điểm quảng cáo </Heading>
-                                {user.role !== "CB-So" &&
-                                    <Tooltip label='Gửi yêu cầu chỉnh sửa thông tin điểm đặt' placement='bottom'>
-                                        <IconButton
-                                            icon={<EditIcon />}
-                                            fontSize='20px'
-                                            variant='outline'
-                                            colorScheme='teal'
-                                            mr={2}
 
-                                        >
-
-                                        </IconButton>
-                                    </Tooltip>}
                                 {info.planned && adBoards.length < info.numberAdBoard && user.role === "CB-So" &&
                                     <Tooltip label='Thêm bảng quảng cáo' placement='bottom'>
                                         <IconButton
