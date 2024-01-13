@@ -23,7 +23,7 @@ const UserSchema = new mongoose.Schema(
     newPassword: String,
     role: String,
     district: String,
-    ward: String,
+    ward: String, 
     rfToken:String
   },
   { timestamps: true }

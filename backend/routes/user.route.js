@@ -2,7 +2,7 @@ import express from 'express';
 import userModel from '../models/user.model.js';
 import bcrypt from "bcrypt";
 import { routeLogger } from '../middlewares/logger.mdw.js'
-import userSchema from '../schema/user.schema.js';
+import userSchema from '../schemas/user.schema.js';
 import validate from "../middlewares/validate.mdw.js"
 const router = express.Router();
 
