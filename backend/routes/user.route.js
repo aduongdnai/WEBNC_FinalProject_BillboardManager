@@ -5,11 +5,12 @@ import { routeLogger } from '../middlewares/logger.mdw.js'
 import userSchema from '../schemas/user.schema.js';
 import validate from "../middlewares/validate.mdw.js"
 import { isAuthenticated } from '../middlewares/authentication.mdw.js';
+import { token } from 'morgan';
 const router = express.Router();
 
 router.use(routeLogger);
 
-router.get('/:id', isAuthenticated, async (req, res) => {
+router.get('/:id', isAuthenticated,validate(userSchema.user_schema), async (req, res) => {
     try {
         const user = await userModel.findById(req.params.id);
         res.status(200).json({
@@ -57,7 +58,6 @@ router.put('/:id', isAuthenticated, validate(userSchema.user_update_schema), asy
 router.put('/change-password/:id', isAuthenticated, async (req, res) => {
     const userId = req.params.id;
     const { oldPassword, newPassword } = req.body;
-
     try {
         const user = await userModel.findById(userId);
 
@@ -81,7 +81,7 @@ router.put('/change-password/:id', isAuthenticated, async (req, res) => {
 
         // Save the updated user information to the database
         const updatedUser = await user.save();
-
+        
         res.status(200).json({
             data: updatedUser,
             msg: "Password updated successfully"

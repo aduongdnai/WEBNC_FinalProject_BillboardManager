@@ -4,6 +4,7 @@ import userModel from "../models/user.model.js";
 
 async function isAuthenticated(req, res, next) {
     try {
+        console.log(req.headers);
         let token = req.get("Authorization");
         if (!token) {
             return res.status(404).json({ success: false, msg: "Token not found" });
@@ -15,7 +16,7 @@ async function isAuthenticated(req, res, next) {
         next();
     } catch (error) {
         if (error) {
-
+            console.log(error);  
             
             let rfTokenClient = req.get("rfToken");
            try{
