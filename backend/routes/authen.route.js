@@ -4,25 +4,26 @@ import jwt from 'jsonwebtoken';
 import _ from "../config/config.js";
 import userModel from '../models/user.model.js';
 import { routeLogger } from '../middlewares/logger.mdw.js';
+import { isAuthenticated } from '../middlewares/authentication.mdw.js';
 const router = express.Router();
 router.use(routeLogger);
 var token;
 
 router.post('/login', async (req, res) => {
-    try{
-        const {email,password}=req.body
+    try {
+        const { email, password } = req.body
         //checkUsername
-       const dbUser = await userModel.find({email: email})
+        const dbUser = await userModel.find({ email: email })
 
         if (!dbUser) {
             return res.status(400).json({ error: 'Account does not exist' });
         }
-       
-        const isMatchPassword= await bcrypt.compare(password,dbUser[0].password)
+
+        const isMatchPassword = await bcrypt.compare(password, dbUser[0].password)
         //console.log(isMatchPassword);
-        if(isMatchPassword){
-            token = jwt.sign({ email: email, password: password }, process.env.SECRET_ACCESS_KEY, { expiresIn: '1m' } );
-            
+        if (isMatchPassword) {
+            token = jwt.sign({ email: email, password: password }, process.env.SECRET_ACCESS_KEY, { expiresIn: '1m' });
+
             var rfToken = jwt.sign({ email: email, password: password }, process.env.SECRET_REFRESH_KEY);
             //save rftoken
             var result = await userModel.updateOne({ email: email }, { $set: { rfToken: rfToken } });
@@ -32,23 +33,23 @@ router.post('/login', async (req, res) => {
 
             // Access the current value of the updated field
             //var currentRfToken = updatedDocument.rfToken;
-            
-            return res.status(200).json({ 
+
+            return res.status(200).json({
                 success: true,
                 token,
                 rfToken,
                 userData
             });
-            
+
         } else {
-          return res.status(401).json({ error: 'Invalid credentials' });
+            return res.status(401).json({ error: 'Invalid credentials' });
 
         }
-    }catch(error){
+    } catch (error) {
         console.error('Error Login:', error);
-        return res.status(500).json({ error: 'Internal Server Error' }); 
+        return res.status(500).json({ error: 'Internal Server Error' });
     }
-    
+
 });
 router.get('/logout', async (req, res) => {
     try {
@@ -68,7 +69,7 @@ router.get('/logout', async (req, res) => {
     }
 
 });
-router.post('/signup', async (req, res) => {
+router.post('/signup', isAuthenticated, async (req, res) => {
     try {
         const { username, email, password, role, district, ward } = req.body;
 

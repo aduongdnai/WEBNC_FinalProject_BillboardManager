@@ -2,7 +2,7 @@ export default {
   "definition": {
     "openapi": "3.0.0",
     "info": {
-      "title": "Sakila API",
+      "title": "Billboard API",
       "version": "1.0.0",
       "description": "API for managing ad locations, boards, reports, users, and more."
     },
@@ -261,12 +261,7 @@ export default {
                       "location_id": "65829566bbae348611e43c02",
                       "boardType": "Trụ hộp đèn",
                       "width": 12,
-                      "height": 10,
-                      "images": [
-                        "official/c6huqkttfeesmh4lcc6h"
-                      ],
-                      "expiryDate": null,
-                      "advertisingLicense_id": null
+                      "height": 10
                     }
                   }
                 }
@@ -1658,6 +1653,9 @@ export default {
       "/adLocationEditRequest": {
         "get": {
           "summary": "Get all ad location edit requests",
+          "tags": [
+            "Ad Location Edit Request"
+          ],
           "responses": {
             "200": {
               "description": "Successful response",
@@ -1673,6 +1671,9 @@ export default {
         },
         "post": {
           "summary": "Create a new ad location edit request",
+          "tags": [
+            "Ad Location Edit Request"
+          ],
           "requestBody": {
             "required": true,
             "content": {
@@ -1709,6 +1710,9 @@ export default {
       "/adLocationEditRequest/findByUserRequest": {
         "post": {
           "summary": "Find ad location edit requests by user",
+          "tags": [
+            "Ad Location Edit Request"
+          ],
           "requestBody": {
             "required": true,
             "content": {
@@ -1735,6 +1739,9 @@ export default {
       "/adLocationEditRequest/{id}": {
         "get": {
           "summary": "Get ad location edit request by ID",
+          "tags": [
+            "Ad Location Edit Request"
+          ],
           "parameters": [
             {
               "name": "id",
@@ -1762,6 +1769,9 @@ export default {
         },
         "put": {
           "summary": "Update ad location edit request by ID",
+          "tags": [
+            "Ad Location Edit Request"
+          ],
           "parameters": [
             {
               "name": "id",

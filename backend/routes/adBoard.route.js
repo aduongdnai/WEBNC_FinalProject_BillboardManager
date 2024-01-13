@@ -2,6 +2,9 @@ import express from 'express'
 import AdBoardModel from '../models/adBoard.model.js';
 import mongoose from 'mongoose';
 import { routeLogger } from '../middlewares/logger.mdw.js'
+import validateMdw from '../middlewares/validate.mdw.js';
+import adBoardSchema from '../schemas/adBoard.schema.js';
+import { isAuthenticated } from '../middlewares/authentication.mdw.js';
 const router = express.Router();
 
 router.use(routeLogger);
@@ -46,7 +49,7 @@ router.get('/find/:id', async (req, res) => {
     }
 
 })
-router.post('/', async (req, res) => {
+router.post('/', isAuthenticated, validateMdw(adBoardSchema.adBoardSchema), async (req, res) => {
     try {
         const newAdBoard = new AdBoardModel(req.body);
 
@@ -68,7 +71,7 @@ router.post('/', async (req, res) => {
     }
 
 })
-router.patch('/:id', async (req, res) => {
+router.patch('/:id', isAuthenticated, async (req, res) => {
     try {
         console.log(req.body);
         const result = await AdBoardModel.findOneAndUpdate({ _id: req.params.id },
@@ -97,9 +100,9 @@ router.patch('/:id', async (req, res) => {
 })
 
 
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", isAuthenticated, async (req, res) => {
     const { id } = req.params;
-  
+
     try {
         const deleteAdBoard = await AdBoardModel.findByIdAndDelete(id);
         res.status(200).json(deleteAdBoard);

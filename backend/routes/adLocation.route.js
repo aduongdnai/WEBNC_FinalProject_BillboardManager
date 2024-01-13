@@ -10,6 +10,8 @@ import {
 } from "../controller/adLocationController.js";
 import { isAuthenticated } from "../middlewares/authentication.mdw.js";
 import { getReviewRequests } from "../controller/reviewController.js";
+import validateMdw from "../middlewares/validate.mdw.js";
+import adLocationSchema from "../schemas/adLocation.schema.js";
 
 // Đường dẫn cho việc cập nhật thông tin điểm đặt quảng cáo
 router.post("/edit", editAdLocation);
@@ -96,7 +98,7 @@ router.post("/findByAdType", async (req, res) => {
 });
 
 
-router.put("/updateAdType", async (req, res) => {
+router.put("/updateAdType", isAuthenticated, async (req, res) => {
   const { oldAdType, newAdType } = req.body;
   console.log(oldAdType, newAdType);
   try {
@@ -108,7 +110,7 @@ router.put("/updateAdType", async (req, res) => {
 });
 
 
-router.post("/", async (req, res) => {
+router.post("/", isAuthenticated, validateMdw(adLocationSchema.adLocationSchema), async (req, res) => {
   try {
     const newAdLocation = new AdLocationModel(req.body);
     console.log(req.body);
@@ -165,7 +167,7 @@ router.get("/area/:area", async (req, res) => {
 });
 
 // Đường dẫn cho việc cập nhật thông tin điểm đặt quảng cáo dựa trên ID
-router.post("/update/:id", async (req, res) => {
+router.post("/update/:id", isAuthenticated, async (req, res) => {
   try {
     const updatedAdLocation = await AdLocationModel.findByIdAndUpdate(
       req.params.id,

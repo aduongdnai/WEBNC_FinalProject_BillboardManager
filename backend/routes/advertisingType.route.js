@@ -4,13 +4,14 @@ import mongoose from 'mongoose';
 import { routeLogger } from '../middlewares/logger.mdw.js'
 import validate from "../middlewares/validate.mdw.js"
 import advertisingTypeSchemas from '../schemas/advertisingType.schemas.js';
+import { isAuthenticated } from '../middlewares/authentication.mdw.js';
 
 
 
 
 const router = express.Router();
 router.use(routeLogger);
-router.get('/', async (req, res) => {
+router.get('/', isAuthenticated, async (req, res) => {
     try {
         const data = await AdvertisingTypeModel.find()
 
@@ -31,7 +32,7 @@ router.get('/', async (req, res) => {
 })
 
 
-router.post('/',validate(advertisingTypeSchemas.advertising_type_schema), async (req, res) => {
+router.post('/', isAuthenticated, validate(advertisingTypeSchemas.advertising_type_schema), async (req, res) => {
     const advertisingType = req.body;
     //console.log(req.body);
     const newType = new AdvertisingTypeModel(advertisingType);
@@ -46,7 +47,7 @@ router.post('/',validate(advertisingTypeSchemas.advertising_type_schema), async 
 })
 
 
-router.put('/:id',validate(advertisingTypeSchemas.advertising_type_schema), async (req, res) => {
+router.put('/:id', isAuthenticated, validate(advertisingTypeSchemas.advertising_type_schema), async (req, res) => {
     const { id } = req.params;
     const { name } = req.body;
 
@@ -58,7 +59,7 @@ router.put('/:id',validate(advertisingTypeSchemas.advertising_type_schema), asyn
     }
 });
 
-router.post("/findType", async (req, res) => {
+router.post("/findType", isAuthenticated, async (req, res) => {
     try {
         const data = await AdvertisingTypeModel.find({
             name: { $regex: req.body.area, $options: 'i' },
