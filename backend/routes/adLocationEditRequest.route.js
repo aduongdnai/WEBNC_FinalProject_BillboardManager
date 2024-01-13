@@ -3,11 +3,14 @@ import AdLocationEditRequestModel from '../models/adLocationEditRequest.model.js
 import UserModel from '../models/user.model.js';
 import AdLocationModel from '../models/adLocation.model.js';
 import { routeLogger } from '../middlewares/logger.mdw.js'
+import { isAuthenticated } from '../middlewares/authentication.mdw.js'
+import validate from '../middlewares/validate.mdw.js';
+import RequestSchemas from '../schemas/EditRequest.schemas.js';
 const router = express.Router();
 
 router.use(routeLogger);
 // Get all ad location edit requests
-router.get('/', async (req, res) => {
+router.get('/', isAuthenticated, async (req, res) => {
     try {
         const adLocationEditRequests = await AdLocationEditRequestModel.find();
         res.json(adLocationEditRequests);
@@ -17,7 +20,7 @@ router.get('/', async (req, res) => {
 });
 
 // Get all ad location edit requests by userRequest
-router.post('/findByUserRequest/', async (req, res) => {
+router.post('/findByUserRequest/', isAuthenticated, async (req, res) => {
     try {
         var adLocationEditRequests;
         if (!req.body.userRequest) {
@@ -42,7 +45,7 @@ router.post('/findByUserRequest/', async (req, res) => {
 });
 
 // Create a new ad location edit request
-router.post('/', async (req, res) => {
+router.post('/', isAuthenticated,validate(RequestSchemas.req_schema), async (req, res) => {
     console.log(req.body);
     try {
         const savedRequest = await new AdLocationEditRequestModel(req.body).save();
@@ -53,7 +56,7 @@ router.post('/', async (req, res) => {
 });
 
 // Update ad location edit request by ID
-router.put('/:id', async (req, res) => {
+router.put('/:id', isAuthenticated,validate(RequestSchemas.req_update_schema), async (req, res) => {
     try {
         const adLocationEditRequest = await AdLocationEditRequestModel.findByIdAndUpdate(
             req.params.id,
@@ -72,7 +75,7 @@ router.put('/:id', async (req, res) => {
 });
 
 // Get ad location edit request by ID
-router.get('/:id', async (req, res) => {
+router.get('/:id',  isAuthenticated, async (req, res) => {
     try {
         const adLocationEditRequest = await AdLocationEditRequestModel.findById(req.params.id);
         if (!adLocationEditRequest) {

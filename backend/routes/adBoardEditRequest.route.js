@@ -4,11 +4,14 @@ import UserModel from '../models/user.model.js';
 import AdBoardModel from '../models/adBoard.model.js';
 import AdLocationModel from '../models/adLocation.model.js';
 import { routeLogger } from '../middlewares/logger.mdw.js'
+import { isAuthenticated } from '../middlewares/authentication.mdw.js'
+import validate from '../middlewares/validate.mdw.js';
+import RequestSchemas from '../schemas/EditRequest.schemas.js';
 const router = express.Router();
 
 router.use(routeLogger);
 // Get all ad location edit requests
-router.get('/', async (req, res) => {
+router.get('/', isAuthenticated, async (req, res) => {
     try {
         const adBoardEditRequests = await AdBoardEditRequestModel.find();
         res.json(adBoardEditRequests);
@@ -17,7 +20,7 @@ router.get('/', async (req, res) => {
     }
 });
 // Create a new ad location edit request
-router.post('/', async (req, res) => {
+router.post('/', isAuthenticated,validate(RequestSchemas.req_schema), async (req, res) => {
     console.log(req.body);
     try {
         const savedRequest = await new AdBoardEditRequestModel(req.body).save();
@@ -28,7 +31,7 @@ router.post('/', async (req, res) => {
 });
 
 // Update ad location edit request by ID
-router.put('/:id', async (req, res) => {
+router.put('/:id', isAuthenticated, validate(RequestSchemas.req_update_schema),async (req, res) => {
     try {
         const adBoardEditRequest = await AdBoardEditRequestModel.findByIdAndUpdate(
             req.params.id,
@@ -47,7 +50,7 @@ router.put('/:id', async (req, res) => {
     }
 });
 
-router.post('/findByUserRequest/', async (req, res) => {
+router.post('/findByUserRequest/', isAuthenticated, async (req, res) => {
     try {
         var adBoardEditRequests;
         if (!req.body.userRequest) {
@@ -75,7 +78,7 @@ router.post('/findByUserRequest/', async (req, res) => {
 });
 
 // Get ad location edit request by ID
-router.get('/:id', async (req, res) => {
+router.get('/:id', isAuthenticated, async (req, res) => {
     try {
         const adBoardEditRequest = await AdBoardEditRequestModel.findById(req.params.id);
         if (!adBoardEditRequest) {

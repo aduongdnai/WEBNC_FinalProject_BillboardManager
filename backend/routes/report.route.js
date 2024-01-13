@@ -2,9 +2,12 @@ import express from 'express';
 import UserReportModel from '../models/userReport.model.js';
 import mongoose from 'mongoose';
 import { routeLogger } from '../middlewares/logger.mdw.js'
+import  {isAuthenticated} from '../middlewares/authentication.mdw.js'
+import validate from '../middlewares/validate.mdw.js'
+import reportSchemas from '../schemas/report.schemas.js'
 const router = express.Router();
 router.use(routeLogger);
-router.post('/', async (req, res) => {
+router.post('/', validate(reportSchemas.report_schema),async (req, res) => {
     const reportData = req.body;
     //console.log(req.body);
     const newReport = new UserReportModel(reportData);
@@ -22,7 +25,7 @@ router.post('/', async (req, res) => {
     }
 });
 
-router.put('/:id', async (req, res) => {
+router.put('/:id',isAuthenticated,validate(reportSchemas.report_update_schema), async (req, res) => {
     const { id } = req.params;
     const { processMethod, status, updatedTime } = req.body;
 
