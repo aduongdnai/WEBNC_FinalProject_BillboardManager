@@ -1,3 +1,4 @@
+import { serverClient } from '../../apis/serverAxiosClient';
 import React, { useEffect } from 'react';
 import { Box, Table, Thead, Tbody, Tr, Th, Td, Text, ButtonGroup, Button, Center, useToast } from '@chakra-ui/react';
 import { ViewIcon, SmallCloseIcon, InfoOutlineIcon, ArrowDownIcon } from '@chakra-ui/icons';
@@ -39,7 +40,7 @@ function AdBoardRequestListCBQuanPhuong() {
             try {
                 //const result = await AdvertisingLicenseRequestApi.getAdvertisingLicenseRequestByUserId(user._id);
                 const data = { userRequest: userData.email };
-                const result = await axios.post(`http://localhost:5000/api/v1/adBoardEditRequest/findByUserRequest/`, data)
+                const result = await serverClient.post(`/adBoardEditRequest/findByUserRequest/`, data)
                 console.log(result.data);
                 setRequestsList(result.data);
                 setUpdate(false);

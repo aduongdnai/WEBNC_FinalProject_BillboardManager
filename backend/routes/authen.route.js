@@ -51,7 +51,7 @@ router.post('/login', async (req, res) => {
     }
 
 });
-router.get('/logout', async (req, res) => {
+router.get('/logout',async (req, res) => {
     try {
         // Get the user's email from the request
         const { email } = req.body;
@@ -61,7 +61,7 @@ router.get('/logout', async (req, res) => {
 
         return res.status(200).json({
             success: true,
-            msg: "logout success"
+            msg: "logout success",           
         });
     } catch (error) {
         console.error('Error Logout:', error);
@@ -95,7 +95,7 @@ router.post('/signup', isAuthenticated, async (req, res) => {
         // Save the new user document to the database
         await newUser.save();
 
-        return res.status(201).json({ message: 'User created successfully' });
+        return res.status(201).json({ message: 'User created successfully' ,token: req.token});
     } catch (err) {
         console.error('Error creating user:', err);
         return res.status(500).json({ error: 'Internal Server Error' });

@@ -1,3 +1,4 @@
+import { serverClient } from '../../apis/serverAxiosClient';
 import React, { useState } from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
@@ -81,11 +82,11 @@ const EditRequestForm = (props) => {
             }
             console.log(data);
 
-            const result = await axios.post(`http://localhost:5000/api/v1/adBoardEditRequest/`, data);
+            const result = await serverClient.post(`/adBoardEditRequest/`, data);
             // Clear any previous errors
             setError(null);
 
-            if (result) {
+            if (result.data) {
                 toast({
                     title: "Chỉnh sửa bảng quảng cáo thành công",
                     status: "success",

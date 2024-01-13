@@ -1,3 +1,4 @@
+import { serverClient } from '../../apis/serverAxiosClient';
 import React, { useEffect } from 'react';
 import { Box, Table, Thead, Tbody, Tr, Th, Td, Text, ButtonGroup, Button, Center, useToast } from '@chakra-ui/react';
 import { ViewIcon, SmallCloseIcon, InfoOutlineIcon, ArrowDownIcon } from '@chakra-ui/icons';
@@ -19,7 +20,6 @@ import userApi from '../../apis/userApi.js';
 import AdvertisingLicenseRequestApi from '../../apis/advertisingLicenseRequestApi.js';
 import adBoardApi from '../../apis/adBoardApi.js';
 import { useSelector } from 'react-redux';
-import axios from 'axios';
 import adLocationAPI from '../../apis/adLocationApi.js';
 function AdLocationEditRequestListCBSo() {
     const [request, setRequest] = React.useState(null);
@@ -44,7 +44,7 @@ function AdLocationEditRequestListCBSo() {
                 image: request.image
             }
             const result = await adLocationAPI.updateAdLocation(request.adLocation._id, data);
-            const resultStatus = await axios.put(`http://localhost:5000/api/v1/adLocationEditRequest/${request._id}`, { status: "Approved" })
+            const resultStatus = await serverClient.put(`/adLocationEditRequest/${request._id}`, { status: "Approved" })
             setUpdate(true);
 
             onClose();
@@ -64,7 +64,7 @@ function AdLocationEditRequestListCBSo() {
             try {
                 //const result = await AdvertisingLicenseRequestApi.getAdvertisingLicenseRequestByUserId(user._id);
                 const data = { userRequest: null };
-                const result = await axios.post(`http://localhost:5000/api/v1/adLocationEditRequest/findByUserRequest/`, data)
+                const result = await serverClient.post(`/adLocationEditRequest/findByUserRequest/`, data)
                 console.log(result.data);
                 setRequestsList(result.data);
                 setUpdate(false);
@@ -77,7 +77,7 @@ function AdLocationEditRequestListCBSo() {
     }, [update]);
     const handleRejectRequest = async () => {
         try {
-            const resultStatus = await axios.put(`http://localhost:5000/api/v1/adLocationEditRequest/${request._id}`, { status: "Rejected" })
+            const resultStatus = await serverClient.put(`/adLocationEditRequest/${request._id}`, { status: "Rejected" })
             setUpdate(true);
             onClose();
         } catch (error) {

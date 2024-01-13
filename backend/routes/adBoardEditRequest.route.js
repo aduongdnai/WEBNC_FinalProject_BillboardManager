@@ -14,7 +14,7 @@ router.use(routeLogger);
 router.get('/', isAuthenticated, async (req, res) => {
     try {
         const adBoardEditRequests = await AdBoardEditRequestModel.find();
-        res.json(adBoardEditRequests);
+        res.json({data: adBoardEditRequests, token: req.token});
     } catch (err) {
         res.status(500).json({ message: err.message });
     }
@@ -24,7 +24,7 @@ router.post('/', isAuthenticated,validate(RequestSchemas.req_schema), async (req
     console.log(req.body);
     try {
         const savedRequest = await new AdBoardEditRequestModel(req.body).save();
-        res.status(201).json(savedRequest);
+        res.status(201).json({data:savedRequest,token: req.token});
     } catch (err) {
         res.status(400).json({ message: err.message });
     }
@@ -44,7 +44,7 @@ router.put('/:id', isAuthenticated, validate(RequestSchemas.req_update_schema),a
             console.log(clientId);
             global.io.to(clientId).emit('UPDATE_ADBOARD_NOTIFICATION', {...adBoardEditRequest, adBoard, adLocation});
         }
-        res.json(adBoardEditRequest);
+        res.json({data:adBoardEditRequest,token: req.token});
     } catch (err) {
         res.status(400).json({ message: err.message });
     }
@@ -70,7 +70,7 @@ router.post('/findByUserRequest/', isAuthenticated, async (req, res) => {
                 adLocation
             };
         }));
-        res.json(adBoardEditRequestsWithUser);
+        res.json({data:adBoardEditRequestsWithUser,token: req.token});
     } catch (err) {
         console.log(err);
         res.status(500).json({ message: err.message });
@@ -84,7 +84,7 @@ router.get('/:id', isAuthenticated, async (req, res) => {
         if (!adBoardEditRequest) {
             return res.status(404).json({ message: 'Ad location edit request not found' });
         }
-        res.json(adBoardEditRequest);
+        res.json({data:adBoardEditRequest,token: req.token});
     } catch (err) {
         res.status(500).json({ message: err.message });
     }

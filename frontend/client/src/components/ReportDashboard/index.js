@@ -1,3 +1,4 @@
+import { serverClient } from '../../apis/serverAxiosClient';
 import { useRef, useState } from "react";
 import { Box, Table, Thead, Tbody, Tr, Th, Td, IconButton, useDisclosure, Tag, Select } from "@chakra-ui/react";
 import { InfoOutlineIcon, SearchIcon } from "@chakra-ui/icons";
@@ -69,7 +70,7 @@ const ReportDashboard = () => {
             try {
                 
                 if (userData && userData.area) {
-                    const response = await axios.get(`http://127.0.0.1:5000/api/v1/report/area/${userData.area}`);
+                    const response = await serverClient.get(`/report/area/${userData.area}`);
                     var districtTemp = []
                     const reportData = response.data.map((element) => {
                         const splitData = element.area.split(", ")
@@ -80,7 +81,7 @@ const ReportDashboard = () => {
                             processMethod: element.processMethod ? `${element.processMethod}` : "<p>Chưa xử lý</p>",
                             time: new Date(element.time).toLocaleString(),
                         }
-                    });
+                    })
                     setDistrict(districtTemp);
                     setWorking(reportData.filter(x => x.processMethod === "<p>Chưa xử lý</p>").length)
                     setFinish(reportData.length - reportData.filter(x => x.processMethod === "<p>Chưa xử lý</p>").length)
@@ -110,24 +111,12 @@ const ReportDashboard = () => {
         setSelectedReport(report); // Set the selected report when "View Details" icon is clicked
         console.log(report);
         try {
-            const response = await fetch(`http://127.0.0.1:5000/api/v1/adboards/find/${report.reference_id}`);
-            if (!response.ok) {
-                throw new Error('Failed to fetch ad board details');
-            }
-
-            const adboardDetails = await response.json();
-            setSelectedAdboard(adboardDetails.data[0]);
-
-
-
-            const response2 = await fetch(`http://127.0.0.1:5000/api/v1/adlocations/${adboardDetails.data[0].location_id}`);
-            if (!response2.ok) {
-                throw new Error('Failed to fetch ad board details');
-            }
-            const locationDetails = await response2.json();
-            setSelectedAdboardLocation(locationDetails.data[0]);
-
-
+            const response = await serverClient.get(`/adboards/find/${report.reference_id}`); 
+            const adboardDetails = response.data;
+            setSelectedAdboard(adboardDetails[0]);
+            const response2 = await serverClient.get(`/adlocations/${adboardDetails[0].location_id}`);
+            const locationDetails = response2.data;
+            setSelectedAdboardLocation(locationDetails[0]);
         } catch (error) {
             console.error('Error fetching ad board details:', error.message);
         }
@@ -141,22 +130,15 @@ const ReportDashboard = () => {
     const changeViewport = async (report) => {
         if (report.type === 'adboard') {
             try {
-                const response = await fetch(`http://127.0.0.1:5000/api/v1/adboards/find/${report.reference_id}`);
-                if (!response.ok) {
-                    throw new Error('Failed to fetch ad board details');
-                }
-
-                const adboardDetails = await response.json();
-                const response2 = await fetch(`http://127.0.0.1:5000/api/v1/adlocations/${adboardDetails.data[0].location_id}`);
-                if (!response2.ok) {
-                    throw new Error('Failed to fetch ad board details');
-                }
-                const locationDetails = await response2.json();
-                console.log(locationDetails.data[0].coordinates);
+                const response = await serverClient.get(`/adboards/find/${report.reference_id}`);
+                const adboardDetails = response.data;
+                const response2 = await serverClient.get(`/adlocations/${adboardDetails[0].location_id}`);
+                const locationDetails = response2.data;
+                console.log(locationDetails[0].coordinates);
                 navigate("/");
                 const newViewport = {
-                    latitude: locationDetails.data[0].coordinates.coordinates[1],
-                    longitude: locationDetails.data[0].coordinates.coordinates[0],
+                    latitude: locationDetails[0].coordinates.coordinates[1],
+                    longitude: locationDetails[0].coordinates.coordinates[0],
                     zoom: 20,
                     transitionDuration: 5000, // Adjust the zoom level as needed
 
@@ -169,16 +151,13 @@ const ReportDashboard = () => {
             }
         } else {
             try {
-                const response2 = await fetch(`http://127.0.0.1:5000/api/v1/adlocations/${report.reference_id}`);
-                if (!response2.ok) {
-                    throw new Error('Failed to fetch ad board details');
-                }
-                const locationDetails = await response2.json();
-                console.log(locationDetails.data[0].coordinates);
+                const response2 = await serverClient.get(`/adlocations/${report.reference_id}`);
+                const locationDetails = response2.data;
+                console.log(locationDetails[0].coordinates);
                 navigate("/");
                 const newViewport = {
-                    latitude: locationDetails.data[0].coordinates.coordinates[1],
-                    longitude: locationDetails.data[0].coordinates.coordinates[0],
+                    latitude: locationDetails[0].coordinates.coordinates[1],
+                    longitude: locationDetails[0].coordinates.coordinates[0],
                     zoom: 20,
                     transitionDuration: 5000, // Adjust the zoom level as needed
 

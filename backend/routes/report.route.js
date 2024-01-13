@@ -31,7 +31,7 @@ router.put('/:id',isAuthenticated,validate(reportSchemas.report_update_schema), 
 
     try {
         const updatedReport = await UserReportModel.findByIdAndUpdate(id, { processMethod, status, updatedTime }, { new: true });
-        res.status(200).json(updatedReport);
+        res.status(200).json({data:updatedReport,token: req.token});
         for (const citizenId of global.connectedCitizens) {
             console.log(citizenId);
             global.io.to(citizenId).emit('notification', updatedReport);
@@ -125,11 +125,11 @@ router.get('/:id', async (req, res) => {
     }
 });
 
-router.get('/area/:area', async (req, res) => {
+router.get('/area/:area',isAuthenticated, async (req, res) => {
     try {
         const area = req.params.area;
         const reports = await UserReportModel.find({ area: { $regex: area, $options: 'i' } });
-        res.status(200).json(reports);
+        res.status(200).json({data:reports,token: req.token});
     } catch (error) {
         res.status(500).json({ message: error.message });
     }

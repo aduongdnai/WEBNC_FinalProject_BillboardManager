@@ -58,8 +58,8 @@ router.post('/', isAuthenticated, validateMdw(adBoardSchema.adBoardSchema), asyn
 
         res.status(200).json({
             result,
-            msg: "success"
-
+            msg: "success",
+            token: req.token
         })
 
     }
@@ -80,7 +80,8 @@ router.patch('/:id', isAuthenticated, async (req, res) => {
         if (result) {
             res.status(200).json({
                 data: result,
-                msg: "success"
+                msg: "success",
+                token: req.token
             })
         } else {
             res.status(400).json({
@@ -105,7 +106,7 @@ router.delete("/:id", isAuthenticated, async (req, res) => {
 
     try {
         const deleteAdBoard = await AdBoardModel.findByIdAndDelete(id);
-        res.status(200).json(deleteAdBoard);
+        res.status(200).json({deleteAdBoard,token: req.token});
     } catch (error) {
         res.status(500).json({ message: error.message });
     }

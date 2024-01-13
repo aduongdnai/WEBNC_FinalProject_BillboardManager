@@ -20,7 +20,7 @@ import userApi from '../../apis/userApi.js';
 import AdvertisingLicenseRequestApi from '../../apis/advertisingLicenseRequestApi.js';
 import adBoardApi from '../../apis/adBoardApi.js';
 import { useSelector } from 'react-redux';
-import axios from 'axios';
+import { serverClient } from '../../apis/serverAxiosClient';
 function AdLocationEditRequestListCBQuanPhuong() {
     const [request, setRequest] = React.useState(null);
     const [requestList, setRequestsList] = React.useState([]);
@@ -39,7 +39,7 @@ function AdLocationEditRequestListCBQuanPhuong() {
             try {
                 //const result = await AdvertisingLicenseRequestApi.getAdvertisingLicenseRequestByUserId(user._id);
                 const data = { userRequest: userData.email };
-                const result = await axios.post(`http://localhost:5000/api/v1/adLocationEditRequest/findByUserRequest/`, data)
+                const result = await serverClient.post(`/adLocationEditRequest/findByUserRequest/`, data)
                 console.log(result.data);
                 setRequestsList(result.data);
                 setUpdate(false);

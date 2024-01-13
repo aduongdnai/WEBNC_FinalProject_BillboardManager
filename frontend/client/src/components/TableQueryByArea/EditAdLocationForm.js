@@ -14,7 +14,7 @@ import CustomInput from '../CustomInput';
 import CustomSelect from '../CustomSelect';
 import ImageUploaderWithWidget from '../ImageUploaderWithWidget';
 import { useSelector } from 'react-redux';
-
+import { serverClient } from '../../apis/serverAxiosClient';
 const EditAdLocationForm = (props) => {
   const userData = useSelector(state => state.auth.userData);
   const { info, onClose } = props;
@@ -90,10 +90,10 @@ const EditAdLocationForm = (props) => {
         status: "Pending"
       }
       console.log(data);
-      const result = await axios.post(`http://localhost:5000/api/v1/adLocationEditRequest/`, data);
+      const result = await serverClient.post(`/adLocationEditRequest/`, data);
       setError(null);
       setPublicId('');
-      if (result) {
+      if (result.data) {
         toast({
           title: "Gửi yêu cầu thành công",
           status: "success",

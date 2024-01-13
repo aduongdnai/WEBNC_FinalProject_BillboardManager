@@ -1,3 +1,4 @@
+import { serverClient } from '../../../apis/serverAxiosClient';
 import React, { useState } from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
@@ -32,9 +33,9 @@ const ReportForm = (props) => {
                     var isContain = null;
                     console.log(name);
                     if(name === ''){
-                        const apiCheck = await axios.post(`http://127.0.0.1:5000/api/v1/ward/findWard`, {area: values.name,district: district});
-                        if(apiCheck.data.data.length === 0){
-                            apiResponse = await axios.post(`http://127.0.0.1:5000/api/v1/ward`, values);
+                        const apiCheck = await serverClient.post(`/ward/findWard`, {area: values.name,district: district});
+                        if(apiCheck.data && apiCheck.data.length === 0){
+                            apiResponse = await serverClient.post(`/ward`, values);
                             initialValues.name = values.name
                             setUpdate(true);
                             isExist = false
@@ -45,11 +46,11 @@ const ReportForm = (props) => {
                         }
                     }
                     else{
-                        const apiCheck = await axios.post(`http://127.0.0.1:5000/api/v1/ward/findWard`, {area: values.name,district: district});
-                        const apiContain = await axios.post(`http://127.0.0.1:5000/api/v1/adlocations/findByArea`, {area: `${name}, ${district}`});
-                        if(apiCheck.data.data.length === 0){
-                            if(apiContain.data.data.length === 0){
-                                apiResponse = await axios.put(`http://127.0.0.1:5000/api/v1/ward/${id}`,values)
+                        const apiCheck = await serverClient.post(`/ward/findWard`, {area: values.name,district: district});
+                        const apiContain = await serverClient.post(`/adlocations/findByArea`, {area: `${name}, ${district}`});
+                        if(apiCheck.data && apiCheck.data.length === 0){
+                            if(apiCheck.data && apiCheck.data.length === 0){
+                                apiResponse = await serverClient.put(`/ward/${id}`,values)
                                 initialValues.name = values.name
                                 setUpdate(true);
                                 isContain = false;
@@ -126,11 +127,11 @@ const ReportForm = (props) => {
             try{
                 var isContain = null;
                 console.log(values);
-                const apiContain = await axios.post(`http://127.0.0.1:5000/api/v1/adlocations/findByArea`, {area: `${name}, ${district}`});
+                const apiContain = await serverClient.post(`/adlocations/findByArea`, {area: `${name}, ${district}`});
                 console.log(apiContain);
-                if(apiContain.data.data.length === 0){
+                if(apiContain.data && apiContain.data.length === 0){
                     console.log("get here");
-                    const apiResponse = await axios.delete(`http://127.0.0.1:5000/api/v1/ward/${id}`);
+                    const apiResponse = await serverClient.delete(`/ward/${id}`);
                     setUpdate(true);
                     isContain = false;
                 }

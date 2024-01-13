@@ -27,6 +27,7 @@ import * as authApi from "../../apis/authApi"
 import store from "../../store";
 import { loginSuccess } from "../actions/authAction";
 import emailjs from '@emailjs/browser';
+import { serverClient } from '../../apis/serverAxiosClient';
 function Login() {
 
   const { setUser, setUserArea, setUserData } = useUser();
@@ -37,10 +38,6 @@ function Login() {
   const toast = useToast();
   const handleLogin = async () => {
     try {
-      // const response = await axios.post("http://127.0.0.1:5000/v1/auth/login", {
-      //   email: email,
-      //   password: password,
-      // });
       const response = await authApi.login({
         email: email,
         password: password,
@@ -157,12 +154,11 @@ function Login() {
     try {
       
       if (otp === _otp) {
-        const response = await axios.post(`http://127.0.0.1:5000/api/v1/users/resetpassword`, {
+        const response = await serverClient.post(`/users/resetpassword`, {
           email: currentEmail,
           resetToken: "RESETTOKEN",
-        });
-        console.log(response);
-        if (response.status === 200) {
+        });      
+        if (response.success) {
           sendPw()
           toast({
             title: 'Please check your email',

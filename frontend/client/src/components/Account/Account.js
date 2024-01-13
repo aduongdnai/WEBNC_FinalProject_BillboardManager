@@ -26,7 +26,7 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-
+import { serverClient } from "../../apis/serverAxiosClient";
 function Account() {
 
   const [currentPassword, setCurrentPassword] = useState("");
@@ -48,15 +48,11 @@ function Account() {
       return; // Prevent further execution if passwords don't match
     }
     try {
-      const response = await axios.put(
-        `http://127.0.0.1:5000/api/v1/users/change-password/${userData._id}`,
-        {
-          oldPassword: currentPassword,
-          newPassword: newPassword
-        }
-      );
-
-      console.log("Password changed successfully", response.data);
+      const response = serverClient.put(`/users/change-password/${userData._id}`,{
+        oldPassword: currentPassword,
+        newPassword: newPassword
+      })
+      
       toast({
         title: "Password changed successfully",
         description: "Your password has been updated.",

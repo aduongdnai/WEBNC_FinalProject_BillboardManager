@@ -1,3 +1,4 @@
+import { serverClient } from '../../apis/serverAxiosClient';
 import { useState } from "react";
 import { Box, Table, Thead, Tbody, Tr, Th, Td, IconButton, useDisclosure } from "@chakra-ui/react";
 import { InfoOutlineIcon, } from "@chakra-ui/icons";
@@ -54,10 +55,10 @@ const ReportTypesManagement = () => {
         try {
             var isExist = null;
             console.log(reportType);
-            const apiCheck = await axios.post(`http://127.0.0.1:5000/api/v1/reportTypes/findRpType`, { area: name });
-            if(apiCheck.data.data.length === 0){
-                const response = await axios.put(`http://127.0.0.1:5000/api/v1/reportTypes/${reportType._id}`, { name: name });
-                const apiUpdate = await axios.post(`http://127.0.0.1:5000/api/v1/report/updateRpType`,{oldRpType: reportType.name, newRpType: name})
+            const apiCheck = await serverClient.post(`/reportTypes/findRpType`, { area: name });
+            if(apiCheck.data && apiCheck.data.length === 0){
+                const response = await serverClient.put(`/reportTypes/${reportType._id}`, { name: name });
+                const apiUpdate = await serverClient.post(`/report/updateRpType`,{oldRpType: reportType.name, newRpType: name})
                 setUpdate(true);
                 isExist = false
             }
@@ -86,10 +87,10 @@ const ReportTypesManagement = () => {
     const handleDelete = async (reportType) => {
         try {
             var isContain = null;
-            const apiContain = await axios.post(`http://127.0.0.1:5000/api/v1/report/findByRpType`, {area: `${reportType.name}`});
+            const apiContain = await serverClient.post(`/report/findByRpType`, {area: `${reportType.name}`});
 
-            if(apiContain.data.data.length === 0){
-                const response = await axios.delete(`http://127.0.0.1:5000/api/v1/reportTypes/${reportType._id}`);
+            if(apiContain.data && apiContain.data.length === 0){
+                const response = await serverClient.delete(`/reportTypes/${reportType._id}`);
                 setUpdate(true);
                 isContain = false;
             }
@@ -117,9 +118,9 @@ const ReportTypesManagement = () => {
     const handleAddNew = async () => {
         try {
             var isExist = null;
-            const apiCheck = await axios.post(`http://127.0.0.1:5000/api/v1/reportTypes/findRpType`, { area: name });
-            if(apiCheck.data.data.length === 0){
-                const response = await axios.post(`http://127.0.0.1:5000/api/v1/reportTypes/`, { name: name });
+            const apiCheck = await serverClient.post(`/reportTypes/findRpType`, { area: name });
+            if(apiCheck.data && apiCheck.data.length === 0){
+                const response = await serverClient.post(`/reportTypes/`, { name: name });
                 setUpdate(true);
                 isExist = false
             }
@@ -147,8 +148,8 @@ const ReportTypesManagement = () => {
     useEffect(() => {
         const fetchReport = async () => {
             try {
-                const response = await axios.get('http://127.0.0.1:5000/api/v1/reportTypes');
-                setReportTypes(response.data.data);
+                const response = await serverClient.get('/reportTypes');
+                setReportTypes(response.data);
                 setUpdate(false);
             } catch (error) {
                 console.error('Error fetching report:', error.message);

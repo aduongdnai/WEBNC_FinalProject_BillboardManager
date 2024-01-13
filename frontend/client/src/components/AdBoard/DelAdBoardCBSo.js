@@ -7,7 +7,7 @@ import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import { useToast, Input } from '@chakra-ui/react';
 import { useEffect } from 'react';
-
+import { serverClient } from '../../apis/serverAxiosClient';
 
 const DelAdBoardCBSo = (props) => {
     const { info,id, onClose, setUpdate } = props;
@@ -16,11 +16,11 @@ const DelAdBoardCBSo = (props) => {
     const handleSubmit = async(values, { setSubmitting, resetForm }) =>{
         try{
             var isContain = null;
-            const apiAdLicense = await axios.get(`http://127.0.0.1:5000/api/v1/advertisingLicenseRequest/adboard/${info._id}`);
-            const apiReport = await axios.post(`http://127.0.0.1:5000/api/v1/report/adBoardtype/${info._id}`);
-            if(apiAdLicense.data.data.length === 0 && apiReport.data.data.length === 0){
+            const apiAdLicense = await serverClient.get(`/advertisingLicenseRequest/adboard/${info._id}`);
+            const apiReport = await serverClient.post(`/report/adBoardtype/${info._id}`);
+            if(apiAdLicense.data.length === 0 && apiReport.data.length === 0){
                 console.log("get here");
-                const apiResponse = await axios.delete(`http://127.0.0.1:5000/api/v1/adboards/${info._id}`);
+                const apiResponse = await serverClient.delete(`/adboards/${info._id}`);
                 setUpdate(true);
                 isContain = false;
             }
