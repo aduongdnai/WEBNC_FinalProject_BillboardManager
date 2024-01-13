@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Box, Table, Thead, Tbody, Tr, Th, Td, IconButton, useDisclosure } from "@chakra-ui/react";
+import { useRef, useState } from "react";
+import { Box, Table, Thead, Tbody, Tr, Th, Td, IconButton, useDisclosure, Tag } from "@chakra-ui/react";
 import { InfoOutlineIcon, SearchIcon } from "@chakra-ui/icons";
 import { IoIosInformationCircle } from "react-icons/io";
 import { Tooltip } from "@chakra-ui/react";
@@ -24,6 +24,8 @@ import { IoSearchOutline } from "react-icons/io5";
 import ToolkitProvider, { Search } from 'react-bootstrap-table2-toolkit/dist/react-bootstrap-table2-toolkit';
 import BootstrapTable from 'react-bootstrap-table-next';
 import paginationFactory from 'react-bootstrap-table2-paginator';
+import filterFactory, { selectFilter } from 'react-bootstrap-table2-filter';
+
 
 import {  useUser } from "../LoginSignup/userContext";
 import Pagination from "./Pagination"
@@ -31,12 +33,26 @@ import ReportProcessForm from "../ReportProcessForm";
 import {useSelector} from "react-redux"
 import { BsMap, BsArrowRightCircle  } from "react-icons/bs";
 import { FaMap, FaArrowCircleRight } from "react-icons/fa";
+import "./style.css";
+
+
+function methodFormatter(cell, row) {
+    return (
+    <span>
+        <div className="custom-css" dangerouslySetInnerHTML={{ __html: cell }} />
+    </span>
+    );
+}
 
 const ITEMS_PER_PAGE = 10;
 const ReportDashboard = () => {
     const [selectedReport, setSelectedReport] = useState(null);
     const [selectedAdboard, setSelectedAdboard] = useState(null);
     const [selectedAdboardLocation, setSelectedAdboardLocation] = useState(null);
+    const [finish, setFinish] = useState(0);
+    const [working, setWorking] = useState(0);
+    const currentData = useRef();
+    var selectOptions = []
 
     const userData = useSelector((state)=>state.auth.userData)
     //console.log(userData);
@@ -49,7 +65,18 @@ const ReportDashboard = () => {
                 
                 if (userData && userData.area) {
                     const response = await axios.get(`http://127.0.0.1:5000/api/v1/report/area/${userData.area}`);
-                    const reportData = response.data;
+                    const reportData = response.data.map((element) => {
+                        const splitString = element.area.split(',')
+                        return{
+                            ...element,
+                            processMethod: element.processMethod ? `${element.processMethod}` : "<p>Chưa xử lý</p>",
+                            ward: splitString[splitString.length - 3],
+                            district: splitString[splitString.length - 2]
+                        }
+                    });
+                    setWorking(reportData.filter(x => x.processMethod === "<p>Chưa xử lý</p>").length)
+                    setFinish(reportData.length - reportData.filter(x => x.processMethod === "<p>Chưa xử lý</p>").length)
+                    console.log(reportData);
                     setReport(reportData);
                 }
                 
@@ -61,7 +88,7 @@ const ReportDashboard = () => {
         fetchReport();
     }, [userData]);
 
-
+    
 
     //console.log(report);
     const { isOpen: isInfoModalOpen, onOpen: onInfoModalOpen, onClose: onInfoModalClose } = useDisclosure();
@@ -161,19 +188,22 @@ const ReportDashboard = () => {
     const indexOfFirstItem = indexOfLastItem - ITEMS_PER_PAGE;
     const currentItems = report.slice(indexOfFirstItem, indexOfLastItem);
 
+
+
+
     const columns = [
         {
             dataField: 'time',
             text: 'Send Time'
         }, 
-        {
-            dataField: 'senderName',
-            text: 'Sender'
-        }, 
-        {
-            dataField: 'phone',
-            text: 'Phone Number'
-        }, 
+        // {
+        //     dataField: 'senderName',
+        //     text: 'Sender'
+        // }, 
+        // {
+        //     dataField: 'phone',
+        //     text: 'Phone Number'
+        // }, 
         {
             dataField: 'reportType',
             text: 'Report Type'
@@ -183,8 +213,21 @@ const ReportDashboard = () => {
             text: 'Address'
         }, 
         {
+            dataField: 'ward',
+            text: 'Ward'
+        },
+        {
+            dataField: 'district',
+            text: 'District'
+        },
+        {
             dataField: 'status',
             text: 'Status'
+        }, 
+        {
+            dataField: 'processMethod',
+            text: 'Process Method',
+            formatter: methodFormatter
         }, 
         {
           dataField: 'action',
@@ -297,6 +340,14 @@ const ReportDashboard = () => {
     }
 
     const MySearch = (props) => {
+        const [query, setQuery] = useState("");
+        useEffect(() => {
+            const timeOutId = setTimeout(() => {
+                props.onSearch(query)
+                //sh(currentData.current.table.props.data.length - currentData.current.table.props.data.filter(x => x.processMethod === "<p>Chưa xử lý</p>").length)
+            },500);
+            return () => clearTimeout(timeOutId);
+        }, [query]);
         return (
             <div className="form-group has-search">
               <span className="form-control-feedback">
@@ -307,19 +358,23 @@ const ReportDashboard = () => {
               style={{marginTop:"20px", marginBottom:"15px"}}
               type="text"
               onChange={(event) => {
-                props.onSearch(event.target.value)
+                setQuery(event.target.value)
+                // console.log(currentData.current.table.props.data);
               }}
               placeholder='Search'
               />
-              {/* <div style={{width:"100%",display:"flex",justifyContent:"flex-end"}}>
-              <Button leftIcon={<CiCirclePlus size="20" />} justifyContent="flex-start" width="200px" colorScheme='teal' variant='solid' 
+              <div style={{width:"100%",display:"flex"}}>
+              {/* <Button leftIcon={<CiCirclePlus size="20" />} justifyContent="flex-start" width="200px" colorScheme='teal' variant='solid' 
                 onClick={() =>{
                     onAddModalOpen()
                   }
                 }>
                 Add
-              </Button>
-              </div> */}
+              </Button> */}
+
+              <Tag colorScheme="teal">{finish} Report finished</Tag>
+              <Tag colorScheme="red" style={{marginLeft:"10px"}}>{working} Report is working on</Tag>
+              </div>
             </div>
         );
     };
@@ -410,6 +465,7 @@ const ReportDashboard = () => {
                                 { ...props.searchProps } 
                             />
                             <BootstrapTable
+                                ref={currentData}
                                 { ...props.baseProps }
                                 pagination={paginationFactory(options)} 
                                 striped
