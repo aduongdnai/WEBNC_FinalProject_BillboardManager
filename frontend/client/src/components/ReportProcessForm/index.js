@@ -11,7 +11,7 @@ import emailjs from '@emailjs/browser';
 import { useToast } from '@chakra-ui/react';
 
 const ReportProcessForm = (props) => {
-    const { info } = props;
+    const { info, setUpdate, onClose } = props;
     const {userData} = useUser();
     const toast = useToast();
     const initialValues = {
@@ -32,10 +32,10 @@ const ReportProcessForm = (props) => {
                 values.updatedTime = new Date().toISOString();
                 values.processMethod = text;
                 const apiResponse = await serverClient.put(`/report/${info._id}`, values);     
+                setUpdate(true)
                 resetForm();  
-                   
                 setTimeout(() => {
-                    window.location.reload();
+                    onClose()
                   }, 2000);
 
                 sendFeedback("template_9q0017f", {status:values.status,to_name: info.senderName,message: values.processMethod, from_name: `Cán bộ ${userData.area}`, to_email: info.email})
