@@ -38,8 +38,8 @@ const socket = io("http://127.0.0.1:5000");
 function App() {
   const userData = useSelector(state => state.auth.userData);
   var userArea;
-  if(userData?.role === "CB-So") userArea = "Hồ Chí Minh";
-  else if(userData?.role === "CB-Quan") userArea = `Quận ${userData.district}, Hồ Chí Minh`
+  if (userData?.role === "CB-So") userArea = "Hồ Chí Minh";
+  else if (userData?.role === "CB-Quan") userArea = `Quận ${userData.district}, Hồ Chí Minh`
   else userArea = `Phường ${userData?.ward}, Quận ${userData?.district}, Hồ Chí Minh`
   const toast = useToast();
   const [report, setReport] = useState();
@@ -81,7 +81,7 @@ function App() {
     socket.on("UPDATE_LOCATION_NOTIFICATION", (data) => {
       console.log("Received notification:", data);
       toast.closeAll();
-      if (userData?.email === data._doc.userRequest){
+      if (userData?.email === data._doc.userRequest) {
         console.log("Data");
         toast({
           title: `Yêu cầu chỉnh sửa điểm đặt quảng cáo của bạn đã được phản hồi`,
@@ -102,7 +102,7 @@ function App() {
     socket.on("UPDATE_ADBOARD_NOTIFICATION", (data) => {
       console.log("Received notification:", data);
       toast.closeAll();
-      if (userData?.email === data._doc.userRequest){
+      if (userData?.email === data._doc.userRequest) {
         toast({
           title: `Yêu cầu chỉnh sửa bảng quảng cáo của bạn đã được phản hồi`,
           description: (
@@ -126,7 +126,7 @@ function App() {
     <UserProvider>
       <div style={{ display: "flex" }}>
         <Router>
-          {userData?<Sidebar />:<></>}
+          {userData ? <Sidebar /> : <></>}
           <Routes>
             <Route
               path="/map"
@@ -142,8 +142,8 @@ function App() {
               path="/table-area"
               element={
                 <ProtectedProvider>
-                  
-                  {userData?.role != "CB-So" ? <TableQueryByArea area={userArea}/> : <Navigate replace to="/manage-location" />}
+
+                  {userData?.role != "CB-So" ? <TableQueryByArea area={userArea} /> : <Navigate replace to="/manage-location" />}
                 </ProtectedProvider>
               }
             />
@@ -167,7 +167,7 @@ function App() {
               path="/manage-ward"
               element={
                 <ProtectedProvider>
-                  {userData?.role !== "CB-So" ? <Navigate replace to="/map" /> :  <ManageWard />}
+                  {userData?.role !== "CB-So" ? <Navigate replace to="/map" /> : <ManageWard />}
                 </ProtectedProvider>
               }
             />
@@ -191,15 +191,17 @@ function App() {
             <Route path="/login" element={<Login />} />
 
             <Route path="/signup" element={<ProtectedProvider>
-                {userData?.role !== "CB-So" ? <Navigate replace to="/map" /> : <Signup />}
-              </ProtectedProvider>} />
+              {userData?.role !== "CB-So" ? <Navigate replace to="/map" /> : <Signup />}
+            </ProtectedProvider>} />
 
             <Route path="/account" element={<ProtectedProvider><Account /></ProtectedProvider>} />
             <Route
               path="/report"
               element={
                 <ProtectedProvider>
-                  <ReportDashboard />
+                  <NotifyProvider isClick={isClick} report={report}>
+                    <ReportDashboard />
+                  </NotifyProvider>
                 </ProtectedProvider>
               }
             />
@@ -219,7 +221,7 @@ function App() {
                 </ProtectedProvider>
               }
             />
-           
+
             <Route path="/manage-location" element={
               <ProtectedProvider>
                 {userData?.role !== "CB-So" ? <Navigate replace to="/map" /> : <AdLocationPage />}
@@ -230,8 +232,8 @@ function App() {
             <Route
               path="/ad-boards/:locationId"
               element={<ProtectedProvider>
-              {userData?.role !== "CB-So" ? <Navigate replace to="/map" /> : <AdBoardsDisplay />}
-            </ProtectedProvider>}
+                {userData?.role !== "CB-So" ? <Navigate replace to="/map" /> : <AdBoardsDisplay />}
+              </ProtectedProvider>}
             />
 
             <Route
@@ -242,7 +244,7 @@ function App() {
                 </ProtectedProvider>
               }
             />
-             <Route
+            <Route
               path="/adlocation-edit-request-list"
               element={
                 <ProtectedProvider>
@@ -250,7 +252,7 @@ function App() {
                 </ProtectedProvider>
               }
             />
-             <Route
+            <Route
               path="/adboard-edit-request-list"
               element={
                 <ProtectedProvider>
@@ -259,7 +261,7 @@ function App() {
               }
             />
             <Route path="/" element={<Navigate replace to="/map" />} />
-           
+
           </Routes>
         </Router>
       </div>

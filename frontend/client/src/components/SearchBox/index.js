@@ -20,10 +20,14 @@ const SearchBox = () => {
         }
         else {
             ; (async () => {
-                const result = await mapAPI.adressToGeoCode(queryText);
-                if (result) {
-                    setSearchResults(result.results)
-                    //console.log(result.results[0].formatted_address);
+                try {
+                    const result = await mapAPI.adressToGeoCode(queryText);
+                    if (result) {
+                        setSearchResults(result.results)
+                        //console.log(result.results[0].formatted_address);
+                    }
+                } catch (error) {
+                    console.log(error);
                 }
 
             })()
@@ -73,9 +77,9 @@ const SearchBox = () => {
             {queryText && (
                 <Box maxH='70vh' p='0' overflowY='auto' bg='white' position='relative' zIndex={10}>
                     <Box px={4}>
-                        
-                            <SearchResults searchResults={searchResults} setSearchResults={setSearchResults} />
-                      
+
+                        <SearchResults searchResults={searchResults} setSearchResults={setSearchResults} />
+
                     </Box>
                 </Box>
             )}

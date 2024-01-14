@@ -7,7 +7,8 @@ const initialState = {
 }
 const viewportReducer = (state = initialState, action) => {
     switch (action.type) {
-        case 'SET_VIEWPORT': {
+        case 'SET_VIEWPORT':
+
             return {
                 ...state,
                 latitude: action.payload.latitude,
@@ -15,7 +16,7 @@ const viewportReducer = (state = initialState, action) => {
                 zoom: action.payload.zoom,
                 transitionDuration: action.payload.transitionDuration
             }
-        }
+
         default:
             return state
     }

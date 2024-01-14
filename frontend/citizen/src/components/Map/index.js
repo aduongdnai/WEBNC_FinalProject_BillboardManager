@@ -29,6 +29,7 @@ function Map(props) {
     const [filters, setFilters] = useState({ planned: true, reported: false });
     const viewport = useSelector(state => state.viewport)
     let reportLocations = useSelector(state => state.report.reportLocations)
+    let reports = useSelector(state => state.report.reports)
     const dispatch = useDispatch()
     const mapRef = useRef(null);
     const geolocateStyle = {
@@ -57,6 +58,26 @@ function Map(props) {
             try {
 
                 const result = await adLocationAPI.getAllAdLocation();
+                const newReportLocations = [];
+                const newReport = []
+                for (let i = 0; i < reportLocations.length; i++) {
+                    const res = await reportApi.getReportByID(reportLocations[i]._id);
+                    if (res.data[0]) {
+
+                        newReportLocations.push(res.data[0]);
+                    }
+                }
+                for (let i = 0; i < reports.length; i++) {
+                    const res = await reportApi.getReportByID(reports[i]._id);
+                    if (res.data[0]) {
+
+                        newReport.push(res.data[0]);
+                    }
+                }
+                console.log("newReportLocations: ", newReportLocations);
+                console.log(reportLocations);
+                localStorage.setItem("reportLocation", JSON.stringify(newReportLocations));
+                localStorage.setItem("report", JSON.stringify(newReport));
                 setAdLocation(result.data);
                 const features = await Promise.all(result.data.map(async (adLocation) => {
                     const hasAdBoard = await adLocationAPI.doesAdLocationHaveAdBoard(adLocation._id);

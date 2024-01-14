@@ -10,8 +10,10 @@ import ImageUploaderWithWidget from '../ImageUploaderWithWidget';
 import CustomInput from '../CustomInput';
 import store from '../../store';
 import { addReport, addReportLocation } from '../actions/reportAction';
+import { useToast } from '@chakra-ui/react';
+
 const ReportForm = (props) => {
-    const { info } = props;
+    const { info, onClose } = props;
     console.log(info);
     const initialValues = {
         type: info.type,
@@ -26,7 +28,7 @@ const ReportForm = (props) => {
         processingMethod: '',
         //adboard_id: '6582a64745b7528c3f429b7b',
     };
-
+    const toast = useToast();
     const validationSchema = Yup.object({
         reportType: Yup.string().required('Report Type is required'),
         senderName: Yup.string().required('Sender Name is required'),
@@ -57,19 +59,34 @@ const ReportForm = (props) => {
 
                 // Reset the form on successful submission
                 resetForm();
-                alert("Report submitted successfully!");
+                if (apiResponse) {
+                    toast({
+                        title: 'Gửi thành công.',
+                        description: "Gửi báo cáo thành công.",
+                        status: 'success',
+                        duration: 2000,
+                        isClosable: true,
+                    });
+                    setTimeout(() => {
+                        onClose();
+                    }, 1500);
+                }
 
-                var rp = localStorage.getItem('report');
-                rp = rp ? JSON.parse(rp) : [];
-                rp.push(apiResponse.data);
-                localStorage.setItem('report', JSON.stringify(rp));
-                store.dispatch(addReport(apiResponse.data));
+
+
                 if (info.type === 'plannedLocation') {
                     var rpl = localStorage.getItem('reportLocation');
                     rpl = rpl ? JSON.parse(rpl) : [];
                     rpl.push(apiResponse.data);
                     localStorage.setItem('reportLocation', JSON.stringify(rpl));
                     store.dispatch(addReportLocation(apiResponse.data));
+                }
+                else {
+                    var rp = localStorage.getItem('report');
+                    rp = rp ? JSON.parse(rp) : [];
+                    rp.push(apiResponse.data);
+                    localStorage.setItem('report', JSON.stringify(rp));
+                    store.dispatch(addReport(apiResponse.data));
                 }
                 //localStorage.setItem(`report_${values.reference_id}`, JSON.stringify({ ...apiResponse.data, isReported: true }));
             } catch (error) {
@@ -106,7 +123,7 @@ const ReportForm = (props) => {
             setRpTypes(types.data.data);
         }
         fetchData();
-            
+
     }, []);
     return (
         <ChakraProvider>
@@ -123,9 +140,9 @@ const ReportForm = (props) => {
                                     <option value="Đóng góp ý kiến">Đóng góp ý kiến</option>
                                     <option value="Giải đáp thắc mắc">Giải đáp thắc mắc</option> */}
                                     {rpTypes.map((type) => (
-                                            <option key={type.id} value={type.name}>{type.name}</option>
-                                        ))}
-                                    
+                                        <option key={type.id} value={type.name}>{type.name}</option>
+                                    ))}
+
                                 </Field>
                                 <ErrorMessage name="reportType" component="div" className="error-message" style={{ color: 'red' }} />
                             </FormControl>

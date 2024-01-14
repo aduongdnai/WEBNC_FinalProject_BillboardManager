@@ -123,7 +123,7 @@ function AdBoardList(props) {
                         <ModalHeader>Report Form</ModalHeader>
                         <ModalCloseButton />
                         <ModalBody>
-                            <ReportForm info={{ type: 'adboard', _id: info._id, area: info.displayAddress }}></ReportForm>
+                            <ReportForm info={{ type: 'adboard', _id: info._id, area: info.displayAddress }} onClose={onReportModalClose}></ReportForm>
                         </ModalBody>
 
 

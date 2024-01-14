@@ -37,7 +37,7 @@ function LocationInfo(props) {
                         <ModalHeader>Report Location Form</ModalHeader>
                         <ModalCloseButton />
                         <ModalBody>
-                            <ReportForm info={{ ...info, type: 'plannedLocation', _id: info._id, area: info.area }}></ReportForm>
+                            <ReportForm info={{ ...info, type: 'plannedLocation', _id: info._id, area: info.area }} onClose={onReportModalClose}></ReportForm>
                         </ModalBody>
 
 

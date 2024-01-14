@@ -11,10 +11,19 @@ const reportReducer = (state = initialState, action) => {
                 reports: [...state.reports, action.payload],
             };
         case 'UPDATE_REPORT':
+            console.log(action.payload);
             return {
                 ...state,
                 reports: state.reports.map(report =>
-                    report.id === action.payload.id ? action.payload : report
+                    report._id === action.payload._id ? action.payload : report
+                ),
+            };
+        case 'UPDATE_REPORT_LOCATION':
+            console.log(action.payload);
+            return {
+                ...state,
+                reports: state.reportLocations.map(report =>
+                    report._id === action.payload._id ? action.payload : report
                 ),
             };
         case 'GET_ALL_REPORTS':

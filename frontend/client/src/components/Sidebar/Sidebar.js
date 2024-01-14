@@ -15,7 +15,7 @@ import {
 } from "@chakra-ui/react";
 import { HamburgerIcon, WarningTwoIcon } from "@chakra-ui/icons";
 import { CiLogin, CiLogout } from "react-icons/ci";
-import { BsTable, BsClipboard2Check, BsPersonFillAdd, BsArrowRightCircle   } from "react-icons/bs";
+import { BsTable, BsClipboard2Check, BsPersonFillAdd, BsArrowRightCircle } from "react-icons/bs";
 import { ImLocation2 } from "react-icons/im";
 import { MdOutlineManageAccounts } from "react-icons/md";
 import { BsFillPinMapFill } from "react-icons/bs";
@@ -111,29 +111,29 @@ export default function Sidebar() {
               Advertising License Management
             </Button>
             <Button
-            background="none"
-            fontSize="15px"
-            ref={btnRef}
-            width={"270px"}
-            justifyContent={"start"}
-            _hover={{ backgroundColor: "#AEC8CA" }}
-            leftIcon={<BsArrowRightCircle  />}
-            onClick={() => navigate("/adboard-edit-request-list")}
-          >
-            Request Inspector Ads Board
-          </Button>
-          <Button
-            background="none"
-            fontSize="15px"
-            ref={btnRef}
-            width={"270px"}
-            justifyContent={"start"}
-            _hover={{ backgroundColor: "#AEC8CA" }}
-            leftIcon={<BsArrowRightCircle  />}
-            onClick={() => navigate("/adlocation-edit-request-list")}
-          >
-            Request Inspector Ads Location
-          </Button>
+              background="none"
+              fontSize="15px"
+              ref={btnRef}
+              width={"270px"}
+              justifyContent={"start"}
+              _hover={{ backgroundColor: "#AEC8CA" }}
+              leftIcon={<BsArrowRightCircle />}
+              onClick={() => navigate("/adboard-edit-request-list")}
+            >
+              Request Inspector Ads Board
+            </Button>
+            <Button
+              background="none"
+              fontSize="15px"
+              ref={btnRef}
+              width={"270px"}
+              justifyContent={"start"}
+              _hover={{ backgroundColor: "#AEC8CA" }}
+              leftIcon={<BsArrowRightCircle />}
+              onClick={() => navigate("/adlocation-edit-request-list")}
+            >
+              Request Inspector Ads Location
+            </Button>
             <Button
               background="none"
               fontSize="15px"
@@ -153,37 +153,65 @@ export default function Sidebar() {
               width={"270px"}
               justifyContent={"start"}
               _hover={{ backgroundColor: "#AEC8CA" }}
-              leftIcon={<BsPersonFillAdd  />}
+              leftIcon={<BsPersonFillAdd />}
               onClick={() => navigate("/signup")}
             >
               Cấp phát tài khoản
             </Button>
-            <Button
-            background="none"
-            fontSize="15px"
-            ref={btnRef}
-            width={"270px"}
-            justifyContent={"start"}
-            _hover={{ backgroundColor: "#AEC8CA" }}
-            leftIcon={<BsArrowRightCircle  />}
-            onClick={() => navigate("/report-types")}
-          >
-            Report Types Management
-          </Button>
-          
-          <Button
-            background="none"
-            fontSize="15px"
-            ref={btnRef}
-            width={"270px"}
-            justifyContent={"start"}
-            _hover={{ backgroundColor: "#AEC8CA" }}
-            leftIcon={<ImLocation2  />}
-            onClick={() => navigate("/manage-district")}
-          >
-            District Management
-          </Button>
-          </>):(<></>)}
+              <Button
+                background="none"
+                fontSize="15px"
+                ref={btnRef}
+                width={"270px"}
+                justifyContent={"start"}
+                _hover={{ backgroundColor: "#AEC8CA" }}
+                leftIcon={<BsArrowRightCircle />}
+                onClick={() => navigate("/report-types")}
+              >
+                Report Types Management
+              </Button>
+
+              <Button
+                background="none"
+                fontSize="15px"
+                ref={btnRef}
+                width={"270px"}
+                justifyContent={"start"}
+                _hover={{ backgroundColor: "#AEC8CA" }}
+                leftIcon={<ImLocation2 />}
+                onClick={() => navigate("/manage-district")}
+              >
+                District Management
+              </Button>
+            </>) : (<></>)}
+            {userData ?
+              (
+                <Tooltip label='Logout'>
+                  <Button
+                    background="none"
+                    mt={5}
+                    fontSize="25px"
+                    leftIcon={<CiLogout />}
+                    onClick={handleLogout}
+                    _hover={{ textDecor: "none", backgroundColor: "#AEC8CA" }}
+                  >
+                    Logout
+                  </Button>
+                </Tooltip>
+              ) :
+              (
+                <Tooltip label='Login'>
+                  <IconButton
+                    background="none"
+                    mt={5}
+                    fontSize="25px"
+                    icon={<CiLogin />}
+                    onClick={() => navigate('/login')}
+                    _hover={{ textDecor: "none", backgroundColor: "#AEC8CA" }}
+                  />
+                </Tooltip>
+              )
+            }
           </DrawerBody>
         </DrawerContent>
       </Drawer>
@@ -197,32 +225,7 @@ export default function Sidebar() {
           icon={<HamburgerIcon />}
           onClick={userData ? (onOpen) : (onClose)}
         />
-        {userData ?
-          (
-            <Tooltip label='Logout'>
-              <IconButton
-                background="none"
-                mt={5}
-                fontSize="25px"
-                icon={<CiLogout />}
-                onClick={handleLogout}
-                _hover={{ textDecor: "none", backgroundColor: "#AEC8CA" }}
-              />
-            </Tooltip>
-          ) :
-          (
-            <Tooltip label='Login'>
-              <IconButton
-                background="none"
-                mt={5}
-                fontSize="25px"
-                icon={<CiLogin />}
-                onClick={() => navigate('/login')}
-                _hover={{ textDecor: "none", backgroundColor: "#AEC8CA" }}
-              />
-            </Tooltip>
-          )
-        }
+
         {/* <Tooltip label='Login'>
           <IconButton
             background="none"

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Box, Table, Thead, Tbody, Tr, Th, Td, IconButton, useDisclosure } from "@chakra-ui/react";
 import { InfoOutlineIcon, SearchIcon } from "@chakra-ui/icons";
 import { Tooltip } from "@chakra-ui/react";
@@ -12,17 +12,21 @@ import {
     ModalBody,
     ModalCloseButton,
 } from '@chakra-ui/react'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { setViewport, } from '../actions/viewportAction'
 import { useNavigate } from 'react-router-dom';
 const ReportDashboard = () => {
     const [selectedReport, setSelectedReport] = useState(null);
     const [selectedAdboard, setSelectedAdboard] = useState(null);
     const [selectedAdboardLocation, setSelectedAdboardLocation] = useState(null);
-    const report = JSON.parse(localStorage.getItem("report"));
+    const report = useSelector((state) => state.report.reports);
+    const reportLocations = useSelector((state) => state.report.reportLocations);
+    const [totalReport, setTotalReport] = useState([]);
     //console.log(report);
     const { isOpen: isInfoModalOpen, onOpen: onInfoModalOpen, onClose: onInfoModalClose } = useDisclosure();
-
+    useEffect(() => {
+        setTotalReport([...report, ...reportLocations])
+    }, [report, reportLocations]);
 
 
     const handleViewDetails = async (report) => {

@@ -81,7 +81,15 @@ function Login() {
           isClosable: true,
         });
       }
-
+      else {
+        toast({
+          title: 'Login failed.',
+          description: "Please check your information and try again.",
+          status: 'error',
+          duration: 2000,
+          isClosable: true,
+        });
+      }
 
       // setUser(response.data.data.user.username);
 
@@ -120,13 +128,23 @@ function Login() {
       .catch(err => console.error('Oh well, you failed. Here some thoughts on the error that occured:', err))
   }
   const handleSendOtp = async () => {
+    if (currentEmail === "") {
+      toast({
+        title: 'Eamil missing.',
+        description: "Please enter your email and try again.",
+        status: 'error',
+        duration: 2000,
+        isClosable: true,
+      });
+      return;
+    }
     set_Otp((prevOtp) => {
       // Generate a new OTP
       const newOtp = Math.floor(1000 + Math.random() * 9000).toString();
-  
+
       // Send email with the new OTP
       sendEmail("template_lej7tf9", { to_name: currentEmail, message: `OTP của bạn là: ${newOtp}`, to_email: currentEmail });
-  
+
       // Display success message
       toast({
         title: 'Please check your email',
@@ -135,10 +153,10 @@ function Login() {
         duration: 2000,
         isClosable: true,
       });
-  
+
       // Log the new OTP
       console.log("New OTP:", newOtp);
-  
+
       // Return the new OTP to update the state
       return newOtp;
     });
@@ -152,12 +170,12 @@ function Login() {
   const handleForgetPassword = async () => {
     console.log(otp, _otp);
     try {
-      
+
       if (otp === _otp) {
         const response = await serverClient.post(`/users/resetpassword`, {
           email: currentEmail,
           resetToken: "RESETTOKEN",
-        });      
+        });
         if (response.success) {
           sendPw()
           toast({
@@ -260,17 +278,20 @@ function Login() {
                 mb={3}
               />
               <FormLabel>OTP</FormLabel>
-              <Input
-                type="otp"
-                variant="filled"
-                placeholder="OTP"
-                value={otp}
-                onChange={(e) => setOtp(e.target.value)}
-                mb={3}
-              />
-              <Button colorScheme="blue" onClick={handleSendOtp}>
-                Gửi OTP
-              </Button>
+              <Flex flexDirection="row">
+                <Input
+                  type="otp"
+                  variant="filled"
+                  placeholder="OTP"
+                  value={otp}
+                  onChange={(e) => setOtp(e.target.value)}
+                  mb={3}
+                  mr={2}
+                />
+                <Button colorScheme="blue" onClick={handleSendOtp}>
+                  Gửi OTP
+                </Button>
+              </Flex>
             </Flex>
           </ModalBody>
 

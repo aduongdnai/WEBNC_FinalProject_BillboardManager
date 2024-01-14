@@ -16,33 +16,32 @@ async function isAuthenticated(req, res, next) {
         next();
     } catch (error) {
         if (error instanceof jwt.TokenExpiredError) {
-            console.log(error);  
-            
+            console.log(error);
+
             let rfTokenClient = req.get("rftoken");
-           try{
-            const decoded = jwt.verify(rfTokenClient, process.env.SECRET_REFRESH_KEY)
-            //Get token from db
-            console.log(decoded.email);
-            const userData = await userModel.findOne({email:decoded.email})
-            console.log(userData);
-            const rfTokenServer = userData.rfToken;
+            try {
+                const decoded = jwt.verify(rfTokenClient, process.env.SECRET_REFRESH_KEY)
+                //Get token from db
 
-            if (!rfTokenServer) return res.status(401).json({ success: false, msg: error.message })
-            var ac_token;
-            
-            console.log('rfTokenClient',rfTokenClient);
-            console.log('rfTokenServer',rfTokenServer);
+                const userData = await userModel.findOne({ email: decoded.email })
 
-            if (rfTokenClient === rfTokenServer) {
-                
-                ac_token = jwt.sign({ email: decoded.email, password: decoded.password }, process.env.SECRET_ACCESS_KEY, { expiresIn: '1m' });
-                req.token = ac_token
-                next();
-            }else return res.status(401).json({ success: false, msg: "Invalid Token" })
-            
-           } catch(err) {
-            return res.status(401).json({ success: false, msg: "Invalid Refresh Token" })
-           }
+                const rfTokenServer = userData.rfToken;
+
+                if (!rfTokenServer) return res.status(401).json({ success: false, msg: error.message })
+                var ac_token;
+
+
+
+                if (rfTokenClient === rfTokenServer) {
+
+                    ac_token = jwt.sign({ email: decoded.email, password: decoded.password }, process.env.SECRET_ACCESS_KEY, { expiresIn: '1m' });
+                    req.token = ac_token
+                    next();
+                } else return res.status(401).json({ success: false, msg: "Invalid Token" })
+
+            } catch (err) {
+                return res.status(401).json({ success: false, msg: "Invalid Refresh Token" })
+            }
         } else
             return res.status(401).json({ success: false, msg: error.message });
 

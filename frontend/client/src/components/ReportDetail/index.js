@@ -15,12 +15,14 @@ import 'react-responsive-carousel/lib/styles/carousel.min.css';
 import { useParams } from "react-router-dom";
 import ReportProcessForm from "../ReportProcessForm";
 import axios from 'axios';
+
 const ReportDetail = () => {
     const { rpId } = useParams();
     const [selectedReport, setSelectedReport] = useState(null);
     const [selectedAdboard, setSelectedAdboard] = useState(null);
     const [selectedAdboardLocation, setSelectedAdboardLocation] = useState(null);
     const { isOpen: isProcessModalOpen, onOpen: onProcessModalOpen, onClose: onProcessModalClose } = useDisclosure();
+    const [update, setUpdate] = useState(false);
     useEffect(() => {
         const fetchReport = async () => {
             try {
@@ -39,14 +41,14 @@ const ReportDetail = () => {
                     setSelectedAdboardLocation(locationData);
                 }
 
-
+                setUpdate(false);
 
             } catch (error) {
                 console.error('Error fetching:', error.message);
             }
         }
         fetchReport();
-    }, [rpId]); // Include missing dependencies in the dependency array
+    }, [rpId, update]); // Include missing dependencies in the dependency array
     if (!selectedReport) {
         return <div>Loading...</div>; // or any other loading indication
     }
@@ -92,7 +94,7 @@ const ReportDetail = () => {
                         <ModalHeader>Xử lí báo cáo</ModalHeader>
                         <ModalCloseButton />
                         <ModalBody>
-                            <ReportProcessForm info={selectedReport} />
+                            <ReportProcessForm info={selectedReport} setUpdate={setUpdate} onClose={onProcessModalClose} />
                         </ModalBody>
 
 
