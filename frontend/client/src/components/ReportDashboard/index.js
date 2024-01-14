@@ -56,7 +56,8 @@ const ReportDashboard = () => {
     const [district, setDistrict] = useState([]);
     const [ward, setWard] = useState([]);
     const [selectDistrict, setSelectDistrict] = useState("");
-
+    const [selectWard, setSelectWard] = useState("");
+    const [update, setUpdate] = useState(false)
 
 
     const userData = useSelector((state)=>state.auth.userData)
@@ -83,6 +84,7 @@ const ReportDashboard = () => {
                         }
                     })
                     setDistrict(districtTemp);
+                    setUpdate(false);
                     setWorking(reportData.filter(x => x.processMethod === "<p>Chưa xử lý</p>").length)
                     setFinish(reportData.length - reportData.filter(x => x.processMethod === "<p>Chưa xử lý</p>").length)
                     console.log(reportData);
@@ -96,7 +98,7 @@ const ReportDashboard = () => {
         };
 
         fetchReport();
-    }, [userData]);
+    }, [userData, update]);
 
     useEffect(() => {
         console.log(district);
@@ -132,6 +134,7 @@ const ReportDashboard = () => {
             try {
                 const response = await serverClient.get(`/adboards/find/${report.reference_id}`);
                 const adboardDetails = response.data;
+                console.log(adboardDetails);
                 const response2 = await serverClient.get(`/adlocations/${adboardDetails[0].location_id}`);
                 const locationDetails = response2.data;
                 console.log(locationDetails[0].coordinates);
@@ -151,16 +154,16 @@ const ReportDashboard = () => {
             }
         } else {
             try {
-                const response2 = await serverClient.get(`/adlocations/${report.reference_id}`);
-                const locationDetails = response2.data;
-                console.log(locationDetails[0].coordinates);
+                // const response2 = await serverClient.get(`/adlocations/${report.reference_id}`);
+                // const locationDetails = response2.data;
+                // console.log(locationDetails[0].coordinates);
+                // if(!locationDetails)
                 navigate("/");
                 const newViewport = {
-                    latitude: locationDetails[0].coordinates.coordinates[1],
-                    longitude: locationDetails[0].coordinates.coordinates[0],
+                    latitude: report.latitude,
+                    longitude: report.longitude,
                     zoom: 20,
                     transitionDuration: 5000, // Adjust the zoom level as needed
-
                 };
 
                 dispatch(setViewport(newViewport));
@@ -361,13 +364,23 @@ const ReportDashboard = () => {
                         // }
                         // else{
                             var newReport = []
+                            var wardTemp = []
                             startData.forEach((element) => {
                                 if(element.area.includes(filter)){
                                     newReport.push(element)
                                 }
                             })
                             console.log(newReport);
+                            newReport.map((element) => {
+                                const splitData = element.area.split(", ")
+                                const isContain = wardTemp.find((name) => name === `${splitData[splitData.length - 3]}`)
+                                if(isContain === undefined) wardTemp.push(`${splitData[splitData.length - 3]}`)
+                            })
+                            console.log(wardTemp);
+                            setWard(wardTemp);
                             setReport(newReport);
+                            setWorking(newReport.filter(x => x.processMethod === "<p>Chưa xử lý</p>").length)
+                            setFinish(newReport.length - newReport.filter(x => x.processMethod === "<p>Chưa xử lý</p>").length)
                         // }
 
                     }} >
@@ -378,9 +391,27 @@ const ReportDashboard = () => {
                     </Select>
                     ) : <></>
                     }
-                    <Button leftIcon={<IoSearchOutline size="20" />} justifyContent="flex-start" width="200px" colorScheme='teal' variant='solid'>
-                    Add
-                    </Button>
+                    {ward.length !== 0 ? (
+                        <Select value={selectWard} width="200px" colorScheme='teal'  placeholder="Select Ward" onChange={(e) => {
+                            const filter = e.target.value;
+                            setSelectWard(filter);
+                            var newReport = []
+                            startData.forEach((element) => {
+                                if(element.area.includes(`${filter}, ${selectDistrict}`)){
+                                    newReport.push(element)
+                                }
+                            })
+                            console.log(newReport);
+                            setReport(newReport);
+                            setWorking(newReport.filter(x => x.processMethod === "<p>Chưa xử lý</p>").length)
+                            setFinish(newReport.length - newReport.filter(x => x.processMethod === "<p>Chưa xử lý</p>").length)
+                        }}>
+                            {ward !== 0 && ward.map((e) =>(
+                                <option value={e}>{e}</option>
+                            ))}
+                        </Select>
+                    ) : <></>}
+                    
                 </div>
               </div>
             </div>
@@ -456,7 +487,7 @@ const ReportDashboard = () => {
                             <ModalHeader>Xử lí báo cáo</ModalHeader>
                             <ModalCloseButton />
                             <ModalBody>
-                                <ReportProcessForm info={selectedReport} />
+                                <ReportProcessForm info={selectedReport} setUpdate={setUpdate} onClose={onProcessModalClose}/>
                             </ModalBody>
                             
 
