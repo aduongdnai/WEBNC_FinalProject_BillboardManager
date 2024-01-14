@@ -389,6 +389,8 @@ const ReportDashboard = () => {
                             })
                             console.log(newReport);
                             setReport(newReport);
+                            setWorking(newReport.filter(x => x.processMethod === "<p>Chưa xử lý</p>").length)
+                            setFinish(newReport.length - newReport.filter(x => x.processMethod === "<p>Chưa xử lý</p>").length)
                         // }
 
                     }} >
