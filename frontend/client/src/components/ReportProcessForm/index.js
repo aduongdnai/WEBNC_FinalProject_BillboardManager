@@ -1,7 +1,7 @@
+import { serverClient } from '../../apis/serverAxiosClient';
 import React, { useState } from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
-import axios from 'axios';
 import { ChakraProvider, Box, FormControl, FormLabel, Select, Button } from '@chakra-ui/react';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
@@ -31,10 +31,7 @@ const ReportProcessForm = (props) => {
             try {
                 values.updatedTime = new Date().toISOString();
                 values.processMethod = text;
-                const apiResponse = await axios.put(`http://127.0.0.1:5000/api/v1/report/${info._id}`, values);
-                console.log(apiResponse.data);
-                console.log(info);
-                // Send email to info.email       
+                const apiResponse = await serverClient.put(`/report/${info._id}`, values);     
                 resetForm();  
                    
                 setTimeout(() => {

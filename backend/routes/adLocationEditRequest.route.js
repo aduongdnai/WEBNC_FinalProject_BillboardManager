@@ -13,7 +13,7 @@ router.use(routeLogger);
 router.get('/', isAuthenticated, async (req, res) => {
     try {
         const adLocationEditRequests = await AdLocationEditRequestModel.find();
-        res.json(adLocationEditRequests);
+        res.json({data:adLocationEditRequests,token: req.token});
     } catch (err) {
         res.status(500).json({ message: err.message });
     }
@@ -38,7 +38,7 @@ router.post('/findByUserRequest/', isAuthenticated, async (req, res) => {
             };
         }));
 
-        res.json(adLocationEditRequestsWithUser);
+        res.json({data:adLocationEditRequestsWithUser,token: req.token});
     } catch (err) {
         res.status(500).json({ message: err.message });
     }
@@ -49,7 +49,7 @@ router.post('/', isAuthenticated,validate(RequestSchemas.req_schema), async (req
     console.log(req.body);
     try {
         const savedRequest = await new AdLocationEditRequestModel(req.body).save();
-        res.status(201).json(savedRequest);
+        res.status(201).json({data:savedRequest,token: req.token});
     } catch (err) {
         res.status(400).json({ message: err.message });
     }
@@ -68,7 +68,7 @@ router.put('/:id', isAuthenticated,validate(RequestSchemas.req_update_schema), a
             console.log(clientId);
             global.io.to(clientId).emit('UPDATE_LOCATION_NOTIFICATION', {...adLocationEditRequest, location: location});
         }
-        res.json(adLocationEditRequest);
+        res.json({data:adLocationEditRequest,token: req.token});
     } catch (err) {
         res.status(400).json({ message: err.message });
     }
@@ -81,7 +81,7 @@ router.get('/:id',  isAuthenticated, async (req, res) => {
         if (!adLocationEditRequest) {
             return res.status(404).json({ message: 'Ad location edit request not found' });
         }
-        res.json(adLocationEditRequest);
+        res.json({data:adLocationEditRequest,token: req.token});
     } catch (err) {
         res.status(500).json({ message: err.message });
     }

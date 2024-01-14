@@ -17,8 +17,6 @@ import ManageWard from "./components/ManageWard";
 import ReportDashboard from "./components/ReportDashboard";
 import AdvertisingLicenseRequestList from "./components/AdvertisingLicenseRequestList";
 import Account from "./components/Account/Account";
-import ReviewRequestsPage from "./components/adLocation/ReviewRequestsPage";
-import ReviewBoardRequestsPage from "./components/AdBoard/ReviewBoardRequestsPage";
 import io from "socket.io-client";
 import { useEffect, useState } from "react";
 import { useToast } from "@chakra-ui/react";
@@ -84,6 +82,7 @@ function App() {
       console.log("Received notification:", data);
       toast.closeAll();
       if (userData?.email === data._doc.userRequest){
+        console.log("Data");
         toast({
           title: `Yêu cầu chỉnh sửa điểm đặt quảng cáo của bạn đã được phản hồi`,
           description: (

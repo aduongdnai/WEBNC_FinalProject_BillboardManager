@@ -4,14 +4,14 @@ import mongoose from 'mongoose';
 import { routeLogger } from '../middlewares/logger.mdw.js'
 import validate from "../middlewares/validate.mdw.js"
 import wardSchemas from "../schemas/ward.schemas.js"
-
+import { isAuthenticated } from '../middlewares/authentication.mdw.js';
 
 
 const router = express.Router();
 
 router.use(routeLogger);
 
-router.post('/findByDistrict', async (req, res) => {
+router.post('/findByDistrict',isAuthenticated, async (req, res) => {
     try {
         const data = await WardModel.find(
             {'district': {$regex: req.body.district, $options: 'i'}}
@@ -19,7 +19,8 @@ router.post('/findByDistrict', async (req, res) => {
         if (data) {
             res.status(200).json({
                 message: "findByDistrict",
-                data
+                data,
+                token: req.token
             })
         }
     }
@@ -33,21 +34,21 @@ router.post('/findByDistrict', async (req, res) => {
 })
 
 
-router.post('/',validate(wardSchemas.ward_schema), async (req, res) => {
+router.post('/',isAuthenticated,validate(wardSchemas.ward_schema), async (req, res) => {
     const ward = req.body;
     //console.log(req.body);
     const newWard = new WardModel(ward);
 
     try {
         await newWard.save();    
-        res.status(201).json(newWard);
+        res.status(201).json({data:newWard,token: req.token});
     } catch (error) {
         res.status(409).json({ message: error.message });
     }
 
 })
 
-router.post("/findWard", async (req, res) => {
+router.post("/findWard",isAuthenticated, async (req, res) => {
     try {
       const data = await WardModel.find({
         name: { $regex: req.body.area, $options: 'i' },
@@ -58,6 +59,7 @@ router.post("/findWard", async (req, res) => {
         res.status(200).json({
           message: "findWard",
           data,
+          token: req.token
         });
       }
     } catch (err) {
@@ -69,25 +71,25 @@ router.post("/findWard", async (req, res) => {
 });
 
 
-router.put('/:id',validate(wardSchemas.ward_update_schema), async (req, res) => {
+router.put('/:id',isAuthenticated,validate(wardSchemas.ward_update_schema), async (req, res) => {
     const { id } = req.params;
     const { name } = req.body;
 
     try {
         const updatedWard = await WardModel.findByIdAndUpdate(id, { name }, { new: true });
-        res.status(200).json(updatedWard);
+        res.status(200).json({data:updatedWard,token: req.token});
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
 });
 
 
-router.delete("/:id", async (req, res) => {
+router.delete("/:id",isAuthenticated, async (req, res) => {
     const { id } = req.params;
   
     try {
         const deleteWard = await WardModel.findByIdAndDelete(id);
-        res.status(200).json(deleteWard);
+        res.status(200).json({data:deleteWard,token: req.token});
     } catch (error) {
         res.status(500).json({ message: error.message });
     }

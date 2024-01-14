@@ -15,7 +15,8 @@ router.get('/:id', isAuthenticated,validate(userSchema.user_schema), async (req,
         const user = await userModel.findById(req.params.id);
         res.status(200).json({
             data: user,
-            msg: "success"
+            msg: "success",
+            token: req.token
         });
     } catch (err) {
         console.log(err);
@@ -44,7 +45,8 @@ router.put('/:id', isAuthenticated, validate(userSchema.user_update_schema), asy
 
         res.status(200).json({
             data: updatedUser,
-            msg: "User updated successfully"
+            msg: "User updated successfully",
+            token: req.token
         });
     } catch (err) {
         console.log(err);
@@ -84,7 +86,8 @@ router.put('/change-password/:id', isAuthenticated, async (req, res) => {
         
         res.status(200).json({
             data: updatedUser,
-            msg: "Password updated successfully"
+            msg: "Password updated successfully",
+            token: req.token
         });
     } catch (err) {
         console.log(err);
@@ -93,7 +96,7 @@ router.put('/change-password/:id', isAuthenticated, async (req, res) => {
         });
     }
 });
-router.post('/resetpassword', isAuthenticated, async (req, res) => {
+router.post('/resetpassword', async (req, res) => {
     const { email, resetToken } = req.body;
     try {
         const user = await userModel.findOne({ email: email });
@@ -117,7 +120,8 @@ router.post('/resetpassword', isAuthenticated, async (req, res) => {
 
         res.status(200).json({
             data: updatedUser,
-            msg: "Password updated successfully"
+            success: true,
+            msg: "Password updated successfully",
         });
     } catch (err) {
         console.log(err);

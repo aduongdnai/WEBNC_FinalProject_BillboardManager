@@ -18,7 +18,8 @@ router.get('/', isAuthenticated, async (req, res) => {
         if (data) {
             res.status(200).json({
                 message: "Get All Advertising Type Successfully",
-                data
+                data,
+                token: req.token
             })
         }
     }
@@ -39,7 +40,7 @@ router.post('/', isAuthenticated, validate(advertisingTypeSchemas.advertising_ty
 
     try {
         await newType.save();
-        res.status(201).json(newType);
+        res.status(201).json({data:newType,token: req.token});
     } catch (error) {
         res.status(409).json({ message: error.message });
     }
@@ -53,7 +54,7 @@ router.put('/:id', isAuthenticated, validate(advertisingTypeSchemas.advertising_
 
     try {
         const updatedType = await AdvertisingTypeModel.findByIdAndUpdate(id, { name }, { new: true });
-        res.status(200).json(updatedType);
+        res.status(200).json({data:updatedType,token: req.token});
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
@@ -69,6 +70,7 @@ router.post("/findType", isAuthenticated, async (req, res) => {
             res.status(200).json({
                 message: "findType",
                 data,
+                token: req.token
             });
         }
     } catch (err) {
@@ -81,12 +83,12 @@ router.post("/findType", isAuthenticated, async (req, res) => {
 
 
 
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", isAuthenticated,async (req, res) => {
     const { id } = req.params;
 
     try {
         const deleteType = await AdvertisingTypeModel.findByIdAndDelete(id);
-        res.status(200).json(deleteType);
+        res.status(200).json({data:deleteType,token: req.token});
     } catch (error) {
         res.status(500).json({ message: error.message });
     }

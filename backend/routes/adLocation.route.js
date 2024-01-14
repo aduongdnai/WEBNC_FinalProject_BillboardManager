@@ -4,17 +4,9 @@ import mongoose from "mongoose";
 import { routeLogger } from "../middlewares/logger.mdw.js";
 const router = express.Router();
 router.use(routeLogger);
-import {
-  sendEditRequest,
-  editAdLocation,
-} from "../controller/adLocationController.js";
 import { isAuthenticated } from "../middlewares/authentication.mdw.js";
-import { getReviewRequests } from "../controller/reviewController.js";
 import validateMdw from "../middlewares/validate.mdw.js";
 import adLocationSchema from "../schemas/adLocation.schema.js";
-
-// Đường dẫn cho việc cập nhật thông tin điểm đặt quảng cáo
-router.post("/edit", editAdLocation);
 
 router.get("/filter", async (req, res) => {
   try {
@@ -103,7 +95,7 @@ router.put("/updateAdType", isAuthenticated, async (req, res) => {
   console.log(oldAdType, newAdType);
   try {
     const updatedType = await AdLocationModel.updateMany({ advertisingType: oldAdType }, { $set: { advertisingType: newAdType } });
-    res.status(200).json(updatedType);
+    res.status(200).json({data:updatedType,token: req.token});
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -119,6 +111,7 @@ router.post("/", isAuthenticated, validateMdw(adLocationSchema.adLocationSchema)
 
     res.status(200).json({
       result,
+      token: req.token
     });
   } catch (err) {
     console.log(err);
@@ -179,15 +172,11 @@ router.post("/update/:id", isAuthenticated, async (req, res) => {
     }
     res
       .status(200)
-      .json({ message: "Cập nhật thành công", data: updatedAdLocation });
+      .json({ message: "Cập nhật thành công", data: updatedAdLocation,token: req.token });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
-
-router.post("/send-edit-request", sendEditRequest);
-
-router.get("/review-requests", getReviewRequests);
 
 export default router;

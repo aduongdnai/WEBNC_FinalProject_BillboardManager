@@ -10,7 +10,7 @@ const authReducer = (state = initialState, action) => {
             return {
                 ...state,
                 accessToken: action.payload.accessToken,
-                refreshToken: action.payload.rfToken,
+                rfToken: action.payload.rfToken,
                 userData: action.payload.userData,
                 isAuth: true,
             }

@@ -19,7 +19,8 @@ router.post('/', isAuthenticated, validateMdw(advertisingLicenseRequestSchema.ad
         //console.log(req.body);
         const result = await newAdvertisingLicense.save()
         res.status(200).json({
-            data: result
+            data: result,
+            token: req.token
         })
     }
     catch (err) {
@@ -33,7 +34,8 @@ router.get('/', isAuthenticated, async (req, res) => {
     try {
         const result = await AdvertisingLicenseRequest.find();
         res.status(200).json({
-            data: result
+            data: result,
+            token: req.token
         })
     }
     catch (err) {
@@ -48,7 +50,8 @@ router.get('/adboard/:id', isAuthenticated, async (req, res) => {
     try {
         const result = await AdvertisingLicenseRequest.find({ adBoard: req.params.id });
         res.status(200).json({
-            data: result
+            data: result,
+            token: req.token
         })
     }
     catch {
@@ -62,7 +65,8 @@ router.get('/:user_id', isAuthenticated, async (req, res) => {
     try {
         const result = await AdvertisingLicenseRequest.find({ user_id: req.params.user_id });
         res.status(200).json({
-            data: result
+            data: result,
+            token: req.token
         })
     }
     catch (err) {
@@ -78,7 +82,8 @@ router.patch('/:id', isAuthenticated, async (req, res) => {
         const updatedRequest = await AdvertisingLicenseRequest.findOneAndUpdate({ _id: req.params.id }, req.body, { new: true });
         res.status(200).json({
             data: updatedRequest,
-            msg: "success"
+            msg: "success",
+            token: req.token
         })
     } catch (error) {
         console.log(error);
@@ -91,7 +96,8 @@ router.delete('/:id', isAuthenticated, async (req, res) => {
     try {
         const updatedRequest = await AdvertisingLicenseRequest.findOneAndDelete({ _id: req.params.id });
         res.status(200).json({
-            msg: "success"
+            msg: "success",
+            token: req.token
         })
     } catch (error) {
         console.log(error);
@@ -109,7 +115,8 @@ router.get("/adlocation/:id", isAuthenticated, async (req, res) => {
         }
 
         res.status(200).json({
-            data: result
+            data: result,
+            token: req.token
         })
     } catch (error) {
         console.log(error);

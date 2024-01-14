@@ -1,186 +1,8 @@
-// import React, { useEffect, useState } from "react";
-// import axios from "axios";
-// import { useParams } from "react-router-dom";
-// import { Table, Thead, Tbody, Tr, Th, Td, Button } from "@chakra-ui/react";
-// import { useNavigate } from "react-router-dom";
-
-// const AdBoardsDisplay = () => {
-//   const [adBoards, setAdBoards] = useState([]);
-//   const { locationId } = useParams(); // Lấy locationId từ URL
-
-//   const navigate = useNavigate();
-//   const handleEdit = (boardId) => {
-//     // Chuyển hướng đến trang chỉnh sửa với boardId
-//     navigate.push(`/edit-adboard/${boardId}`);
-//   };
-
-//   useEffect(() => {
-//     axios
-//       .get(`http://localhost:5000/api/v1/adboards/${locationId}`)
-//       .then((response) => {
-//         setAdBoards(response.data.data);
-//       })
-//       .catch((error) => console.error("Error fetching ad boards:", error));
-//   }, [locationId]);
-
-//   return (
-//     <div>
-//       {adBoards.length > 0 ? (
-//         <Table>
-//           <Thead>
-//             <Tr>
-//               <Th>ID</Th>
-//               <Th>Loại Bảng</Th>
-//               <Th>Kích Thước</Th>
-//               <Th>Hành động</Th>
-//             </Tr>
-//           </Thead>
-//           <Tbody>
-//             {adBoards.map((board, index) => (
-//               <Tr key={board._id}>
-//                 <Td>{index + 1}</Td>
-//                 <Td>{board.boardType}</Td>
-//                 <Td>{`${board.width} x ${board.height}`}</Td>
-
-//                 <Td>
-//                   <Button
-//                     colorScheme="blue"
-//                     onClick={() => handleEdit(board._id)}
-//                   >
-//                     Chỉnh sửa bảng quảng cáo
-//                   </Button>
-//                 </Td>
-//               </Tr>
-//             ))}
-//           </Tbody>
-//         </Table>
-//       ) : (
-//         <p>Không tìm thấy bảng quảng cáo nào cho vị trí này.</p>
-//       )}
-//     </div>
-//   );
-// };
-
-// export default AdBoardsDisplay;
-
-// import React, { useEffect, useState } from "react";
-// import axios from "axios";
-// import { useParams } from "react-router-dom";
-// import {
-//   Table,
-//   Thead,
-//   Tbody,
-//   Tr,
-//   Th,
-//   Td,
-//   Button,
-//   Modal,
-//   ModalOverlay,
-//   ModalContent,
-//   ModalHeader,
-//   ModalFooter,
-//   ModalBody,
-//   ModalCloseButton,
-//   useDisclosure,
-// } from "@chakra-ui/react";
-// import { useNavigate } from "react-router-dom";
-// import EditAdBoardForm from "./EditAdBoardForm.js";
-
-// const AdBoardsDisplay = () => {
-//   const [adBoards, setAdBoards] = useState([]);
-//   const { locationId } = useParams(); // Lấy locationId từ URL
-//   const navigate = useNavigate();
-
-//   const { isOpen, onOpen, onClose } = useDisclosure();
-//   const [selectedBoard, setSelectedBoard] = useState(null);
-
-//   useEffect(() => {
-//     axios
-//       .get(`http://localhost:5000/api/v1/adboards/${locationId}`)
-//       .then((response) => {
-//         setAdBoards(response.data.data);
-//       })
-//       .catch((error) => console.error("Error fetching ad boards:", error));
-//   }, [locationId]);
-
-//   const handleEdit = (boardId) => {
-//     navigate(`/edit-adboard/${boardId}`);
-//   };
-
-//   return (
-//     <div>
-//       {adBoards.length > 0 ? (
-//         <Table>
-//           <Thead>
-//             <Tr>
-//               <Th>STT</Th>
-//               <Th>ID</Th>
-//               <Th>Loại Bảng</Th>
-//               <Th>Kích Thước</Th>
-//               <Th>Hành động</Th>
-//             </Tr>
-//           </Thead>
-//           <Tbody>
-//             {adBoards.map((board, index) => (
-//               <Tr key={board._id}>
-//                 <Td>{index + 1}</Td>
-//                 <Td>{board._id}</Td>
-//                 <Td>{board.boardType}</Td>
-//                 <Td>{`${board.width} x ${board.height}`}</Td>
-//                 <Td>
-//                   <Button
-//                     colorScheme="blue"
-//                     onClick={() => handleEdit(board._id)}
-//                   >
-//                     Chỉnh sửa bảng quảng cáo
-//                   </Button>
-//                 </Td>
-//               </Tr>
-//             ))}
-//           </Tbody>
-//         </Table>
-//       ) : (
-//         <p>Không tìm thấy bảng quảng cáo nào cho vị trí này.</p>
-//       )}
-
-//       <Modal isOpen={isOpen} onClose={onClose}>
-//         <ModalOverlay />
-//         <ModalContent>
-//           <ModalHeader>Chỉnh Sửa Bảng Quảng Cáo</ModalHeader>
-//           <ModalCloseButton />
-//           <ModalBody>
-//             {selectedBoard && (
-//               <EditAdBoardForm
-//                 adBoard={selectedBoard}
-//                 onClose={onClose}
-//                 // You might need to pass other props like onSubmit
-//               />
-//             )}
-//           </ModalBody>
-//           <ModalFooter>
-//             <Button colorScheme="blue" mr={3} onClick={onClose}>
-//               Đóng
-//             </Button>
-//           </ModalFooter>
-//         </ModalContent>
-//       </Modal>
-//     </div>
-//   );
-// };
-
-// export default AdBoardsDisplay;
-
+import { serverClient } from '../../apis/serverAxiosClient';
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import { useParams } from "react-router-dom";
 import {
-  Table,
   Icon,
-  Thead,
-  Tbody,
-  Tr,
-  Th,
-  Td,
   Button,
   useDisclosure,
   Modal,
@@ -192,14 +14,13 @@ import {
   ModalFooter,
   useToast
 } from "@chakra-ui/react";
-import EditAdBoardForm from "./EditAdBoardForm"; // Điều chỉnh đường dẫn import
-import { FaEye,FaPen } from "react-icons/fa";
+import { FaPen } from "react-icons/fa";
 import { FaTrashAlt } from "react-icons/fa";
 
 import { IoSearchOutline } from "react-icons/io5";
 import BootstrapTable from 'react-bootstrap-table-next';
 import paginationFactory from 'react-bootstrap-table2-paginator';
-import ToolkitProvider, { Search } from 'react-bootstrap-table2-toolkit/dist/react-bootstrap-table2-toolkit';
+import ToolkitProvider from 'react-bootstrap-table2-toolkit/dist/react-bootstrap-table2-toolkit';
 import { useSelector } from "react-redux";
 import EditAdBoardCBSo from "./EditAdBoardCBSo";
 import { CiCirclePlus } from "react-icons/ci";
@@ -227,8 +48,8 @@ const AdBoardsDisplay = () => {
     const fetchData1 = async() => {
       try{
 
-        const apiresponse = await axios.get(`http://localhost:5000/api/v1/adboards/${locationId}`)
-        setAdBoards(apiresponse.data.data);
+        const apiresponse = await serverClient.get(`/adboards/${locationId}`)
+        setAdBoards(apiresponse.data);
         setUpdate(false);
 
       }catch(error){
@@ -237,9 +58,9 @@ const AdBoardsDisplay = () => {
     }
     const fetchData2 = async() => {
       try{
-        const apiresponse = await axios.get(`http://localhost:5000/api/v1/adlocations/${locationId}`)
-        console.log(apiresponse.data.data);
-        setLocation(apiresponse.data.data[0]);
+        const apiresponse = await serverClient.get(`/adlocations/${locationId}`)
+        console.log(apiresponse.data);
+        setLocation(apiresponse.data[0]);
         setUpdate(false);
 
       }catch(error){

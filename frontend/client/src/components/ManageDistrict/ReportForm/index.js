@@ -1,3 +1,4 @@
+import { serverClient } from '../../../apis/serverAxiosClient';
 import React, { useState } from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
@@ -37,10 +38,10 @@ const ReportForm = (props) => {
                     var isExist = null;
                     var isContain = null;
                     if(name === ''){
-                        const apiCheck = await axios.post(`http://127.0.0.1:5000/api/v1/district/findDistrict`, {area: values.name});
-                        console.log(apiCheck.data.data);
-                        if(apiCheck.data.data.length === 0){
-                            apiResponse = await axios.post(`http://127.0.0.1:5000/api/v1/district`, values);
+                        const apiCheck = await serverClient.post(`/district/findDistrict`, {area: values.name});
+                        console.log(apiCheck.data);
+                        if(apiCheck.data && apiCheck.data.length === 0){
+                            apiResponse = await serverClient.post(`/district`, values);
                             initialValues.name = values.name
                             setUpdate(true);
                             isExist = false
@@ -52,11 +53,11 @@ const ReportForm = (props) => {
                         // console.log(isExist.state);
                     }
                     else{
-                        const apiCheck = await axios.post(`http://127.0.0.1:5000/api/v1/district/findDistrict`, {area: values.name});
-                        const apiContain = await axios.post(`http://127.0.0.1:5000/api/v1/adlocations/findByArea`, {area: name});
-                        if(apiCheck.data.data.length === 0){
-                            if(apiContain.data.data.length === 0){
-                                apiResponse = await axios.put(`http://127.0.0.1:5000/api/v1/district/${id}`,values);
+                        const apiCheck = await serverClient.post(`/district/findDistrict`, {area: values.name});
+                        const apiContain = await serverClient.post(`/adlocations/findByArea`, {area: name});
+                        if(apiCheck.data && apiCheck.data.length === 0){
+                            if(apiContain.data && apiContain.data.length === 0){
+                                apiResponse = await serverClient.put(`/district/${id}`,values);
                                 initialValues.name = values.name
                                 setUpdate(true);
                                 isContain = false;
@@ -124,10 +125,10 @@ const ReportForm = (props) => {
         const handleSubmit = async(values, { setSubmitting, resetForm }) =>{
             try{
                 var isContain = null;
-                const apiContain = await axios.post(`http://127.0.0.1:5000/api/v1/adlocations/findByArea`, {area: name});
-                if(apiContain.data.data.length === 0){
+                const apiContain = await serverClient.post(`/adlocations/findByArea`, {area: name});
+                if(apiContain.data && apiContain.data.length === 0){
                     console.log("get here");
-                    const apiResponse = await axios.delete(`http://127.0.0.1:5000/api/v1/district/${id}`);
+                    const apiResponse = await serverClient.delete(`/district/${id}`);
                     setUpdate(true);
                     isContain = false;
                 }

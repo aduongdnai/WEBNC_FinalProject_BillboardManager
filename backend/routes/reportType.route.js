@@ -37,7 +37,7 @@ router.post('/', isAuthenticated,validate(reportTypeSchemas.report_type_schema),
 
     try {
         await newRpType.save();    
-        res.status(201).json(newRpType);
+        res.status(201).json({data:newRpType,token: req.token});
     } catch (error) {
         res.status(409).json({ message: error.message });
     }
@@ -51,7 +51,7 @@ router.put('/:id', isAuthenticated,validate(reportTypeSchemas.report_type_schema
 
     try {
         const updatedRpType = await ReportTypeModel.findByIdAndUpdate(id, { name }, { new: true });
-        res.status(200).json(updatedRpType);
+        res.status(200).json({data:updatedRpType,token: req.token});
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
@@ -84,7 +84,7 @@ router.delete("/:id", isAuthenticated, async (req, res) => {
 
   try {
       const deleteRpType = await ReportTypeModel.findByIdAndDelete(id);
-      res.status(200).json(deleteRpType);
+      res.status(200).json({data:deleteRpType,token: req.token});
   } catch (error) {
       res.status(500).json({ message: error.message });
   }

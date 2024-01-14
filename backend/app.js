@@ -5,11 +5,9 @@ import mongoose from "mongoose";
 import adLocationRoute from "./routes/adLocation.route.js";
 import adBoardRoute from "./routes/adBoard.route.js";
 import reportRoute from "./routes/report.route.js";
-import editRequestRoutes from "./routes/editRequest.route.js";
-import editBoardRequests from "./routes/editBoardRequest.route.js";
 import userRoute from "./routes/user.route.js";
 import advertisingLicenseRequestRoute from "./routes/advertisingLicenseRequest.route.js";
-//import App from "./routes/LoginSignup.route.js";
+
 import cookieParser from "cookie-parser";
 import { Server as SocketIO } from "socket.io";
 import { createServer } from "http";
@@ -60,8 +58,6 @@ server.use("/api/v1/adboards", adBoardRoute);
 server.use("/api/v1/report", reportRoute);
 server.use("/api/v1/advertisingLicenseRequest", advertisingLicenseRequestRoute);
 
-server.use("/api/v1/editrequests", editRequestRoutes);
-server.use("/api/v1/editboards", editBoardRequests);
 server.use("/api/v1/adLocationEditRequest", adLocationEditRequestRoute);
 server.use("/api/v1/adBoardEditRequest", adBoardEditRequestRoute);
 

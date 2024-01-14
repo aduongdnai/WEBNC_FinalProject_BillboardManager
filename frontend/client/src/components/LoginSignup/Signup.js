@@ -16,6 +16,7 @@ import {
 import { Link, useNavigate } from "react-router-dom";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { serverClient } from "../../apis/serverAxiosClient";
 
 function Signup() {
   let navigate = useNavigate();
@@ -59,11 +60,11 @@ function Signup() {
     }
     if (isInvalid) return;
     try {
-      const response = await axios.post(
-        "http://127.0.0.1:5000/api/v1/auth/signup",
+      const response = await serverClient.post(
+        "/auth/signup",
         formData
       );
-      console.log("Registration successful:", response.data);
+      console.log("Registration successful:");
       // Handle successful registration (e.g., redirect to login page)
       setTimeout(() => {
         navigate("/map");
@@ -102,16 +103,16 @@ function Signup() {
   const handleRoleChange = async (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value, district: "", ward: "" }); // Reset giá trị quận và phường khi thay đổi vai trò
-    const resDistricts = await axios.get("http://localhost:5000/api/v1/district");
-    setDistricts(resDistricts.data.data)
+    const resDistricts = await serverClient.get("/district");
+    setDistricts(resDistricts.data)
   
   };
 
   const handleDistrictChange = async (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
-    const resWards = await axios.post("http://localhost:5000/api/v1/ward/findByDistrict", { district: value });
-    setWards(resWards.data.data)
+    const resWards = await serverClient.post("/ward/findByDistrict", { district: value });
+    setWards(resWards.data)
   };
 
   const handleWardChange = (e) => {

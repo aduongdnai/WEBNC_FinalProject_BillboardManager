@@ -1,3 +1,4 @@
+import { serverClient } from '../../apis/serverAxiosClient';
 import React, { useEffect } from 'react';
 import { Box, Table, Thead, Tbody, Tr, Th, Td, Text, ButtonGroup, Button, Center, useToast } from '@chakra-ui/react';
 import { ViewIcon, SmallCloseIcon, InfoOutlineIcon, ArrowDownIcon } from '@chakra-ui/icons';
@@ -41,7 +42,7 @@ function AdBoardEditRequestListCBSo() {
                 height: request.height,
             }
             const result = await adBoardApi.updateAdboardDuong(request.adBoard._id,data);
-            const resultStatus = await axios.put(`http://localhost:5000/api/v1/adBoardEditRequest/${request._id}`, { status: "Approved" })
+            const resultStatus = await serverClient.put(`/adBoardEditRequest/${request._id}`, { status: "Approved" })
             setUpdate(true);
             onClose();
         } catch (error) {
@@ -60,7 +61,7 @@ function AdBoardEditRequestListCBSo() {
             try {
                 //const result = await AdvertisingLicenseRequestApi.getAdvertisingLicenseRequestByUserId(user._id);
                 const data = { userRequest: null };
-                const result = await axios.post(`http://localhost:5000/api/v1/adBoardEditRequest/findByUserRequest/`, data)
+                const result = await serverClient.post(`/adBoardEditRequest/findByUserRequest/`, data)
                 console.log(result.data);
                 setRequestsList(result.data);
                 setUpdate(false);
@@ -73,7 +74,7 @@ function AdBoardEditRequestListCBSo() {
     }, [update]);
     const handleRejectRequest = async () => {
         try {
-            const resultStatus = await axios.put(`http://localhost:5000/api/v1/adBoardEditRequest/${request._id}`, { status: "Rejected" })
+            const resultStatus = await serverClient.put(`/adBoardEditRequest/${request._id}`, { status: "Rejected" })
             setUpdate(true);
             onClose();
         } catch (error) {

@@ -1,3 +1,4 @@
+import { serverClient } from '../../../apis/serverAxiosClient';
 import React, { useState } from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
@@ -30,9 +31,9 @@ const ReportForm = (props) => {
                     var isExist = null;
                     console.log(name);
                     if(name === ''){
-                        const apiCheck = await axios.post(`http://127.0.0.1:5000/api/v1/advertisingType/findType`, {area: values.name});
-                        if(apiCheck.data.data.length === 0){
-                            apiResponse = await axios.post(`http://127.0.0.1:5000/api/v1/advertisingType`, values);
+                        const apiCheck = await serverClient.post(`/advertisingType/findType`, {area: values.name});
+                        if(apiCheck.data.length === 0){
+                            apiResponse = await serverClient.post(`/advertisingType`, values);
                             initialValues.name = values.name
                             setUpdate(true);
                             isExist = false
@@ -42,12 +43,12 @@ const ReportForm = (props) => {
                         }
                     }
                     else{
-                        const apiCheck = await axios.post(`http://127.0.0.1:5000/api/v1/advertisingType/findType`, {area: values.name});
-                        // const apiContain = await axios.post(`http://127.0.0.1:5000/api/v1/adlocations/findByAdType`, {area: `${name}`});
-                        if(apiCheck.data.data.length === 0){
+                        const apiCheck = await serverClient.post(`/advertisingType/findType`, {area: values.name});
+                        // const apiContain = await serverClient.post(`/adlocations/findByAdType`, {area: `${name}`});
+                        if(apiCheck.data.length === 0){
                             // if(apiContain.data.data.length === 0){
-                                apiResponse = await axios.put(`http://127.0.0.1:5000/api/v1/advertisingType/${id}`,values)
-                                const apiUpdate = await axios.put(`http://127.0.0.1:5000/api/v1/adlocations/updateAdType`,{oldAdType: name, newAdType: values.name})
+                                apiResponse = await serverClient.put(`/advertisingType/${id}`,values)
+                                const apiUpdate = await serverClient.put(`/adlocations/updateAdType`,{oldAdType: name, newAdType: values.name})
                                 initialValues.name = values.name
                                 setUpdate(true);
                             // }
@@ -123,11 +124,11 @@ const ReportForm = (props) => {
             try{
                 var isContain = null;
                 console.log(values);
-                const apiContain = await axios.post(`http://127.0.0.1:5000/api/v1/adlocations/findByAdType`, {area: `${name}`});
+                const apiContain = await serverClient.post(`/adlocations/findByAdType`, {area: `${name}`});
                 console.log(apiContain);
-                if(apiContain.data.data.length === 0){
+                if(apiContain.data.length === 0){
                     console.log("get here");
-                    const apiResponse = await axios.delete(`http://127.0.0.1:5000/api/v1/advertisingType/${id}`);
+                    const apiResponse = await serverClient.delete(`advertisingType/${id}`);
                     setUpdate(true);
                     isContain = false;
                 }

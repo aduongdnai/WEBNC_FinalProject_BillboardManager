@@ -1,3 +1,4 @@
+import { serverClient } from '../../apis/serverAxiosClient';
 import React, { useState, useEffect } from 'react';
 import {
     Flex, Box, Text, Heading, useDisclosure, Button, Modal,
@@ -23,18 +24,18 @@ const ReportDetail = () => {
     useEffect(() => {
         const fetchReport = async () => {
             try {
-                const response = await axios.get(`http://127.0.0.1:5000/api/v1/report/${rpId}`);
-                const selectedReportData = response.data.data[0];
+                const response = await serverClient.get(`/report/${rpId}`);
+                const selectedReportData = response.data[0];
                 setSelectedReport(selectedReportData);
 
                 //console.log(selectedReportData);
                 if (selectedReportData.type === 'adboard') {
-                    const adboardResponse = await axios.get(`http://127.0.0.1:5000/api/v1/adboards/find/${selectedReportData.reference_id}`);
-                    const selectedAdboardData = adboardResponse.data.data[0];
+                    const adboardResponse = await serverClient.get(`/adboards/find/${selectedReportData.reference_id}`);
+                    const selectedAdboardData = adboardResponse.data[0];
                     setSelectedAdboard(selectedAdboardData);
 
-                    const locationResponse = await axios.get(`http://127.0.0.1:5000/api/v1/adlocations/${selectedAdboardData.location_id}`);
-                    const locationData = locationResponse.data.data[0];
+                    const locationResponse = await serverClient.get(`/adlocations/${selectedAdboardData.location_id}`);
+                    const locationData = locationResponse.data[0];
                     setSelectedAdboardLocation(locationData);
                 }
 
