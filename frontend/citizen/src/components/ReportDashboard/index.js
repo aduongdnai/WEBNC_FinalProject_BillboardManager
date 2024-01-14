@@ -63,9 +63,10 @@ const ReportDashboard = () => {
                 if (!response.ok) {
                     throw new Error('Failed to fetch ad board details');
                 }
-    
+
                 const adboardDetails = await response.json();
                 const response2 = await fetch(`http://127.0.0.1:5000/api/v1/adlocations/${adboardDetails.data[0].location_id}`);
+                console.log(response2);
                 if (!response2.ok) {
                     throw new Error('Failed to fetch ad board details');
                 }
@@ -77,37 +78,37 @@ const ReportDashboard = () => {
                     longitude: locationDetails.data[0].coordinates.coordinates[0],
                     zoom: 20,
                     transitionDuration: 5000, // Adjust the zoom level as needed
-    
+
                 };
-    
+
                 dispatch(setViewport(newViewport));
-    
+
             } catch (error) {
                 console.error('Error fetching ad board details:', error.message);
             }
-        }else{
+        } else {
             try {
-                const response2 = await fetch(`http://127.0.0.1:5000/api/v1/adlocations/${report.reference_id}`);
+                const response2 = await fetch(`http://127.0.0.1:5000/api/v1/report/${report._id}`);
                 if (!response2.ok) {
                     throw new Error('Failed to fetch ad board details');
                 }
                 const locationDetails = await response2.json();
-                console.log(locationDetails.data[0].coordinates);
+                console.log(locationDetails);
                 navigate("/");
                 const newViewport = {
-                    latitude: locationDetails.data[0].coordinates.coordinates[1],
-                    longitude: locationDetails.data[0].coordinates.coordinates[0],
+                    latitude: locationDetails.data[0].latitude,
+                    longitude: locationDetails.data[0].longitude,
                     zoom: 20,
                     transitionDuration: 5000, // Adjust the zoom level as needed
-    
+
                 };
-    
+
                 dispatch(setViewport(newViewport));
             } catch (error) {
                 console.error('Error fetching location details:', error.message);
             }
         }
-        
+
 
     }
     return (

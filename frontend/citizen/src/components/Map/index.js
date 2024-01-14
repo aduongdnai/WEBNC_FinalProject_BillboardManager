@@ -6,7 +6,6 @@ import ReactMapGL, {
     GeolocateControl, NavigationControl, Source,
     FullscreenControl, ScaleControl, Popup, Layer
 } from '@goongmaps/goong-map-react'
-import Pins from '../Pin';
 import LocationInfo from './locationInfo';
 import PlannedLocationInfo from './plannedLocationInfo';
 import SearchBox from '../SearchBox';
@@ -16,11 +15,9 @@ import mapAPI from '../../apis/mapApi';
 import adLocationAPI from '../../apis/adLocationApi';
 import Pin from '../Pin';
 import { clusterLayer, clusterCountLayer, unclusteredPointLayer, unclusteredPointTextLayer } from './layer';
-import { reportclusterLayer, reportclusterCountLayer, reportunclusteredPointLayer, reportunclusteredPointTextLayer } from './reportLayer';
 import FilterOverlay from '../FilterOverlay';
-import reportApi from '../../apis/reportApi';
 import ReportLocationInfo from './reportLocationInfo';
-import adBoardApi from '../../apis/adBoardApi';
+import reportApi from '../../apis/reportApi';
 
 
 function Map(props) {
@@ -29,10 +26,9 @@ function Map(props) {
     const [adLocation, setAdLocation] = useState(null);
     const [reportLocationInfo, setReportLocationInfo] = useState(null);
     const [geoJsonAdLocation, setGeoJsonAdLocation] = useState(null);
-    const [filters, setFilters] = useState({ planned: true, reported: true });
+    const [filters, setFilters] = useState({ planned: true, reported: false });
     const viewport = useSelector(state => state.viewport)
-    const report = useSelector(state => state.report.reports)
-    const reportLocations = useSelector(state => state.report.reportLocations)
+    let reportLocations = useSelector(state => state.report.reportLocations)
     const dispatch = useDispatch()
     const mapRef = useRef(null);
     const geolocateStyle = {
@@ -61,7 +57,6 @@ function Map(props) {
             try {
 
                 const result = await adLocationAPI.getAllAdLocation();
-
                 setAdLocation(result.data);
                 const features = await Promise.all(result.data.map(async (adLocation) => {
                     const hasAdBoard = await adLocationAPI.doesAdLocationHaveAdBoard(adLocation._id);

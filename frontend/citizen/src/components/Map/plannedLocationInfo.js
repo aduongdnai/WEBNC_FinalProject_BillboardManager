@@ -13,9 +13,10 @@ import {
     ModalHeader,
     ModalBody,
     ModalCloseButton,
+    Divider
 } from '@chakra-ui/react'
 import ReportForm from '../ReportForm';
-import { WarningTwoIcon, RepeatClockIcon } from '@chakra-ui/icons';
+import { RepeatClockIcon } from '@chakra-ui/icons';
 import { Carousel } from 'react-responsive-carousel';
 import { Image as CloudinaryImage, CloudinaryContext } from 'cloudinary-react';
 import { useNavigate } from 'react-router-dom';
@@ -85,16 +86,6 @@ function PlannedLocationInfo(props) {
                     <DrawerContent>
                         <DrawerHeader borderBottomWidth='1px'>Thông tin địa điểm quảng cáo
                             <br></br>
-                            {/* <Button
-                                colorScheme={report.isReported ? "yellow" : "red"}
-                                leftIcon={<WarningTwoIcon />}
-                                onClick={report.isReported ? onReportDetailOpen : onReportModalOpen}
-                                variant={"outline"}  // Add the report icon to the left of the button text
-                                mt={2}
-                                size='sm'
-                            >
-                                {report.isReported ? "Reported" : "Report"}
-                            </Button> */}
                             <Button
                                 colorScheme="teal"
                                 leftIcon={<RepeatClockIcon />}
@@ -106,7 +97,7 @@ function PlannedLocationInfo(props) {
                             >
                                 Report History
                             </Button>
-                            <Modal isOpen={isReportModalOpen} onClose={onReportModalClose} size='4xl'>
+                            {/* <Modal isOpen={isReportModalOpen} onClose={onReportModalClose} size='4xl'>
                                 <ModalOverlay />
                                 <ModalContent >
                                     <ModalHeader>Report Location Form</ModalHeader>
@@ -147,11 +138,24 @@ function PlannedLocationInfo(props) {
 
 
                                 </ModalContent>
-                            </Modal>
+                            </Modal> */}
                         </DrawerHeader>
                         <DrawerBody>
                             <Box>
-                                <Heading size={"md"}>Có  {adBoards.length} biển quảng cáo</Heading>
+                                <CloudinaryContext cloudName={process.env.REACT_APP_CLOUDINARY_CLOUD_NAME} secure="true" upload_preset="my_unsigned_preset">
+                                    <Carousel>
+                                        <CloudinaryImage publicId={info.image} width="150" height="50" />
+                                    </Carousel>
+                                </CloudinaryContext>
+                                <Text><strong>Loại quảng cáo:</strong> {info.advertisingType}</Text>
+                                <Text><strong>Loại địa điểm:</strong> {info.locationType}</Text>
+                                <Text><strong>Địa chỉ :</strong> {displayAddress}</Text>
+                                <Text><strong>Tình trạng:</strong> {info.planned ? "Đã Quy Hoạch" : "Chưa Quy Hoạch"}</Text>
+                            </Box>
+                            <Divider></Divider>
+                            <Box>
+                                <Heading size={"lg"} mt={4}>Thông tin bảng quảng cáo</Heading>
+                                {adBoards.length > 0 && <Heading size={"md"}>Có  {adBoards.length} biển quảng cáo</Heading>}
                                 {adBoards.length > 0 ? (
                                     adBoards.map((adBoard) => (
 

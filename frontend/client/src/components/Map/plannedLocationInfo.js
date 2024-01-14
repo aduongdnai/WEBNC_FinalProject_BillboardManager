@@ -110,7 +110,8 @@ function PlannedLocationInfo(props) {
                             </Box>
                             <Divider></Divider>
                             <Box>
-                                <Heading size={"md"}>Có  {adBoards.length} biển quảng cáo</Heading>
+                                <Heading size={"lg"} mt={4}>Thông tin bảng quảng cáo</Heading>
+                                {adBoards.length > 0 && <Heading size={"md"}>Có  {adBoards.length} biển quảng cáo</Heading>}
 
                                 {adBoards.length > 0 ? (
                                     adBoards.map((adBoard) => (

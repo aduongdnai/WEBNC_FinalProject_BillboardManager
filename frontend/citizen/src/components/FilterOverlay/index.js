@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Box, Button, FormControl, FormLabel, Spacer, Switch } from '@chakra-ui/react';
 function FilterOverlay({ onFilterChange }) {
     const [planned, setPlanned] = React.useState(true);
