@@ -20,7 +20,7 @@ import { Image as CloudinaryImage, CloudinaryContext } from 'cloudinary-react';
 import { useSelector } from 'react-redux';
 
 function PlannedLocationInfo(props) {
-    const { info } = props;
+    const { info, setUpdate } = props;
     const { isOpen, onOpen, onClose } = useDisclosure();
     const { isOpen: isAddAdBoardOpen, onOpen: onAddAdBoardOpen, onClose: onAddAdBoardClose } = useDisclosure();
     const [adBoards, setAdBoards] = useState([]);
@@ -125,7 +125,7 @@ function PlannedLocationInfo(props) {
                                     <ModalHeader>Thêm bảng quảng cáo</ModalHeader>
                                     <ModalCloseButton />
                                     <ModalBody>
-                                        <AdBoardForm info={info} onClose={onAddAdBoardClose} onSubmitForm={handleSubmitForm}></AdBoardForm>
+                                        <AdBoardForm info={info} onClose={onAddAdBoardClose} onSubmitForm={handleSubmitForm} setUpdate={setUpdate}></AdBoardForm>
                                     </ModalBody>
                                 </ModalContent>
                             </Modal>

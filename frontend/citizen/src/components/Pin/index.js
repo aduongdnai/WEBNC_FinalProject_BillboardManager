@@ -21,7 +21,7 @@ function Pins(props) {
                 viewBox="0 0 24 24"
                 style={{
                     cursor: 'pointer',
-                    fill: city.status === "Pending" ? '#d00' : '#1fe096',
+                    fill: city.status === "Pending" ? '#d00' : city.status === "Processing" ? "#fff06c" : '#1fe096',
                     stroke: 'none',
                     transform: `translate(${-SIZE / 2}px,${-SIZE}px)`
                 }}

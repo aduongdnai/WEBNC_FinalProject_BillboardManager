@@ -30,6 +30,7 @@ import ReportTypesManagement from "./components/ReportTypesManagement";
 import TableQueryAdBoardByArea from "./components/TableQueryAdBoardByArea";
 import AdLocationEditRequestList from "./components/AdLocationEditRequestList";
 import AdBoardEditRequestList from "./components/AdBoardEditRequestList";
+import NotFound from "./components/NotFound/indesx";
 const socket = io("http://127.0.0.1:5000");
 
 
@@ -261,7 +262,7 @@ function App() {
               }
             />
             <Route path="/" element={<Navigate replace to="/map" />} />
-
+            <Route path="/*" element={<NotFound />} />
           </Routes>
         </Router>
       </div>

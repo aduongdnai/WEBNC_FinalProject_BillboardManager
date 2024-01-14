@@ -10,7 +10,7 @@ const router = express.Router();
 
 router.use(routeLogger);
 
-router.get('/:id', isAuthenticated,validate(userSchema.user_schema), async (req, res) => {
+router.get('/:id', isAuthenticated, async (req, res) => {
     try {
         const user = await userModel.findById(req.params.id);
         res.status(200).json({
@@ -83,7 +83,7 @@ router.put('/change-password/:id', isAuthenticated, async (req, res) => {
 
         // Save the updated user information to the database
         const updatedUser = await user.save();
-        
+
         res.status(200).json({
             data: updatedUser,
             msg: "Password updated successfully",

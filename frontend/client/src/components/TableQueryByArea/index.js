@@ -1,6 +1,6 @@
 import {
   Icon,
-  Button,  
+  Button,
   Modal,
   ModalOverlay,
   ModalContent,
@@ -137,7 +137,7 @@ function TableQueryByArea(props) {
               h={5}
               marginRight={5}
               // marginLeft={2} 
-              onClick={() => navigate('/table-adboard', {state: { location: row }})}
+              onClick={() => navigate('/table-adboard', { state: { location: row } })}
               _hover={{ color: 'blue' }}
             />
             <Icon

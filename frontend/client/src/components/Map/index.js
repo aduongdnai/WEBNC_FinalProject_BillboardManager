@@ -206,7 +206,7 @@ function Map(props) {
                         closeOnClick={false}
                         onClose={setPlannedPopupInfo}
                     >
-                        <PlannedLocationInfo info={plannedPopupInfo} />
+                        <PlannedLocationInfo info={plannedPopupInfo} setUpdate={setUpdate} />
                     </Popup>
                 )}
                 {reportLocationInfo && (

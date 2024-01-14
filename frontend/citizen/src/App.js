@@ -13,6 +13,8 @@ import NotificationProvider from "./Provider/NotificationProvider";
 import { useState } from "react";
 import { updateReport, updateReportLocation } from "./components/actions/reportAction";
 import { useDispatch } from "react-redux";
+import NotFound from "./components/NotFound";
+
 const socket = io('http://127.0.0.1:5000');
 
 function App() {
@@ -116,7 +118,7 @@ function App() {
 
           <Route path="/" element={<NotificationProvider isClick={isClick} report={report}><Map /></NotificationProvider>} />
           <Route path="/report" element={<NotificationProvider isClick={isClick} report={report}><ReportDashboard /></NotificationProvider>} />
-
+          <Route path="/*" element={<NotFound />} />
         </Routes>
       </Router>
     </div>

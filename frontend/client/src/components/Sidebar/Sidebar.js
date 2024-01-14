@@ -84,7 +84,7 @@ export default function Sidebar() {
               justifyContent={"start"}
               onClick={() => navigate("/table-area")}
             >
-              Table Management
+              Location Management
             </Button>
             <Button
               background="none"

@@ -13,8 +13,8 @@ const SearchResults = ({ searchResults, setSearchResults }) => {
         const newViewport = {
             latitude: location.lat,
             longitude: location.lng,
-            zoom: 12,
-            transitionDuration: 5000, // Adjust the zoom level as needed
+            zoom: 18,
+            transitionDuration: 2000, // Adjust the zoom level as needed
 
         };
 

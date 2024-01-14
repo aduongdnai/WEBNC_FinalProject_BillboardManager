@@ -10,7 +10,7 @@ import { useToast, ButtonGroup, VStack, Heading, Box, Text, Button, Drawer, Draw
 import { AddIcon, ViewIcon } from '@chakra-ui/icons';
 import { useState } from 'react';
 import adBoardApi from '../../apis/adBoardApi';
-function AdBoardForm({ onClose, info, onSubmitForm }) {
+function AdBoardForm({ onClose, info, onSubmitForm, setUpdate }) {
     const [error, setError] = useState(null);
     const [publicId, setPublicId] = useState([]);
     const toast = useToast();
@@ -69,6 +69,7 @@ function AdBoardForm({ onClose, info, onSubmitForm }) {
             // Reset the form
             actions.resetForm();
             setPublicId([]);
+            setUpdate(true);
             onClose();
         } catch (error) {
             // Handle errors, and set the error state
@@ -110,13 +111,13 @@ function AdBoardForm({ onClose, info, onSubmitForm }) {
                         <CustomInput
                             name="width"
                             label="Chiều rộng"
-                            placeholder="Nhập chiều dài (VD: 8m)"
+                            placeholder="Nhập chiều rộng (VD: 8m)"
                             type="number"
                         />
                         <CustomInput
                             name="height"
-                            label="Chiều cao"
-                            placeholder="Nhập khu vực (VD: 10m)"
+                            label="Chiều dài"
+                            placeholder="Nhập chiều dài (VD: 10m)"
                             type="number"
                         />
                         <ButtonGroup pt="1rem">
